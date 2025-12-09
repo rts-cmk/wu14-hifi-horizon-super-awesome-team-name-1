@@ -5,6 +5,6 @@ import env from "@/env";
 console.log(`server is running on port ${env.PORT}`);
 
 serve({
-    fetch: app.fetch,
-    port: env.PORT,
-})
+	fetch: app.fetch,
+	port: env.PORT,
+});
