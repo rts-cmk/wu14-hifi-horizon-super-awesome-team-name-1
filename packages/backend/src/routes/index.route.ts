@@ -1,4 +1,8 @@
-import { createRoute, z } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
+import * as HttpStatusCodes from "stoker/http-status-codes";
+import * as HttpStatusPhrases from "stoker/http-status-phrases";
+import { jsonContent } from "stoker/openapi/helpers";
+import { createMessageObjectSchema } from "stoker/openapi/schemas";
 import { createRouter } from "@/lib/create-app";
 
 const router = createRouter().openapi(
@@ -6,20 +10,19 @@ const router = createRouter().openapi(
 		method: "get",
 		path: "/",
 		responses: {
-			200: {
-				content: {
-					"application/json": {
-						schema: z.object({
-							message: z.string(),
-						}),
-					},
-				},
-				description: "HIFI Horizon API Index",
-			},
+			[HttpStatusCodes.OK]: jsonContent(
+				createMessageObjectSchema(HttpStatusPhrases.ACCEPTED),
+				HttpStatusPhrases.ACCEPTED,
+			),
 		},
 	}),
 	(c) => {
-		return c.json({ message: "HIFI Horizon API" });
+		return c.json(
+			{
+				message: "HIFI Horizon API",
+			},
+			HttpStatusCodes.OK,
+		);
 	},
 );
 

@@ -16,7 +16,7 @@ export default function configureOpenAPI(app: AppOpenAPI) {
 		Scalar({
 			url: "/doc",
 			layout: "classic",
-			theme: "none"
+			theme: "none",
 		}),
 	);
 
