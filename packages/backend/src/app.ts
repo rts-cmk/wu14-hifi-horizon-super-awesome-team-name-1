@@ -1,9 +1,20 @@
 import { Hono } from "hono";
-import { logger } from "hono/logger";
-import { notFound, onError } from "stoker/middlewares";
+import { requestId } from "hono/request-id";
 
-const app = new Hono();
-app.use(logger());
+import type { PinoLogger } from "hono-pino";
+
+import { notFound, onError } from "stoker/middlewares";
+import { pinoLogger } from "./middlewares/pino-logger";
+
+type AppBindings = {
+    Variables: {
+        logger: PinoLogger
+    }
+}
+
+const app = new Hono<AppBindings>();
+app.use(requestId());
+app.use(pinoLogger);
 
 app.get("/", (c) => {
     return c.json({ message: "Hello Hono!" });
