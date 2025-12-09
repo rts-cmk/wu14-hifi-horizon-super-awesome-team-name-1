@@ -1,3 +1,11 @@
+/**
+ * this entire hono app was only possible because of cj.
+ * https://github.com/w3cj/hono-open-api-starter
+ * and the following youtube video:
+ * 
+ * https://www.youtube.com/watch?v=sNh9PoM9sUE
+ */
+
 import configureOpenAPI from "@/lib/configure-open-api";
 import createApp from "@/lib/create-app";
 
