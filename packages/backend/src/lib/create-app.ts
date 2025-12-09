@@ -7,10 +7,14 @@ import { pinoLogger } from "@/middlewares/pino-logger";
 
 import type { AppBindings } from "./types";
 
-export default function createApp() {
-	const app = new OpenAPIHono<AppBindings>({
+export function createRouter() {
+	return new OpenAPIHono<AppBindings>({
 		strict: false,
-	});
+	})
+}
+
+export default function createApp() {
+	const app = createRouter();
 	app.use(requestId());
 	app.use(pinoLogger);
 
