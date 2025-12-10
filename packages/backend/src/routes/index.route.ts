@@ -6,24 +6,24 @@ import { createMessageObjectSchema } from 'stoker/openapi/schemas'
 import { createRouter } from '@/lib/create-app'
 
 const router = createRouter().openapi(
-	createRoute({
-		method: 'get',
-		path: '/',
-		responses: {
-			[HttpStatusCodes.OK]: jsonContent(
-				createMessageObjectSchema(HttpStatusPhrases.ACCEPTED),
-				HttpStatusPhrases.ACCEPTED
-			)
-		}
-	}),
-	(c) => {
-		return c.json(
-			{
-				message: 'HIFI Horizon API'
-			},
-			HttpStatusCodes.OK
-		)
-	}
+    createRoute({
+        method: 'get',
+        path: '/',
+        responses: {
+            [HttpStatusCodes.OK]: jsonContent(
+                createMessageObjectSchema(HttpStatusPhrases.ACCEPTED),
+                HttpStatusPhrases.ACCEPTED
+            )
+        }
+    }),
+    c => {
+        return c.json(
+            {
+                message: 'HIFI Horizon API'
+            },
+            HttpStatusCodes.OK
+        )
+    }
 )
 
 export default router
