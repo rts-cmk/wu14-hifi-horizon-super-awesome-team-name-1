@@ -93,3 +93,15 @@ export const loginSchema = z.object({
     email: z.email(),
     password: z.string()
 })
+
+export const updateUserSchema = createInsertSchema(users)
+    .omit({ id: true, createdAt: true, updatedAt: true, password: true })
+    .partial()
+    .extend({
+        password: z.string().optional(),
+        confirmPassword: z.string().optional()
+    })
+    .refine(data => data.password === data.confirmPassword, {
+        message: "Passwords don't match",
+        path: ['confirmPassword']
+    })

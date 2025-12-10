@@ -1,12 +1,12 @@
 import { eq } from 'drizzle-orm'
-import { setCookie } from 'hono/cookie'
+import { deleteCookie, setCookie } from 'hono/cookie'
 import { sign } from 'hono/jwt'
 import * as HttpStatusCodes from 'stoker/http-status-codes'
 import db from '@/db'
 import { userSchema, users } from '@/db/schema'
 import env from '@/env'
 import type { AppRouteHandler } from '@/lib/types'
-import type { LoginRoute, MeRoute, RegisterRoute } from './users.route'
+import type { LoginRoute, LogoutRoute, MeRoute, RegisterRoute, UpdateRoute } from './users.route'
 
 export const register: AppRouteHandler<RegisterRoute> = async c => {
     const data = c.req.valid('json')
@@ -66,6 +66,34 @@ export const me: AppRouteHandler<MeRoute> = async c => {
     const user = await db.query.users.findFirst({
         where: eq(users.id, userId)
     })
+
+    if (!user) {
+        return c.json({ message: 'User not found' }, HttpStatusCodes.UNAUTHORIZED)
+    }
+
+    return c.json(userSchema.parse(user), HttpStatusCodes.OK)
+}
+
+export const logout: AppRouteHandler<LogoutRoute> = async c => {
+    deleteCookie(c, 'auth_token')
+    return c.body(null, HttpStatusCodes.NO_CONTENT)
+}
+
+export const update: AppRouteHandler<UpdateRoute> = async c => {
+    const payload = c.get('jwtPayload')
+    const userId = payload.id
+    const updates = c.req.valid('json')
+
+    const updateData: Partial<typeof users.$inferInsert> = { ...updates }
+
+    if (updates.password) {
+        updateData.password = await Bun.password.hash(updates.password)
+    }
+    // Remove confirmPassword from the update data as it's not in the DB
+    // @ts-expect-error - confirmPassword is explicitly in the schema but not in the DB type inferred insert
+    delete updateData.confirmPassword
+
+    const [user] = await db.update(users).set(updateData).where(eq(users.id, userId)).returning()
 
     if (!user) {
         return c.json({ message: 'User not found' }, HttpStatusCodes.UNAUTHORIZED)

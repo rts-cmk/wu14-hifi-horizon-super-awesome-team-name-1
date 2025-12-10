@@ -2,7 +2,7 @@ import { createRoute, z } from '@hono/zod-openapi'
 import * as HttpStatusCodes from 'stoker/http-status-codes'
 import { jsonContent, jsonContentRequired } from 'stoker/openapi/helpers'
 import { createErrorSchema } from 'stoker/openapi/schemas'
-import { loginSchema, userInsertSchema, userSchema } from '@/db/schema'
+import { loginSchema, updateUserSchema, userInsertSchema, userSchema } from '@/db/schema'
 
 const tags = ['users']
 
@@ -59,6 +59,39 @@ export const me = createRoute({
     }
 })
 
+export const logout = createRoute({
+    path: '/users/logout',
+    method: 'post',
+    tags,
+    responses: {
+        [HttpStatusCodes.NO_CONTENT]: {
+            description: 'User logged out'
+        }
+    }
+})
+
+export const update = createRoute({
+    path: '/users/me',
+    method: 'patch',
+    tags,
+    security: [{ cookieAuth: [] }],
+    request: {
+        body: jsonContentRequired(updateUserSchema, 'The user updates')
+    },
+    responses: {
+        [HttpStatusCodes.OK]: jsonContent(userSchema, 'The updated user'),
+        [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
+            z.object({
+                message: z.string()
+            }),
+            'Unauthorized'
+        ),
+        [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(createErrorSchema(updateUserSchema), 'Validation error')
+    }
+})
+
 export type RegisterRoute = typeof register
 export type LoginRoute = typeof login
 export type MeRoute = typeof me
+export type LogoutRoute = typeof logout
+export type UpdateRoute = typeof update
