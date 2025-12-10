@@ -6,13 +6,30 @@ import { patchProductSchema, productCreateSchema, productSchema } from '@/db/sch
 
 const tags = ['products']
 
+const listQuerySchema = z.object({
+    page: z.coerce.number().min(1).default(1),
+    limit: z.coerce.number().min(1).max(100).default(10),
+    q: z.string().optional()
+})
+
+const productListSchema = z.object({
+    data: z.array(productSchema),
+    total: z.number(),
+    page: z.number(),
+    limit: z.number()
+})
+
 export const list = createRoute({
     path: '/products',
     method: 'get',
     tags,
+    request: {
+        query: listQuerySchema
+    },
     responses: {
-        [HttpStatusCodes.OK]: jsonContent(z.array(productSchema), 'The list of products'),
-        [HttpStatusCodes.BAD_REQUEST]: jsonContent(z.object({ errors: z.array(z.string()) }), 'Validation error')
+        [HttpStatusCodes.OK]: jsonContent(productListSchema, 'The list of products'),
+        [HttpStatusCodes.BAD_REQUEST]: jsonContent(z.object({ errors: z.array(z.string()) }), 'Validation error'),
+        [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(createErrorSchema(listQuerySchema), 'Validation error')
     }
 })
 
