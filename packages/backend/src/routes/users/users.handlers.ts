@@ -1,6 +1,6 @@
-import * as HttpStatusCodes from 'stoker/http-status-codes'
 import { eq } from 'drizzle-orm'
 import { sign } from 'hono/jwt'
+import * as HttpStatusCodes from 'stoker/http-status-codes'
 import db from '@/db'
 import { userSchema, users } from '@/db/schema'
 import env from '@/env'
