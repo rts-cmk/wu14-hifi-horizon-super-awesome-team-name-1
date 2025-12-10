@@ -1,135 +1,146 @@
-# Turborepo starter
+# **Projektopgave HI-FI Horizon**
 
-This Turborepo starter is maintained by the Turborepo core team.
+## Om opgaven
+Denne opgave omhandler opsætning, navigation og hentning af data. Læs hele opgavebeskrivelsen grundigt igennem inden I stiller spørgsmål.
 
-## Using this example
+## Opgavebeskrivelse
 
-Run the following command:
+I skal fremstille en webapplikation til en HI-FI webbutik, som præsenterer butikkens produkter inddelt efter kategori eller producent. Brugeren af sitet skal nemt og overskueligt kunne finde rundt i de forskellige produkter og kunne fremsøge produkter vha. søgeord. Der er **udelukkende** tale om præsentation af produkterne, man skal ikke kunne handle produkter på siden.
 
-```sh
-npx create-turbo@latest
-```
+Opgaven varer ca. 2-2.5 uger og omhandler både planlægningen og produktionen af client-side produktet. Opgaven skal planlægges, der skal udarbejdes designanalyse (identifikation af komponenter/moduler). <strike>Der skal udarbejdes user-stories til de enkelte komponenter. I skal samarbejde om projektet digitalt (eksempelvis ved hjælp af GitHub Projects), men det er også et krav, at I undervejs i processen vedligeholder et fysisk kanban-board, som kan bruges fx. ved de daglige scrum-møder.</strike>
 
-## What's inside?
+<strike>Der er afsat to dage til den indledende planlægning, hvorefter selve udførelsen af produktet afvikles i to sprints af cirka en uges varighed. I skal afholde et sprint-planning møde med jeres lærer forud for hvert sprint, ligesom der skal være et sprint-review af hvert sprint med jeres lærer.</strike>
 
-This Turborepo includes the following packages/apps:
+Det arbejde der forventes udført når projektet er slut, er en funktionel offentlig tilgængelig (github pages eller lignende) client-side som henter data og billeder fra en (eller flere) JSON-datakilde(r). Applikationen skal være sat op, så den matcher det udleverede design.
 
-### Apps and Packages
+Et HI-FI produkt består af et navn, en beskrivelse, en pris, et billede, samt hører til i en kategori og er knyttet til en producent. I skal selv udtænke hvordan datastrukturen stilles op i JSON.
+*(billederne findes i den medfølgende .zip fil, men ved alle de andre produktdata finder I selv på noget, benyt evt https://lipsum.com/feed/html )*
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### Tekniske krav
+**Client-Side** skal løses vha. HTML, CSS og Javascript(React.js), som ved hjælp af fetch-api'et henter data fra en eller flere JSON filer. Jeres CSS skal være modulær, og overholde BEM konventionen, <strike>samt principperne i SMACSS.</strike> Produktet kan designes efter mobile first princippet, men ikke nødvendigvis implementeret til begge medier *(prioriter browser varianten som den primære der produceres)*.
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
-### Utilities
+### Planlægning
+* Layoutanalyse - identificer komponenter/moduler(BEM blokke) i layoutet. <strike>Husk at analysere indefra og ud.</strike>
+* <strike>User stories - skriv user stories til alle komponenter.</strike>
+* <strike>Udarbejd 'definition of done' på de enkelte user-stories. Hvilke kriterier skal komponentet/modulet opfylde for at være færdigt? Hvad skal den som laver review kontrollere om er i orden?</strike>
+* <strike>SPRINT PLANNING (husk at invitere jeres lærer) Prioriter jeres user-stories og estimer dem, i vælger at arbejde med i det første sprint (planning poker)</strike>
 
-This Turborepo has some additional tools already setup for you:
+### Forslag til arbejdsprocess
+* Opsæt HTML sider med navigation og dummy-data (statisk site)
+* Design datastrukturer i JSON. (en test-fil med tre eller fire produkter som kan bruges i udviklingsfasen)
+* Programmér funktioner til dataudtræk
+* Byg alle nødvendige fetch, og udskriv data fra fetch.
+* Opret datafiler (JSON)
+* Dokumentér kode og funktionalitet i markdown-filer 
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
 
-### Build
+### Sider og indhold
+* Forside
+* Brand-liste
+* Shop-kategorier
+* Kategori-liste
+* Enkelt produktvisning
+ 
+### Forsiden 
+* Forsidetekst og billeder af produkter
+* Visning af ét eller flere udvalgte produkter (kan være de senest oprettede, et tilfældigt produkt eller andet du finder relevant)
+ 
+### Produktsider
+Der er flere forskellige funktioner under produkter:
+* Visning af alle produkter inden for en bestemt kategori, uden produkt beskrivelse
+* Visning af alle produkter der hører til en bestemt producent, uden produkt beskrivelse
+* Visning af ét produkt ved klik på et produkt fra listerne
+* Visning af produkter efter søgning 
 
-To build all apps and packages, run the following command:
+Alle produkter hentes via et "API"(JSON) og udskrives med fetch, alle produkter vises med deres billede.
+ 
+### Alle sider 
+* Menu 
+* Fritekst-søgefunktion til produkter og producenter (visning på produktsiden) 
+* Footer med kontaktinfo 
 
-```
-cd my-turborepo
+### Github
+* <strike>Projektet opsættes i et GitHub repo - husk at invitere din lærer som collaborator.</strike>
+* Projektet accepteres som en GitHub assignment.
+* Der skal *committes ved væsentlige ændringer eller færdiggørelse af en funktionalitet* - og altid inden fyraften.
+* Alle commit tekster på GitHub skal kort beskrive ændringerne. **Der må ikke skrives ligegyldige beskrivelser!**.
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+### Billedfiler
+Alle billeder ligger i en zippet fil fordelt i mapper.
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+I vælger om alle billeder skal ligge i én mappe eller om I vil bevare mappestrukturen.
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+Brug følgende liste, hvis I er i tvivl om hvilke kategorier de forskellige billeder tilhører:
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+  
+**CD Afspillere**
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+    * creek_classic_cd.jpg
+    * creek_Destiny_CD.jpg
+    * creek_evo_cd.jpg
+    * Exp_2010S_CD.gif
 
-### Develop
 
-To develop all apps and packages, run the following command:
+**DVD Afspillere**
 
-```
-cd my-turborepo
+    * creek_classic.jpg
+    * exposure_2010S.jpg
+    * parasound_d200.jpg
+    * parasound_halod3.jpg
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+**Effektforstærkere**
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+    * manley_mahi.jpg
+    * manley_neoclassic300b.jpg
+    * manley_snapper.jpg
+    * parasound_haloa23.jpg
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+**Forforstærkere**
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+    * Creek_OBH_22_Passive_Preamp.jpg
+    * parasound_classic7100.jpg
+    * parasound_halop3.jpg
+    * Project_prebox.jpg
 
-### Remote Caching
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+**Højtalere**
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+    * boesendorfer_vcs_wall.gif
+    * epos_m5.gif
+    * harbeth_hl7es2.jpg
+    * harbeth_monitor30.jpg
+    * harbeth_p3es2.jpg
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
 
-```
-cd my-turborepo
+**Int. Forstærkere**
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
+    * creek_a50I.jpg
+    * creek_classic5350SE.jpg
+    * creek_destinyamp.jpg
+    * manley_snapper.jpg
+    * Manley_Stingray.jpg
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+**Pladespillere**
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+    * Pro_ject_Debut_3_bl.jpg
+    * Pro_ject_Debut_III_red_1.jpg
+    * Pro_ject_Debut_III_yellow_1.jpg
+    * Pro_ject_rpm_5.jpg
+    * Pro_ject_rpm10.jpg
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
+**Rørforstærkere**
 
-## Useful Links
+    * jolida_JD102b.jpg
+    * jolida_JD202a.jpg
+    * jolida_JD300b.jpg
+    * jolida_JD302b.jpg
+    * jolida_JD502b.jpg 
+ 
+## EKSTRAOPGAVE
+Hvis I er hurtigt færdige!
 
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+Indsæt reklmebannere på hjemmesiden. Du skal selv beslutte hvor på siden reklamebannere vil passe ind. Find et API på nettet, som lader dig fetche bannere og indsæt vilkårlige bannere på hjemmesiden.

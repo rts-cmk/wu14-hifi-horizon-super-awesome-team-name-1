@@ -2,21 +2,21 @@
  * this entire hono app was only possible because of cj.
  * https://github.com/w3cj/hono-open-api-starter
  * and the following youtube video:
- * 
+ *
  * https://www.youtube.com/watch?v=sNh9PoM9sUE
  */
 
-import configureOpenAPI from "@/lib/configure-open-api";
-import createApp from "@/lib/create-app";
+import configureOpenAPI from '@/lib/configure-open-api'
+import createApp from '@/lib/create-app'
 
-import indexRoute from "@/routes/index.route";
+import indexRoute from '@/routes/index.route'
 
-const routes = [indexRoute];
+const routes = [indexRoute]
 
-const app = configureOpenAPI(createApp());
+const app = configureOpenAPI(createApp())
 
 routes.forEach((route) => {
-	app.route("/", route);
-});
+	app.route('/', route)
+})
 
-export default app;
+export default app
