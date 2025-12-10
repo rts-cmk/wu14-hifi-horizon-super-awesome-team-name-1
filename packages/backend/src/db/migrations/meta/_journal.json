@@ -29,6 +29,13 @@
       "when": 1765369982516,
       "tag": "0003_thin_genesis",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1765370821496,
+      "tag": "0004_fat_valeria_richards",
+      "breakpoints": true
     }
   ]
 }

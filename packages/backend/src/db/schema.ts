@@ -54,6 +54,44 @@ export const users = pgTable('users', {
     updatedAt: timestamp('updated_at').defaultNow().notNull()
 })
 
+export const orders = pgTable('orders', {
+    id: serial('id').primaryKey(),
+    orderNumber: text('order_number').notNull().unique(),
+    userId: integer('user_id')
+        .references(() => users.id)
+        .notNull(),
+    total: integer('total').notNull(),
+    subtotal: integer('subtotal').notNull(),
+    vat: integer('vat').notNull(),
+    delivery: integer('delivery').notNull(),
+    status: text('status').notNull().default('pending'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    
+    // Customer Snapshot
+    customerName: text('customer_name').notNull(),
+    customerEmail: text('customer_email').notNull(),
+    customerPhone: text('customer_phone'),
+    customerAddress: text('customer_address').notNull(),
+    customerAddress2: text('customer_address2'),
+    customerZip: text('customer_zip').notNull(),
+    customerCity: text('customer_city').notNull(),
+    customerCountry: text('customer_country')
+})
+
+export const orderItems = pgTable('order_items', {
+    id: serial('id').primaryKey(),
+    orderId: integer('order_id')
+        .references(() => orders.id)
+        .notNull(),
+    productId: integer('product_id').references(() => products.id),
+    
+    // Product Snapshot
+    productName: text('product_name').notNull(),
+    productBrand: text('product_brand').notNull(),
+    price: integer('price').notNull(),
+    quantity: integer('quantity').notNull()
+})
+
 export const productsRelations = relations(products, ({ many }) => ({
     images: many(productImages)
 }))
@@ -62,6 +100,21 @@ export const productImagesRelations = relations(productImages, ({ one }) => ({
     product: one(products, {
         fields: [productImages.productId],
         references: [products.id]
+    })
+}))
+
+export const ordersRelations = relations(orders, ({ many, one }) => ({
+    items: many(orderItems),
+    user: one(users, {
+        fields: [orders.userId],
+        references: [users.id]
+    })
+}))
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+    order: one(orders, {
+        fields: [orderItems.orderId],
+        references: [orders.id]
     })
 }))
 
@@ -111,3 +164,28 @@ export const updateUserSchema = createInsertSchema(users)
         message: "Passwords don't match",
         path: ['confirmPassword']
     })
+
+export const orderItemSchema = createSelectSchema(orderItems)
+export const orderSchema = createSelectSchema(orders).extend({
+    items: z.array(orderItemSchema),
+    shop: z.literal('342 HIFI Horizon - Falkirk').default('342 HIFI Horizon - Falkirk'),
+    currency: z.literal('DKK').default('DKK')
+})
+
+export const createOrderSchema = z.object({
+    items: z.array(z.object({
+        productId: z.number(),
+        quantity: z.number().min(1)
+    })),
+    deliveryMethod: z.enum(['standard', 'express']).default('standard'),
+    customerDetails: z.object({
+        fullName: z.string(),
+        email: z.string().email(),
+        phone: z.string().optional(),
+        address: z.string(),
+        address2: z.string().optional(),
+        zipCode: z.string(),
+        city: z.string(),
+        country: z.string().optional()
+    })
+})
