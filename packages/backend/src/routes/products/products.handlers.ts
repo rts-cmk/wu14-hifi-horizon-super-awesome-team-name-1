@@ -1,4 +1,4 @@
-import { count, eq, ilike, or } from 'drizzle-orm'
+import { asc, count, desc, eq, ilike, or } from 'drizzle-orm'
 import * as HttpStatusCodes from 'stoker/http-status-codes'
 import { z } from 'zod'
 import db from '@/db'
@@ -7,7 +7,7 @@ import type { AppRouteHandler } from '@/lib/types'
 import type { CreateRoute, GetOneRoute, ListRoute, PatchRoute, RemoveRoute } from './products.route'
 
 export const list: AppRouteHandler<ListRoute> = async c => {
-    const { page, limit, q } = c.req.valid('query')
+    const { page, limit, q, sort, order } = c.req.valid('query')
 
     const where = q ? or(ilike(products.name, `%${q}%`), ilike(products.brand, `%${q}%`)) : undefined
 
@@ -17,7 +17,11 @@ export const list: AppRouteHandler<ListRoute> = async c => {
         where,
         with: { images: true },
         limit,
-        offset: (page - 1) * limit
+        offset: (page - 1) * limit,
+        orderBy: (products) => {
+            const column = products[sort]
+            return order === 'asc' ? asc(column) : desc(column)
+        }
     })
 
     return c.json(

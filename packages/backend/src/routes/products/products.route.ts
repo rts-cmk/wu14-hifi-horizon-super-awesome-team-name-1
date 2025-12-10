@@ -9,7 +9,9 @@ const tags = ['products']
 const listQuerySchema = z.object({
     page: z.coerce.number().min(1).default(1),
     limit: z.coerce.number().min(1).max(100).default(10),
-    q: z.string().optional()
+    q: z.string().optional(),
+    sort: z.enum(['price', 'brand', 'name']).default('name'),
+    order: z.enum(['asc', 'desc']).default('asc')
 })
 
 const productListSchema = z.object({

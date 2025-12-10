@@ -65,8 +65,9 @@ export const orders = pgTable('orders', {
     vat: integer('vat').notNull(),
     delivery: integer('delivery').notNull(),
     status: text('status').notNull().default('pending'),
+    paymentMethod: text('payment_method').notNull().default('credit_card'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
-    
+
     // Customer Snapshot
     customerName: text('customer_name').notNull(),
     customerEmail: text('customer_email').notNull(),
@@ -84,7 +85,7 @@ export const orderItems = pgTable('order_items', {
         .references(() => orders.id)
         .notNull(),
     productId: integer('product_id').references(() => products.id),
-    
+
     // Product Snapshot
     productName: text('product_name').notNull(),
     productBrand: text('product_brand').notNull(),
@@ -173,11 +174,14 @@ export const orderSchema = createSelectSchema(orders).extend({
 })
 
 export const createOrderSchema = z.object({
-    items: z.array(z.object({
-        productId: z.number(),
-        quantity: z.number().min(1)
-    })),
+    items: z.array(
+        z.object({
+            productId: z.number(),
+            quantity: z.number().min(1)
+        })
+    ),
     deliveryMethod: z.enum(['standard', 'express']).default('standard'),
+    paymentMethod: z.enum(['credit_card', 'paypal', 'apple_pay']).default('credit_card'),
     customerDetails: z.object({
         fullName: z.string(),
         email: z.string().email(),
