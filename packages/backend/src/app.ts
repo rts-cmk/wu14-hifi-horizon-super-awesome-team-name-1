@@ -10,8 +10,9 @@ import configureOpenAPI from '@/lib/configure-open-api'
 import createApp from '@/lib/create-app'
 
 import indexRoute from '@/routes/index.route'
+import productsRoute from '@/routes/products/products.index'
 
-const routes = [indexRoute]
+const routes = [indexRoute, productsRoute]
 
 const app = configureOpenAPI(createApp())
 
