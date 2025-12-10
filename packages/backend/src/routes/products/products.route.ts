@@ -48,7 +48,10 @@ export const getOne = createRoute({
     responses: {
         [HttpStatusCodes.OK]: jsonContent(productSchema, 'The requested product'),
         [HttpStatusCodes.NOT_FOUND]: jsonContent(z.object({ message: z.string() }), 'Product not found'),
-        [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(createErrorSchema(z.object({ id: z.coerce.number() })), 'Invalid id validation error')
+        [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+            createErrorSchema(z.object({ id: z.coerce.number() })),
+            'Invalid id validation error'
+        )
     }
 })
 
@@ -100,7 +103,10 @@ export const remove = createRoute({
             description: 'Product deleted'
         },
         [HttpStatusCodes.NOT_FOUND]: jsonContent(z.object({ message: z.string() }), 'Product not found'),
-        [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(createErrorSchema(z.object({ id: z.coerce.number() })), 'Invalid id validation error')
+        [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+            createErrorSchema(z.object({ id: z.coerce.number() })),
+            'Invalid id validation error'
+        )
     }
 })
 
