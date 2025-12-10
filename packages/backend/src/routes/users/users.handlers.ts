@@ -44,6 +44,7 @@ export const login: AppRouteHandler<LoginRoute> = async c => {
     const token = await sign(
         {
             id: user.id,
+            role: user.role,
             exp: Math.floor(Date.now() / 1000) + 60 * 60 * 8 // 8 hours
         },
         env.JWT_SECRET

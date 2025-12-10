@@ -20,6 +20,7 @@ export const create = createRoute({
     path: '/products',
     method: 'post',
     tags,
+    security: [{ cookieAuth: [] }],
     request: {
         body: jsonContentRequired(productCreateSchema, 'The product to create')
     },
@@ -59,6 +60,7 @@ export const patch = createRoute({
     path: '/products/{id}',
     method: 'patch',
     tags,
+    security: [{ cookieAuth: [] }],
     request: {
         params: z.object({
             id: z.coerce.number().openapi({
@@ -86,6 +88,7 @@ export const remove = createRoute({
     path: '/products/{id}',
     method: 'delete',
     tags,
+    security: [{ cookieAuth: [] }],
     request: {
         params: z.object({
             id: z.coerce.number().openapi({

@@ -49,6 +49,7 @@ export const users = pgTable('users', {
     phone: text('phone'),
     email: text('email').notNull().unique(),
     password: text('password').notNull(),
+    role: text('role').notNull().default('customer'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull()
 })
@@ -87,7 +88,12 @@ export const productCreateSchema = createInsertSchema(products, {
 export const patchProductSchema = productCreateSchema.partial()
 
 export const userSchema = createSelectSchema(users).omit({ password: true })
-export const userInsertSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true })
+export const userInsertSchema = createInsertSchema(users).omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    role: true
+})
 
 export const loginSchema = z.object({
     email: z.email(),
@@ -95,7 +101,7 @@ export const loginSchema = z.object({
 })
 
 export const updateUserSchema = createInsertSchema(users)
-    .omit({ id: true, createdAt: true, updatedAt: true, password: true })
+    .omit({ id: true, createdAt: true, updatedAt: true, password: true, role: true })
     .partial()
     .extend({
         password: z.string().optional(),
