@@ -1,12 +1,7 @@
-import { config } from 'dotenv'
-import { expand } from 'dotenv-expand'
 import { z } from 'zod'
-
-expand(config())
 
 const envSchema = z.object({
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-    LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
     PORT: z.coerce.number().default(3000),
     DATABASE_URL: z.url(),
     JWT_SECRET: z.string()

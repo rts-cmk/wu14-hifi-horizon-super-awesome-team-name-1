@@ -1,10 +1,35 @@
-import { serve } from '@hono/node-server'
-import app from '@/app'
-import env from '@/env'
+import dotenv from 'dotenv'
 
-console.log(`server is running on port ${env.PORT}`)
+dotenv.config()
 
-serve({
-    fetch: app.fetch,
-    port: env.PORT
+import { apiReference } from '@scalar/express-api-reference'
+import cookieParser from 'cookie-parser'
+import express, { type NextFunction, type Request, type Response } from 'express'
+import { openApiSpec } from '@/openapi'
+import authRoute from '@/routes/auth.route'
+import indexRoute from '@/routes/index.route'
+
+const app = express()
+
+app.use(express.json())
+app.use(cookieParser())
+
+app.use('/', indexRoute)
+app.use('/', authRoute)
+
+app.use(
+    '/docs',
+    apiReference({
+        content: openApiSpec
+    })
+)
+
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+    const status = err.name.includes('token') ? 403 : 500
+    const message = status === 403 ? 'invalid token.' : 'internal server error.'
+    res.status(status).json({ error: message })
+})
+
+app.listen(3000, () => {
+    console.log('server running on http://localhost:3000')
 })
