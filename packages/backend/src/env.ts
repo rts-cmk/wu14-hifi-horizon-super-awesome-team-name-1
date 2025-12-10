@@ -11,7 +11,8 @@ const envSchema = z.object({
 	LOG_LEVEL: z
 		.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal'])
 		.default('info'),
-	PORT: z.coerce.number().default(3000)
+	PORT: z.coerce.number().default(3000),
+  DATABASE_URL: z.url(),
 })
 
 export type Env = z.infer<typeof envSchema>
