@@ -88,3 +88,8 @@ export const patchProductSchema = productCreateSchema.partial()
 
 export const userSchema = createSelectSchema(users).omit({ password: true })
 export const userInsertSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true })
+
+export const loginSchema = z.object({
+    email: z.email(),
+    password: z.string()
+})
