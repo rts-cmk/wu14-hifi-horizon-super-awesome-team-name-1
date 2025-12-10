@@ -11,8 +11,9 @@ import createApp from '@/lib/create-app'
 
 import indexRoute from '@/routes/index.route'
 import productsRoute from '@/routes/products/products.index'
+import usersRoute from '@/routes/users/users.index'
 
-const routes = [indexRoute, productsRoute]
+const routes = [indexRoute, productsRoute, usersRoute]
 
 const app = configureOpenAPI(createApp())
 

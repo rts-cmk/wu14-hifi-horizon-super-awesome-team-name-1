@@ -1,5 +1,5 @@
 import { relations, sql } from 'drizzle-orm'
-import { check, integer, json, pgTable, serial, text, uniqueIndex } from 'drizzle-orm/pg-core'
+import { check, integer, json, pgTable, serial, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
 
@@ -38,6 +38,21 @@ export const productCategories = pgTable('product_categories', {
     name: text('name').notNull()
 })
 
+export const users = pgTable('users', {
+    id: serial('id').primaryKey(),
+    fullName: text('full_name').notNull(),
+    address: text('address').notNull(),
+    address2: text('address2'),
+    zipCode: text('zip_code').notNull(),
+    city: text('city').notNull(),
+    country: text('country'),
+    phone: text('phone'),
+    email: text('email').notNull().unique(),
+    password: text('password').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull()
+})
+
 export const productsRelations = relations(products, ({ many }) => ({
     images: many(productImages)
 }))
@@ -70,3 +85,6 @@ export const productCreateSchema = createInsertSchema(products, {
 }).omit({ id: true })
 
 export const patchProductSchema = productCreateSchema.partial()
+
+export const userSchema = createSelectSchema(users).omit({ password: true })
+export const userInsertSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true })
