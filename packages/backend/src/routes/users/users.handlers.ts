@@ -1,4 +1,5 @@
 import { eq } from 'drizzle-orm'
+import { setCookie } from 'hono/cookie'
 import { sign } from 'hono/jwt'
 import * as HttpStatusCodes from 'stoker/http-status-codes'
 import db from '@/db'
@@ -47,6 +48,13 @@ export const login: AppRouteHandler<LoginRoute> = async c => {
         },
         env.JWT_SECRET
     )
+
+    setCookie(c, 'auth_token', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Strict',
+        maxAge: 60 * 60 * 8
+    })
 
     return c.json({ token }, HttpStatusCodes.OK)
 }

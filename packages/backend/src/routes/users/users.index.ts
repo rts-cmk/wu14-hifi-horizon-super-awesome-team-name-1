@@ -7,7 +7,7 @@ import * as routes from '@/routes/users/users.route'
 
 const router = createRouter().openapi(routes.register, handlers.register).openapi(routes.login, handlers.login)
 
-router.use('/users/me', jwt({ secret: env.JWT_SECRET }))
+router.use('/users/me', jwt({ secret: env.JWT_SECRET, cookie: 'auth_token' }))
 router.openapi(routes.me, handlers.me)
 
 export default router

@@ -12,10 +12,10 @@ export default function configureOpenAPI(app: AppOpenAPI) {
         // @ts-expect-error - components is not in the type
         components: {
             securitySchemes: {
-                bearerAuth: {
-                    type: 'http',
-                    scheme: 'bearer',
-                    bearerFormat: 'JWT'
+                cookieAuth: {
+                    type: 'apiKey',
+                    in: 'cookie',
+                    name: 'auth_token'
                 }
             }
         }

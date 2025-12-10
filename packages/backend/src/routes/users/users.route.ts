@@ -47,11 +47,7 @@ export const me = createRoute({
     path: '/users/me',
     method: 'get',
     tags,
-    security: [
-        {
-            bearerAuth: []
-        }
-    ],
+    security: [{ cookieAuth: [] }],
     responses: {
         [HttpStatusCodes.OK]: jsonContent(userSchema, 'The current user'),
         [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
