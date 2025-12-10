@@ -3,15 +3,15 @@ import { z } from 'zod'
 import db from '@/db'
 import { productSchema, products } from '@/db/schema'
 import type { AppRouteHandler } from '@/lib/types'
-import type { ListRoute } from './products.route'
-
-const schema = z.array(productSchema)
+import type { CreateRoute, ListRoute } from './products.route'
 
 export const list: AppRouteHandler<ListRoute> = async c => {
     const data = await db.select().from(products)
-    const result = schema.safeParse(data)
-    if (!result.success) {
-        return c.json(z.treeifyError(result.error), HttpStatusCodes.BAD_REQUEST)
-    }
-    return c.json(result.data, HttpStatusCodes.OK)
+    return c.json(z.array(productSchema).parse(data), HttpStatusCodes.OK)
+}
+
+export const create: AppRouteHandler<CreateRoute> = async c => {
+    const data = await c.req.valid('json')
+    const [product] = await db.insert(products).values(data).returning()
+    return c.json(productSchema.parse(product), HttpStatusCodes.CREATED)
 }

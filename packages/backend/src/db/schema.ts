@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm'
 import { check, integer, json, pgTable, serial, text, uniqueIndex } from 'drizzle-orm/pg-core'
-import { createSelectSchema } from 'drizzle-zod'
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
 
 export const products = pgTable(
@@ -25,11 +25,6 @@ export const products = pgTable(
     ]
 )
 
-export const productSchema = createSelectSchema(products, {
-    materials: z.array(z.unknown()),
-    specifications: z.record(z.string(), z.unknown())
-})
-
 export const productImages = pgTable('product_images', {
     id: serial('id').primaryKey(),
     productId: integer('product_id')
@@ -42,3 +37,15 @@ export const productCategories = pgTable('product_categories', {
     id: serial('id').primaryKey(),
     name: text('name').notNull()
 })
+
+export const productSchema = createSelectSchema(products, {
+    materials: z.array(z.unknown()),
+    specifications: z.record(z.string(), z.unknown())
+})
+
+export const productCreateSchema = createInsertSchema(products, {
+    materials: z.array(z.unknown()),
+    specifications: z.record(z.string(), z.unknown())
+}).omit({ id: true })
+
+export const patchProductSchema = productCreateSchema.partial()
