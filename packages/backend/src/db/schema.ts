@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm'
+import { relations, sql } from 'drizzle-orm'
 import { check, integer, json, pgTable, serial, text, uniqueIndex } from 'drizzle-orm/pg-core'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
@@ -38,9 +38,30 @@ export const productCategories = pgTable('product_categories', {
     name: text('name').notNull()
 })
 
+export const productsRelations = relations(products, ({ many }) => ({
+    images: many(productImages)
+}))
+
+export const productImagesRelations = relations(productImages, ({ one }) => ({
+    product: one(products, {
+        fields: [productImages.productId],
+        references: [products.id]
+    })
+}))
+
 export const productSchema = createSelectSchema(products, {
     materials: z.array(z.unknown()),
     specifications: z.record(z.string(), z.unknown())
+}).extend({
+    images: z
+        .array(
+            z.object({
+                id: z.number(),
+                productId: z.number(),
+                image: z.string()
+            })
+        )
+        .optional()
 })
 
 export const productCreateSchema = createInsertSchema(products, {
