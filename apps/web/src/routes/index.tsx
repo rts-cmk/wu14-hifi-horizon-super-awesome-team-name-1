@@ -6,16 +6,16 @@ export const Route = createFileRoute("/")({
 
 function App() {
 	return (
-	  <main className="w-full h-[calc(100vh-4.5rem)]">
+		<main className="w-full h-[calc(100vh-4.5rem)]">
 			<section className="w-full h-full">
-			  <video
+				<video
 					src="/assets/video.mp4"
 					autoPlay
 					muted
 					loop
 					className="w-full h-full object-cover"
-			  />
+				/>
 			</section>
 		</main>
-	)
+	);
 }
