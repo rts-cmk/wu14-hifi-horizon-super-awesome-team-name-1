@@ -8,6 +8,7 @@ import express, { type NextFunction, type Request, type Response } from 'express
 import { openApiSpec } from '@/openapi'
 import authRoute from '@/routes/auth.route'
 import indexRoute from '@/routes/index.route'
+import env from './env'
 
 const app = express()
 
@@ -30,4 +31,4 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     res.status(status).json({ error: message })
 })
 
-app.listen(3000, () => {})
+app.listen(env.PORT)
