@@ -4,7 +4,7 @@ import { useEscapeKey } from "@/hooks/use-escape-key";
 import { cn } from "@/lib/utils";
 
 const drawerVariants = cva(
-	"fixed top-0 h-full z-50 w-full max-w-sm shadow-2xl overflow-y-auto transition-transform duration-300 ease-out",
+	"fixed top-0 h-full z-50 w-full max-w-full md:max-w-md shadow-2xl overflow-y-auto transition-transform duration-300 ease-out",
 	{
 		variants: {
 			side: {
