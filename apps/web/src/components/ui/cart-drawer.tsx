@@ -1,12 +1,17 @@
 import { Minus, Plus, X } from "lucide-react";
-import type { CartItem } from "@/lib/mock";
 import { cn } from "@/lib/utils";
 import { Drawer } from "./drawer";
 
 interface CartDrawerProps {
 	open: boolean;
 	onClose: () => void;
-	items?: CartItem[];
+	items?: Array<{
+		id: string;
+		name: string;
+		price: number;
+		quantity: number;
+		inStock: boolean;
+	}>;
 	className?: string;
 }
 

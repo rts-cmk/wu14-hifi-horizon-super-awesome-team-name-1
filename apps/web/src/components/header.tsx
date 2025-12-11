@@ -4,7 +4,6 @@ import { CartDrawer } from "@/components/ui/cart-drawer";
 import { MenuDrawer } from "@/components/ui/menu-drawer";
 import { SearchBar } from "@/components/ui/search-bar";
 import { ShopDropdown } from "@/components/ui/shop-dropdown";
-import { mockCartItems } from "@/lib/mock";
 import { useNav } from "@/stores/navigation";
 
 export default function Header() {
@@ -121,7 +120,7 @@ export default function Header() {
 			<CartDrawer
 				open={cartOpen}
 				onClose={() => close("cartOpen")}
-				items={mockCartItems}
+				items={[]}
 			/>
 		</header>
 	);
