@@ -30,6 +30,4 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     res.status(status).json({ error: message })
 })
 
-app.listen(3000, () => {
-    console.log('server running on http://localhost:3000')
-})
+app.listen(3000, () => {})
