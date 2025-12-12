@@ -10,11 +10,7 @@ interface CartDrawerProps {
 	className?: string;
 }
 
-export function CartDrawer({
-	open,
-	onClose,
-	className,
-}: CartDrawerProps) {
+export function CartDrawer({ open, onClose, className }: CartDrawerProps) {
 	const { items, removeItem, updateQuantity, total } = useCartStore();
 	const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -87,7 +83,9 @@ export function CartDrawer({
 											<div className="flex items-center gap-2">
 												<button
 													type="button"
-													onClick={() => updateQuantity(item.id, item.quantity - 1)}
+													onClick={() =>
+														updateQuantity(item.id, item.quantity - 1)
+													}
 													disabled={item.quantity <= 1}
 													className="size-8 flex items-center justify-center text-gray-600 hover:text-black transition-colors disabled:opacity-50"
 													aria-label="Decrease quantity"
@@ -99,7 +97,9 @@ export function CartDrawer({
 												</span>
 												<button
 													type="button"
-													onClick={() => updateQuantity(item.id, item.quantity + 1)}
+													onClick={() =>
+														updateQuantity(item.id, item.quantity + 1)
+													}
 													disabled={item.quantity >= item.stock}
 													className="size-8 flex items-center justify-center text-gray-600 hover:text-black transition-colors disabled:opacity-50"
 													aria-label="Increase quantity"
@@ -126,7 +126,7 @@ export function CartDrawer({
 					<div className="flex justify-between items-center">
 						<span className="font-medium text-black">Sub total:</span>
 						<span className="text-orange-500 font-bold text-xl">
-							£ {(total()).toLocaleString("en-GB", { minimumFractionDigits: 2 })}
+							£ {total().toLocaleString("en-GB", { minimumFractionDigits: 2 })}
 						</span>
 					</div>
 
@@ -138,12 +138,13 @@ export function CartDrawer({
 						>
 							Go to cart
 						</Link>
-						<button
-							type="button"
-							className="bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 rounded transition-colors"
+						<Link
+							to="/payment"
+							onClick={onClose}
+							className="bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 rounded transition-colors text-center flex items-center justify-center"
 						>
 							Go to payment
-						</button>
+						</Link>
 					</div>
 				</div>
 			</div>

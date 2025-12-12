@@ -73,7 +73,6 @@ function CompareComponent() {
 					<div className="overflow-x-auto">
 						{/* Use a min-width to ensure columns don't get crushed on mobile */}
 						<div className={cn("grid min-w-[800px]", gridCols)}>
-							
 							{/* Header Row */}
 							<div className="p-4 border-b border-gray-200 bg-gray-50" />
 							{products.map((product) => (
@@ -94,7 +93,10 @@ function CompareComponent() {
 										{product.title}
 									</h3>
 									<p className="text-orange-500 font-bold">
-										£{(product.price).toLocaleString("en-GB", { minimumFractionDigits: 2 })}
+										£
+										{product.price.toLocaleString("en-GB", {
+											minimumFractionDigits: 2,
+										})}
 									</p>
 								</div>
 							))}

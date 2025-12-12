@@ -14,7 +14,9 @@ export interface CartProduct {
 
 interface CartStore {
 	items: CartProduct[];
-	addItem: (product: Omit<CartProduct, "quantity"> & { quantity?: number }) => void;
+	addItem: (
+		product: Omit<CartProduct, "quantity"> & { quantity?: number },
+	) => void;
 	removeItem: (id: number) => void;
 	updateQuantity: (id: number, quantity: number) => void;
 	clearCart: () => void;
@@ -34,14 +36,14 @@ export const useCartStore = create<CartStore>()(
 					if (newQuantity <= existingItem.stock) {
 						set({
 							items: items.map((i) =>
-								i.id === product.id
-									? { ...i, quantity: newQuantity }
-									: i,
+								i.id === product.id ? { ...i, quantity: newQuantity } : i,
 							),
 						});
 					}
 				} else {
-					set({ items: [...items, { ...product, quantity: product.quantity || 1 }] });
+					set({
+						items: [...items, { ...product, quantity: product.quantity || 1 }],
+					});
 				}
 			},
 			removeItem: (id) => {
@@ -56,9 +58,9 @@ export const useCartStore = create<CartStore>()(
 				});
 			},
 			clearCart: () => set({ items: [] }),
-			total: () => get().items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+			total: () =>
+				get().items.reduce((sum, item) => sum + item.price * item.quantity, 0),
 		}),
 		{ name: "shopping-cart" },
 	),
 );
-

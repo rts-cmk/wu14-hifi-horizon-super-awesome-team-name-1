@@ -42,8 +42,8 @@ function RouteComponent() {
 			price: product.price,
 			images: product.images,
 			specifications: product.specifications,
-		})
-	}
+		});
+	};
 
 	const handleAddToCart = () => {
 		addItem({
@@ -141,5 +141,5 @@ function RouteComponent() {
 
 			<ProductSpecifications specifications={product.specifications} />
 		</main>
-	)
+	);
 }

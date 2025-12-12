@@ -67,7 +67,9 @@ export function ComparisonDialog({
 
 			<div className="relative bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col z-50">
 				<div className="flex items-center justify-between p-4 border-b shrink-0">
-					<h2 className="text-lg md:text-xl font-semibold">Add Product to Compare</h2>
+					<h2 className="text-lg md:text-xl font-semibold">
+						Add Product to Compare
+					</h2>
 					<button
 						type="button"
 						onClick={() => onOpenChange(false)}
@@ -101,8 +103,9 @@ export function ComparisonDialog({
 						<div className="space-y-2">
 							{filteredProducts.map((product) => {
 								const inComparison = isInComparison(product.id);
-								const isMaxReached = !inComparison && compareProducts.length >= 3;
-								
+								const isMaxReached =
+									!inComparison && compareProducts.length >= 3;
+
 								return (
 									<div
 										key={product.id}

@@ -18,7 +18,6 @@ export function ComparisonBar() {
 		<>
 			<div className="fixed bottom-0 left-0 right-0 bg-[#E8E8E8] z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
 				<div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-					
 					{/* Product List */}
 					<div className="flex gap-4 overflow-x-auto pb-2 -mb-2 mask-gradient-right flex-1">
 						{products.map((product) => (
@@ -44,7 +43,7 @@ export function ComparisonBar() {
 										/>
 									)}
 								</div>
-								
+
 								<div className="flex-1 min-w-0 flex flex-col justify-center h-full">
 									<p className="text-xs font-semibold text-black line-clamp-2 leading-tight mb-1">
 										{product.title}
