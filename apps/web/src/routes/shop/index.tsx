@@ -5,7 +5,7 @@ import {
 	type ShopFiltersState,
 } from "@/components/ui/shop-filters";
 
-export const Route = createFileRoute("/shop")({
+export const Route = createFileRoute("/shop/")({
 	component: ShopComponent,
 	validateSearch: (search: Record<string, unknown>) => ({
 		category: typeof search.category === "string" ? search.category : undefined,
@@ -17,7 +17,7 @@ function ShopComponent() {
 		brand: "Logitech",
 		color: null,
 		price: null,
-	});
+	})
 
 	return (
 		<main className="min-h-screen w-full px-8 py-10">
@@ -30,5 +30,5 @@ function ShopComponent() {
 				<section className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></section>
 			</div>
 		</main>
-	);
+	)
 }

@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 import { ProductColorSelector } from "@/components/ui/product-color-selector";
 import { ProductImageCarousel } from "@/components/ui/product-image-carousel";
@@ -6,8 +7,9 @@ import { ProductQuantitySelector } from "@/components/ui/product-quantity-select
 import { ProductSpecifications } from "@/components/ui/product-specifications";
 import { ProductStockIndicator } from "@/components/ui/product-stock-indicator";
 import { cn } from "@/lib/utils";
+import { useComparisonStore } from "@/stores/comparison";
 
-export const Route = createFileRoute("/shop_/$productId")({
+export const Route = createFileRoute("/shop/$productId")({
 	component: RouteComponent,
 	loader: async ({ params }) => {
 		const res = await fetch(`/api/products/${params.productId}`);
@@ -22,15 +24,47 @@ function RouteComponent() {
 	const product = Route.useLoaderData();
 	const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "");
 	const [quantity, setQuantity] = useState(1);
+	const {
+		addProduct,
+		isInComparison,
+		products: compareProducts,
+	} = useComparisonStore();
 
 	const canAddToCart = product.stock > 0 && quantity <= product.stock;
+	const inComparison = isInComparison(product.id);
+
+	const handleAddToCompare = () => {
+		addProduct({
+			id: product.id,
+			title: product.title,
+			price: product.price,
+			images: product.images,
+			specifications: product.specifications,
+		})
+	}
 
 	return (
-		<main className="min-h-screen w-full">
+		<main className="min-h-screen w-full pb-32">
 			<div className="px-8">
-				<h1 className="text-4xl text-[#495464] font-semibold py-10 uppercase">
-					Product
-				</h1>
+				<div className="flex items-center justify-between py-10">
+					<h1 className="text-4xl text-[#495464] font-semibold uppercase">
+						Product
+					</h1>
+					<button
+						type="button"
+						onClick={handleAddToCompare}
+						disabled={inComparison || compareProducts.length >= 3}
+						className={cn(
+							"flex items-center gap-2 px-4 py-2 rounded-sm transition-colors",
+							inComparison || compareProducts.length >= 3
+								? "text-gray-400 cursor-not-allowed"
+								: "text-gray-600 hover:text-gray-900",
+						)}
+					>
+						{inComparison ? "Added to Compare" : "Compare"}
+						<SlidersHorizontal className="size-5" />
+					</button>
+				</div>
 
 				<section className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-12">
 					<ProductImageCarousel
@@ -91,5 +125,5 @@ function RouteComponent() {
 
 			<ProductSpecifications specifications={product.specifications} />
 		</main>
-	);
+	)
 }
