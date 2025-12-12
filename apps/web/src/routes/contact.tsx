@@ -57,7 +57,7 @@ function RouteComponent() {
 
 	return (
 		<main className="min-h-screen w-full max-w-6xl mx-auto">
-			<h1 className="text-4xl text-[#495464] font-semibold py-10">Contact</h1>
+			<h1 className="text-4xl text-[#495464] font-semibold py-10 uppercase">Get in touch with us</h1>
 
 			<form
 				onSubmit={handleSubmit}
