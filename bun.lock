@@ -4,6 +4,9 @@
   "workspaces": {
     "": {
       "name": "wu14-hifi-horizon-super-awesome-team-name-1",
+      "dependencies": {
+        "zod": "^4.1.13",
+      },
       "devDependencies": {
         "@biomejs/biome": "2.3.8",
         "turbo": "^2.6.3",

@@ -7,7 +7,7 @@ import { ShopDropdown } from "@/components/ui/shop-dropdown";
 import { useNav } from "@/stores/navigation";
 
 export default function Header() {
-	const { menuOpen, cartOpen, shopOpen, toggle, close } = useNav();
+	const { menuOpen, cartOpen, toggle, close } = useNav();
 
 	return (
 		<header>
@@ -20,15 +20,17 @@ export default function Header() {
 					</Link>
 
 					<div className="flex items-center gap-6">
-						<div className="relative">
-							<button
-								type="button"
-								onClick={() => toggle("shopOpen")}
+						<div className="relative group">
+							<Link
+								to="/shop"
+								search={{ category: undefined }}
 								className="hover:text-gray-300 transition-colors font-medium"
 							>
 								SHOP
-							</button>
-							{shopOpen && <ShopDropdown />}
+							</Link>
+							<div className="absolute top-full left-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+								<ShopDropdown />
+							</div>
 						</div>
 
 						<Link

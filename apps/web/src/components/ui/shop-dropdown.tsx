@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
-import { useNav } from "@/stores/navigation";
 
 const categories = [
 	"CD Players",
@@ -18,12 +17,10 @@ interface ShopDropdownProps {
 }
 
 export function ShopDropdown({ className }: ShopDropdownProps) {
-	const { close } = useNav();
-
 	return (
 		<div
 			className={cn(
-				"absolute top-full left-0 mt-2 bg-white text-black rounded-md shadow-xl py-4 w-64 z-50",
+				"absolute top-full left-0 mt-2 bg-white text-black rounded-xs py-4 w-64 z-50",
 				className,
 			)}
 		>
@@ -32,9 +29,9 @@ export function ShopDropdown({ className }: ShopDropdownProps) {
 				{categories.map((category) => (
 					<Link
 						key={category}
-						to="/"
-						onClick={() => close("shopOpen")}
-						className="block px-4 py-2 text-amber-700 hover:bg-gray-100 hover:text-amber-900 transition-colors"
+						to="/shop"
+						search={{ category }}
+						className="block px-4 py-2 text-[#A39161] hover:bg-gray-100 transition-colors"
 					>
 						{category}
 					</Link>
