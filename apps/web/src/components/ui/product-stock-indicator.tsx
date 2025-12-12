@@ -19,4 +19,3 @@ export function ProductStockIndicator({ stock }: ProductStockIndicatorProps) {
 		</span>
 	);
 }
-

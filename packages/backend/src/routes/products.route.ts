@@ -6,6 +6,7 @@ import {
     productCreateSchema,
     productDescriptions,
     productImages,
+    productSpecifications,
     products,
     productUpdateWithRelationsSchema
 } from '@/db/schema'
@@ -34,11 +35,17 @@ router.get('/products', async (_req: Request, res: Response) => {
                     .from(productImages)
                     .where(eq(productImages.productId, product.id))
 
+                const specifications = await db
+                    .select({ label: productSpecifications.label, value: productSpecifications.value })
+                    .from(productSpecifications)
+                    .where(eq(productSpecifications.productId, product.id))
+
                 return {
                     ...product,
                     descriptions: descriptions.map(d => d.content),
                     colors: colors.map(c => c.color),
-                    images
+                    images,
+                    specifications
                 }
             })
         )
@@ -81,11 +88,17 @@ router.get('/products/:id', async (req: Request, res: Response) => {
             .from(productImages)
             .where(eq(productImages.productId, product.id))
 
+        const specifications = await db
+            .select({ label: productSpecifications.label, value: productSpecifications.value })
+            .from(productSpecifications)
+            .where(eq(productSpecifications.productId, product.id))
+
         return res.status(200).json({
             ...product,
             descriptions: descriptions.map(d => d.content),
             colors: colors.map(c => c.color),
-            images
+            images,
+            specifications
         })
     } catch (error) {
         console.error(error)
@@ -96,7 +109,7 @@ router.get('/products/:id', async (req: Request, res: Response) => {
 router.post('/products', async (req: Request, res: Response) => {
     try {
         const validatedData = productCreateSchema.parse(req.body)
-        const { descriptions, colors, images, ...productData } = validatedData
+        const { descriptions, colors, images, specifications, ...productData } = validatedData
 
         const [newProduct] = await db.insert(products).values(productData).returning()
 
@@ -115,32 +128,26 @@ router.post('/products', async (req: Request, res: Response) => {
         }
 
         if (colors.length > 0) {
-            await db.insert(productColors).values(
-                colors.map(color => ({
-                    productId: newProduct.id,
-                    color
-                }))
-            )
+            await db.insert(productColors).values(colors.map(color => ({ productId: newProduct.id, color })))
         }
 
         if (images.length > 0) {
-            await db.insert(productImages).values(
-                images.map(image => ({
-                    productId: newProduct.id,
-                    url: image.url,
-                    alt: image.alt
-                }))
-            )
+            await db
+                .insert(productImages)
+                .values(images.map(image => ({ productId: newProduct.id, url: image.url, alt: image.alt })))
+        }
+
+        if (specifications && specifications.length > 0) {
+            await db
+                .insert(productSpecifications)
+                .values(
+                    specifications.map(spec => ({ productId: newProduct.id, label: spec.label, value: spec.value }))
+                )
         }
 
         return res.status(201).json({
             message: 'Product created successfully',
-            product: {
-                ...newProduct,
-                descriptions,
-                colors,
-                images
-            }
+            product: { ...newProduct, descriptions, colors, images, specifications: specifications || [] }
         })
     } catch (error) {
         if (error instanceof Error && error.name === 'ZodError') {
@@ -162,7 +169,7 @@ router.patch('/products/:id', async (req: Request, res: Response) => {
         }
 
         const validatedData = productUpdateWithRelationsSchema.parse(req.body)
-        const { descriptions, colors, images, ...productData } = validatedData
+        const { descriptions, colors, images, specifications, ...productData } = validatedData
 
         if (Object.keys(productData).length > 0) {
             await db
@@ -199,13 +206,18 @@ router.patch('/products/:id', async (req: Request, res: Response) => {
         if (images) {
             await db.delete(productImages).where(eq(productImages.productId, productId))
             if (images.length > 0) {
-                await db.insert(productImages).values(
-                    images.map(image => ({
-                        productId,
-                        url: image.url,
-                        alt: image.alt
-                    }))
-                )
+                await db
+                    .insert(productImages)
+                    .values(images.map(image => ({ productId, url: image.url, alt: image.alt })))
+            }
+        }
+
+        if (specifications) {
+            await db.delete(productSpecifications).where(eq(productSpecifications.productId, productId))
+            if (specifications.length > 0) {
+                await db
+                    .insert(productSpecifications)
+                    .values(specifications.map(spec => ({ productId, label: spec.label, value: spec.value })))
             }
         }
 
@@ -231,13 +243,19 @@ router.patch('/products/:id', async (req: Request, res: Response) => {
             .from(productImages)
             .where(eq(productImages.productId, productId))
 
+        const updatedSpecs = await db
+            .select({ label: productSpecifications.label, value: productSpecifications.value })
+            .from(productSpecifications)
+            .where(eq(productSpecifications.productId, productId))
+
         return res.status(200).json({
             message: 'Product updated successfully',
             product: {
                 ...updatedProduct,
                 descriptions: updatedDescriptions.map(d => d.content),
                 colors: updatedColors.map(c => c.color),
-                images: updatedImages
+                images: updatedImages,
+                specifications: updatedSpecs
             }
         })
     } catch (error) {

@@ -37,4 +37,3 @@ export function ProductQuantitySelector({
 		</div>
 	);
 }
-

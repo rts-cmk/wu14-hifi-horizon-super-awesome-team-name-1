@@ -76,6 +76,15 @@ export const productImages = pgTable('product_images', {
     alt: text('alt')
 })
 
+export const productSpecifications = pgTable('product_specifications', {
+    id: serial('id').primaryKey(),
+    productId: integer('product_id')
+        .notNull()
+        .references(() => products.id, { onDelete: 'cascade' }),
+    label: text('label').notNull(), // e.g., "Frequency Response", "Connectivity"
+    value: text('value').notNull() // e.g., "20Hz - 20kHz", "WiFi, Bluetooth 5.0"
+})
+
 export const productSchema = createSelectSchema(products)
 export const productInsertSchema = createInsertSchema(products).omit({
     id: true,
@@ -92,28 +101,21 @@ const hexColorSchema = z
     .string()
     .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Must be a valid hex color (e.g., #1a1a1a)')
 
+const specificationSchema = z.object({
+    label: z.string(),
+    value: z.string()
+})
+
 export const productCreateSchema = productInsertSchema.extend({
     descriptions: z.array(z.string()).min(1, 'At least one description is required'),
     colors: z.array(hexColorSchema).min(1, 'At least one color is required'),
-    images: z
-        .array(
-            z.object({
-                url: z.url(),
-                alt: z.string().optional()
-            })
-        )
-        .min(1, 'At least one image is required')
+    images: z.array(z.object({ url: z.url(), alt: z.string().optional() })).min(1, 'At least one image is required'),
+    specifications: z.array(specificationSchema).optional()
 })
 
 export const productUpdateWithRelationsSchema = productUpdateSchema.extend({
     descriptions: z.array(z.string()).optional(),
     colors: z.array(hexColorSchema).optional(),
-    images: z
-        .array(
-            z.object({
-                url: z.url(),
-                alt: z.string().optional()
-            })
-        )
-        .optional()
+    images: z.array(z.object({ url: z.url(), alt: z.string().optional() })).optional(),
+    specifications: z.array(specificationSchema).optional()
 })
