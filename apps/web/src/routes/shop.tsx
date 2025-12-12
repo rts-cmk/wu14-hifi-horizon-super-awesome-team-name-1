@@ -27,8 +27,7 @@ function ShopComponent() {
 			<div className="flex gap-8">
 				<ShopFilters filters={filters} onFiltersChange={setFilters} />
 
-				<section className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-				</section>
+				<section className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></section>
 			</div>
 		</main>
 	);
