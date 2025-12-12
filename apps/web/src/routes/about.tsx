@@ -91,13 +91,13 @@ function RouteComponent() {
 						const imageWrapperClass = cn(
 							"p-4 rounded w-full md:w-1/2",
 							"order-2",
-							imageLeftOnDesktop ? "md:order-1" : "md:order-2"
+							imageLeftOnDesktop ? "md:order-1" : "md:order-2",
 						);
 
 						const textWrapperClass = cn(
 							"p-4 rounded text-center space-y-4 w-full md:w-1/2",
 							"order-1",
-							imageLeftOnDesktop ? "md:order-2" : "md:order-1"
+							imageLeftOnDesktop ? "md:order-2" : "md:order-1",
 						);
 
 						return (
