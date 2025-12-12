@@ -1,30 +1,21 @@
+import { Link } from "@tanstack/react-router";
 import { Minus, Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCartStore } from "@/stores/cart";
 import { Drawer } from "./drawer";
 
 interface CartDrawerProps {
 	open: boolean;
 	onClose: () => void;
-	items?: Array<{
-		id: string;
-		name: string;
-		price: number;
-		quantity: number;
-		inStock: boolean;
-	}>;
 	className?: string;
 }
 
 export function CartDrawer({
 	open,
 	onClose,
-	items = [],
 	className,
 }: CartDrawerProps) {
-	const subtotal = items.reduce(
-		(sum, item) => sum + item.price * item.quantity,
-		0,
-	);
+	const { items, removeItem, updateQuantity, total } = useCartStore();
 	const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
 	return (
@@ -62,25 +53,30 @@ export function CartDrawer({
 								>
 									<button
 										type="button"
+										onClick={() => removeItem(item.id)}
 										className="text-black transition-colors self-start"
-										aria-label={`Remove ${item.name}`}
+										aria-label={`Remove ${item.title}`}
 									>
 										<X className="size-4" />
 									</button>
 
-									<div className="w-24 h-16 shrink-0 overflow-hidden">
-										<img
-											src={"http://placehold.co/100x100"}
-											alt={item.name}
-											className="size-full object-cover"
-										/>
+									<div className="w-24 h-16 shrink-0 overflow-hidden bg-gray-100 flex items-center justify-center">
+										{item.images?.[0] ? (
+											<img
+												src={item.images[0].url}
+												alt={item.title}
+												className="size-full object-contain"
+											/>
+										) : (
+											<div className="size-full bg-gray-200" />
+										)}
 									</div>
 
 									<div className="flex-1 min-w-0">
-										<h3 className="font-semibold text-sm leading-tight">
-											{item.name}
+										<h3 className="font-semibold text-sm leading-tight text-black">
+											{item.title}
 										</h3>
-										{item.inStock && (
+										{item.stock > 0 && (
 											<p className="text-sm text-gray-600 flex items-center gap-1 mt-1">
 												In stock
 												<span className="inline-block size-2 bg-green-500 rounded-full" />
@@ -91,26 +87,30 @@ export function CartDrawer({
 											<div className="flex items-center gap-2">
 												<button
 													type="button"
-													className="size-8 flex items-center justify-center text-gray-600 hover:text-black transition-colors"
+													onClick={() => updateQuantity(item.id, item.quantity - 1)}
+													disabled={item.quantity <= 1}
+													className="size-8 flex items-center justify-center text-gray-600 hover:text-black transition-colors disabled:opacity-50"
 													aria-label="Decrease quantity"
 												>
 													<Minus className="size-4" />
 												</button>
-												<span className="size-8 flex items-center justify-center border border-gray-300 text-sm font-medium">
+												<span className="size-8 flex items-center justify-center border border-gray-300 text-sm font-medium text-black">
 													{item.quantity}
 												</span>
 												<button
 													type="button"
-													className="size-8 flex items-center justify-center text-gray-600 hover:text-black transition-colors"
+													onClick={() => updateQuantity(item.id, item.quantity + 1)}
+													disabled={item.quantity >= item.stock}
+													className="size-8 flex items-center justify-center text-gray-600 hover:text-black transition-colors disabled:opacity-50"
 													aria-label="Increase quantity"
 												>
 													<Plus className="size-4" />
 												</button>
 											</div>
 
-											<span className="font-medium text-sm">
+											<span className="font-medium text-sm text-black">
 												£{" "}
-												{item.price.toLocaleString("en-GB", {
+												{(item.price * item.quantity).toLocaleString("en-GB", {
 													minimumFractionDigits: 2,
 												})}
 											</span>
@@ -124,19 +124,20 @@ export function CartDrawer({
 
 				<div className="p-6 space-y-4">
 					<div className="flex justify-between items-center">
-						<span className="font-medium">Sub total:</span>
+						<span className="font-medium text-black">Sub total:</span>
 						<span className="text-orange-500 font-bold text-xl">
-							£ {subtotal.toLocaleString("en-GB", { minimumFractionDigits: 2 })}
+							£ {(total()).toLocaleString("en-GB", { minimumFractionDigits: 2 })}
 						</span>
 					</div>
 
 					<div className="grid grid-cols-2 gap-4">
-						<button
-							type="button"
-							className="bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 rounded transition-colors"
+						<Link
+							to="/cart"
+							onClick={onClose}
+							className="bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 rounded transition-colors text-center flex items-center justify-center"
 						>
 							Go to cart
-						</button>
+						</Link>
 						<button
 							type="button"
 							className="bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 rounded transition-colors"

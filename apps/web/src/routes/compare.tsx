@@ -94,7 +94,7 @@ function CompareComponent() {
 										{product.title}
 									</h3>
 									<p className="text-orange-500 font-bold">
-										£{(product.price / 100).toLocaleString("en-GB", { minimumFractionDigits: 2 })}
+										£{(product.price).toLocaleString("en-GB", { minimumFractionDigits: 2 })}
 									</p>
 								</div>
 							))}

@@ -7,6 +7,7 @@ import { ProductQuantitySelector } from "@/components/ui/product-quantity-select
 import { ProductSpecifications } from "@/components/ui/product-specifications";
 import { ProductStockIndicator } from "@/components/ui/product-stock-indicator";
 import { cn } from "@/lib/utils";
+import { useCartStore } from "@/stores/cart";
 import { useComparisonStore } from "@/stores/comparison";
 
 export const Route = createFileRoute("/shop/$productId")({
@@ -24,6 +25,7 @@ function RouteComponent() {
 	const product = Route.useLoaderData();
 	const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "");
 	const [quantity, setQuantity] = useState(1);
+	const { addItem } = useCartStore();
 	const {
 		addProduct,
 		isInComparison,
@@ -42,6 +44,19 @@ function RouteComponent() {
 			specifications: product.specifications,
 		})
 	}
+
+	const handleAddToCart = () => {
+		addItem({
+			id: product.id,
+			title: product.title,
+			brand: product.brand,
+			price: product.price,
+			stock: product.stock,
+			images: product.images,
+			quantity: quantity,
+			color: selectedColor,
+		});
+	};
 
 	return (
 		<main className="min-h-screen w-full pb-32">
@@ -109,6 +124,7 @@ function RouteComponent() {
 							<button
 								type="button"
 								disabled={!canAddToCart}
+								onClick={handleAddToCart}
 								className={cn(
 									"flex-1 text-white text-lg font-medium py-3 px-8 rounded-sm transition-colors",
 									canAddToCart

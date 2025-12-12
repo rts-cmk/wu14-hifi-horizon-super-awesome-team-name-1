@@ -4,10 +4,13 @@ import { CartDrawer } from "@/components/ui/cart-drawer";
 import { MenuDrawer } from "@/components/ui/menu-drawer";
 import { SearchBar } from "@/components/ui/search-bar";
 import { ShopDropdown } from "@/components/ui/shop-dropdown";
+import { useCartStore } from "@/stores/cart";
 import { useNav } from "@/stores/navigation";
 
 export default function Header() {
 	const { menuOpen, cartOpen, toggle, close } = useNav();
+	const { items } = useCartStore();
+	const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
 	return (
 		<header>
@@ -74,6 +77,11 @@ export default function Header() {
 						aria-label="Cart"
 					>
 						<ShoppingCart className="size-6" />
+						{itemCount > 0 && (
+							<span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
+								{itemCount}
+							</span>
+						)}
 					</button>
 				</div>
 			</nav>
@@ -104,6 +112,11 @@ export default function Header() {
 						aria-label="Cart"
 					>
 						<ShoppingCart className="size-6" />
+						{itemCount > 0 && (
+							<span className="absolute top-1 right-1 bg-orange-500 text-white text-xs font-bold w-4 h-4 flex items-center justify-center rounded-full">
+								{itemCount}
+							</span>
+						)}
 					</button>
 
 					<button
@@ -119,11 +132,7 @@ export default function Header() {
 
 			<SearchBar />
 			<MenuDrawer open={menuOpen} onClose={() => close("menuOpen")} />
-			<CartDrawer
-				open={cartOpen}
-				onClose={() => close("cartOpen")}
-				items={[]}
-			/>
+			<CartDrawer open={cartOpen} onClose={() => close("cartOpen")} />
 		</header>
 	);
 }
