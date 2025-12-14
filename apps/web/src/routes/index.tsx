@@ -17,7 +17,6 @@ function App() {
 				/>
 			</section>
 
-			{/* popular products section */}
 			<section className="w-full px-12">
 				<div className="flex justify-between items-center gap-4">
 					<h1 className="text-4xl text-[#495464] uppercase font-semibold py-8">

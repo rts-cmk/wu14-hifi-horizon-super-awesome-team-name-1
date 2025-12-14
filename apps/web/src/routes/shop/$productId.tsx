@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
-import { ProductColorSelector } from "@/components/ui/product-color-selector";
-import { ProductImageCarousel } from "@/components/ui/product-image-carousel";
-import { ProductQuantitySelector } from "@/components/ui/product-quantity-selector";
-import { ProductSpecifications } from "@/components/ui/product-specifications";
-import { ProductStockIndicator } from "@/components/ui/product-stock-indicator";
+import { ProductColorSelector } from "@/components/product-color-selector";
+import { ProductImageCarousel } from "@/components/product-image-carousel";
+import { ProductQuantitySelector } from "@/components/product-quantity-selector";
+import { ProductSpecifications } from "@/components/product-specifications";
+import { ProductStockIndicator } from "@/components/product-stock-indicator";
 import { cn } from "@/lib/utils";
 import { useCartStore } from "@/stores/cart";
 import { useComparisonStore } from "@/stores/comparison";

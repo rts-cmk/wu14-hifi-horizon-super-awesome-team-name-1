@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Minus, Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCartStore } from "@/stores/cart";
-import { Drawer } from "./drawer";
+import { Drawer } from "./ui/drawer";
 
 interface CartDrawerProps {
 	open: boolean;
@@ -57,15 +57,11 @@ export function CartDrawer({ open, onClose, className }: CartDrawerProps) {
 									</button>
 
 									<div className="w-24 h-16 shrink-0 overflow-hidden bg-gray-100 flex items-center justify-center">
-										{item.images?.[0] ? (
-											<img
-												src={item.images[0].url}
-												alt={item.title}
-												className="size-full object-contain"
-											/>
-										) : (
-											<div className="size-full bg-gray-200" />
-										)}
+										<img
+											src={item.images[0].url}
+											alt={item.title}
+											className="size-full object-contain"
+										/>
 									</div>
 
 									<div className="flex-1 min-w-0">
@@ -83,9 +79,7 @@ export function CartDrawer({ open, onClose, className }: CartDrawerProps) {
 											<div className="flex items-center gap-2">
 												<button
 													type="button"
-													onClick={() =>
-														updateQuantity(item.id, item.quantity - 1)
-													}
+													onClick={() => updateQuantity(item.id, item.quantity - 1)}
 													disabled={item.quantity <= 1}
 													className="size-8 flex items-center justify-center text-gray-600 hover:text-black transition-colors disabled:opacity-50"
 													aria-label="Decrease quantity"
@@ -97,9 +91,7 @@ export function CartDrawer({ open, onClose, className }: CartDrawerProps) {
 												</span>
 												<button
 													type="button"
-													onClick={() =>
-														updateQuantity(item.id, item.quantity + 1)
-													}
+													onClick={() => updateQuantity(item.id, item.quantity + 1)}
 													disabled={item.quantity >= item.stock}
 													className="size-8 flex items-center justify-center text-gray-600 hover:text-black transition-colors disabled:opacity-50"
 													aria-label="Increase quantity"
@@ -141,6 +133,7 @@ export function CartDrawer({ open, onClose, className }: CartDrawerProps) {
 						<Link
 							to="/payment"
 							onClick={onClose}
+							disabled={itemCount < 1}
 							className="bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 rounded transition-colors text-center flex items-center justify-center"
 						>
 							Go to payment

@@ -3,7 +3,7 @@ import { useState } from "react";
 import {
 	ShopFilters,
 	type ShopFiltersState,
-} from "@/components/ui/shop-filters";
+} from "@/components/shop-filters";
 
 export const Route = createFileRoute("/shop/")({
 	component: ShopComponent,

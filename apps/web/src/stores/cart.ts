@@ -31,7 +31,6 @@ export const useCartStore = create<CartStore>()(
 				const { items } = get();
 				const existingItem = items.find((i) => i.id === product.id);
 				if (existingItem) {
-					// check if adding more would exceed stock
 					const newQuantity = existingItem.quantity + (product.quantity || 1);
 					if (newQuantity <= existingItem.stock) {
 						set({

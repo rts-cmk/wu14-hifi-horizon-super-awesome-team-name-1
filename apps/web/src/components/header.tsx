@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { Menu, Search, ShoppingCart, User } from "lucide-react";
-import { CartDrawer } from "@/components/ui/cart-drawer";
-import { MenuDrawer } from "@/components/ui/menu-drawer";
-import { SearchBar } from "@/components/ui/search-bar";
-import { ShopDropdown } from "@/components/ui/shop-dropdown";
+import { CartDrawer } from "@/components/cart-drawer";
+import { MenuDrawer } from "@/components/menu-drawer";
+import { SearchBar } from "@/components/search-bar";
+import { ShopDropdown } from "@/components/shop-dropdown";
 import { useCartStore } from "@/stores/cart";
 import { useNav } from "@/stores/navigation";
 

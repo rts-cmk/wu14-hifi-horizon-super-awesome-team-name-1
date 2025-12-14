@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Minus, Plus, X } from "lucide-react";
 import { useCartStore } from "@/stores/cart";
+import { CheckoutStepper } from "@/components/checkout-stepper";
 
 export const Route = createFileRoute("/cart")({
 	component: CartComponent,
@@ -9,7 +10,6 @@ export const Route = createFileRoute("/cart")({
 const formatPrice = (price: number) =>
 	`£ ${price.toLocaleString("en-GB", { minimumFractionDigits: 2 })}`;
 
-import { CheckoutStepper } from "@/components/ui/checkout-stepper";
 
 function CartComponent() {
 	const { items, removeItem, updateQuantity, total } = useCartStore();

@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Drawer } from "./drawer";
+import { Drawer } from "./ui/drawer";
 
 interface MenuDrawerProps {
 	open: boolean;

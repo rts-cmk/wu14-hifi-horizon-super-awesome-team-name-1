@@ -7,7 +7,7 @@ import {
 	FaCcVisa,
 } from "react-icons/fa";
 import { SiFedex } from "react-icons/si";
-import { CheckoutStepper } from "@/components/ui/checkout-stepper";
+import { CheckoutStepper } from "@/components/checkout-stepper";
 import { cn } from "@/lib/utils";
 import { useCartStore } from "@/stores/cart";
 import { useCheckoutStore } from "@/stores/checkout";

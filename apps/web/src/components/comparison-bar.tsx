@@ -18,7 +18,6 @@ export function ComparisonBar() {
 		<>
 			<div className="fixed bottom-0 left-0 right-0 bg-[#E8E8E8] z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
 				<div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-					{/* Product List */}
 					<div className="flex gap-4 overflow-x-auto pb-2 -mb-2 mask-gradient-right flex-1">
 						{products.map((product) => (
 							<div
@@ -55,7 +54,6 @@ export function ComparisonBar() {
 							</div>
 						))}
 
-						{/* Add Button Placeholder - if needed to match functionality, though image doesn't explicitly show an 'add' card, logic implies it */}
 						{products.length < 3 && (
 							<button
 								type="button"
@@ -69,15 +67,13 @@ export function ComparisonBar() {
 					</div>
 
 					<div className="flex items-center gap-4 shrink-0">
-						{/* Message Bubble */}
 						{products.length < 2 && (
 							<div className="hidden md:flex relative bg-[#B8B8B8] text-white px-4 py-2 text-sm font-medium items-center shadow-sm">
 								You can compare up to 3 products
-								<div className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-3 h-3 bg-[#B8B8B8] rotate-45" />
+								<div className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-[#B8B8B8] rotate-45" />
 							</div>
 						)}
 
-						{/* Compare Button */}
 						<Link
 							to="/compare"
 							className={cn(
