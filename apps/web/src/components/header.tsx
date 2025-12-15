@@ -18,7 +18,7 @@ export default function Header() {
 				<div className="flex items-center gap-8">
 					<Link to="/" aria-label="HIFI Home">
 						<figure>
-							<img src="/images/logo.svg" alt="HIFI Horizon" className="h-10" />
+							<img src="/logo.svg" alt="HIFI Horizon" className="h-10" />
 						</figure>
 					</Link>
 

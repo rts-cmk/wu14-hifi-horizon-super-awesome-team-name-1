@@ -21,6 +21,7 @@
         "packages/*"
     ],
     "dependencies": {
+        "fuse.js": "^7.1.0",
         "zod": "^4.1.13"
     }
 }

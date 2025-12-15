@@ -1,12 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { Plus, SlidersHorizontal, X } from "lucide-react";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { useComparisonStore } from "@/stores/comparison";
 import { ComparisonDialog } from "./comparison-dialog";
-
-const formatPrice = (price: number) =>
-	price.toLocaleString("en-GB", { style: "currency", currency: "GBP" });
 
 export function ComparisonBar() {
 	const { products, removeProduct } = useComparisonStore();

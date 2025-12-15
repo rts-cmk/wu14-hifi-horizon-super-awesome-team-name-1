@@ -56,7 +56,7 @@ function RouteComponent() {
 	};
 
 	return (
-		<main className="min-h-screen w-full max-w-6xl mx-auto">
+		<main className="min-h-[calc(100vh-4rem)] w-full max-w-6xl mx-auto">
 			<h1 className="text-4xl text-[#495464] font-semibold py-10 uppercase">
 				Get in touch with us
 			</h1>
@@ -64,6 +64,7 @@ function RouteComponent() {
 			<form
 				onSubmit={handleSubmit}
 				className="bg-white p-8 space-y-1 text-balance"
+				id="contact-form"
 			>
 				{/* Full Name */}
 				<label
@@ -80,7 +81,7 @@ function RouteComponent() {
 					value={formData.fullName}
 					onChange={handleChange}
 					required
-					className="bg-[#E8E8E8] py-3 w-2xl px-4"
+					className="bg-[#E8E8E8] py-3 w-full md:w-2xl px-4"
 				/>
 
 				{/* Email */}
@@ -98,7 +99,7 @@ function RouteComponent() {
 					value={formData.email}
 					onChange={handleChange}
 					required
-					className="bg-[#E8E8E8] py-3 w-2xl px-4"
+					className="bg-[#E8E8E8] py-3 w-full md:w-2xl px-4"
 				/>
 
 				{/* Subject */}
@@ -116,7 +117,7 @@ function RouteComponent() {
 					value={formData.subject}
 					onChange={handleChange}
 					required
-					className="bg-[#E8E8E8] py-3 w-2xl px-4"
+					className="bg-[#E8E8E8] py-3 w-full md:w-2xl px-4"
 				/>
 
 				{/* Message */}
@@ -147,7 +148,7 @@ function RouteComponent() {
 				</div>
 			</form>
 
-			<p className="flex justify-center text-xl mt-12">
+			<p className="md:flex text-xl justify-center mt-10 mb-20 px-4">
 				Visit our sister companies&nbsp;
 				<span className="text-orange-500">Home Sound</span>&nbsp;and&nbsp;
 				<span className="text-orange-500">The Movie Rooms</span>&nbsp;part of

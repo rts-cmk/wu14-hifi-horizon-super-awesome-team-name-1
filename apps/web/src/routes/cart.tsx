@@ -1,15 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Minus, Plus, X } from "lucide-react";
-import { useCartStore } from "@/stores/cart";
 import { CheckoutStepper } from "@/components/checkout-stepper";
+import { useCartStore } from "@/stores/cart";
+import { formatPrice } from "@/lib/utils";
 
 export const Route = createFileRoute("/cart")({
 	component: CartComponent,
 });
-
-const formatPrice = (price: number) =>
-	`£ ${price.toLocaleString("en-GB", { minimumFractionDigits: 2 })}`;
-
 
 function CartComponent() {
 	const { items, removeItem, updateQuantity, total } = useCartStore();
@@ -45,12 +42,12 @@ function CartComponent() {
 				<div className="space-y-4">
 					{items.map((item) => (
 						<div
-							key={item.id}
+							key={`${item.id}-${item.color || "default"}`}
 							className="relative bg-white p-6 rounded-sm shadow-sm flex flex-col md:flex-row items-center gap-6"
 						>
 							<button
 								type="button"
-								onClick={() => removeItem(item.id)}
+								onClick={() => removeItem(item.id, item.color)}
 								className="absolute top-4 right-4 text-gray-400 hover:text-black transition-colors"
 							>
 								<X className="size-5" />
@@ -81,7 +78,9 @@ function CartComponent() {
 							<div className="flex items-center gap-4">
 								<button
 									type="button"
-									onClick={() => updateQuantity(item.id, item.quantity - 1)}
+									onClick={() =>
+										updateQuantity(item.id, item.quantity - 1, item.color)
+									}
 									className="text-[#495464] hover:text-black disabled:opacity-50"
 									disabled={item.quantity <= 1}
 								>
@@ -92,7 +91,9 @@ function CartComponent() {
 								</div>
 								<button
 									type="button"
-									onClick={() => updateQuantity(item.id, item.quantity + 1)}
+									onClick={() =>
+										updateQuantity(item.id, item.quantity + 1, item.color)
+									}
 									className="text-[#495464] hover:text-black disabled:opacity-50"
 									disabled={item.quantity >= item.stock}
 								>

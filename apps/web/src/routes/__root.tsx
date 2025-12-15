@@ -1,8 +1,8 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import Header from "@/components/header";
 import { ComparisonBar } from "@/components/comparison-bar";
+import Header from "@/components/header";
 
 export const Route = createRootRoute({
 	component: () => (

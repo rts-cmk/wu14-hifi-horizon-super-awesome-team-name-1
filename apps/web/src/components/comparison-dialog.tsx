@@ -1,15 +1,12 @@
 import { Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { type CompareProduct, useComparisonStore } from "@/stores/comparison";
 
 interface ComparisonDialogProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 }
-
-const formatPrice = (price: number) =>
-	price.toLocaleString("en-GB", { style: "currency", currency: "GBP" });
 
 export function ComparisonDialog({
 	open,

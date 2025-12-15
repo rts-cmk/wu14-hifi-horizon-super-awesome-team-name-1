@@ -27,7 +27,7 @@ export function CheckoutStepper({ currentStep }: CheckoutStepperProps) {
 							<div className="relative group">
 								{index <= currentIndex ? (
 									<Link
-										to={step.href as any}
+										to={step.href as string}
 										disabled={index === currentIndex}
 										className={cn(
 											"w-16 h-16 flex items-center justify-center rounded-sm shadow-sm transition-colors z-10 relative",

@@ -17,8 +17,8 @@ interface CartStore {
 	addItem: (
 		product: Omit<CartProduct, "quantity"> & { quantity?: number },
 	) => void;
-	removeItem: (id: number) => void;
-	updateQuantity: (id: number, quantity: number) => void;
+	removeItem: (id: number, color?: string) => void;
+	updateQuantity: (id: number, quantity: number, color?: string) => void;
 	clearCart: () => void;
 	total: () => number;
 }
@@ -29,13 +29,17 @@ export const useCartStore = create<CartStore>()(
 			items: [],
 			addItem: (product) => {
 				const { items } = get();
-				const existingItem = items.find((i) => i.id === product.id);
+				const existingItem = items.find(
+					(i) => i.id === product.id && i.color === product.color,
+				);
 				if (existingItem) {
 					const newQuantity = existingItem.quantity + (product.quantity || 1);
 					if (newQuantity <= existingItem.stock) {
 						set({
 							items: items.map((i) =>
-								i.id === product.id ? { ...i, quantity: newQuantity } : i,
+								i.id === product.id && i.color === product.color
+									? { ...i, quantity: newQuantity }
+									: i,
 							),
 						});
 					}
@@ -45,14 +49,18 @@ export const useCartStore = create<CartStore>()(
 					});
 				}
 			},
-			removeItem: (id) => {
-				set({ items: get().items.filter((i) => i.id !== id) });
+			removeItem: (id, color) => {
+				set({
+					items: get().items.filter((i) => !(i.id === id && i.color === color)),
+				});
 			},
-			updateQuantity: (id, quantity) => {
+			updateQuantity: (id, quantity, color) => {
 				if (quantity <= 0) return;
 				set({
 					items: get().items.map((i) =>
-						i.id === id ? { ...i, quantity: Math.min(i.stock, quantity) } : i,
+						i.id === id && i.color === color
+							? { ...i, quantity: Math.min(i.stock, quantity) }
+							: i,
 					),
 				});
 			},

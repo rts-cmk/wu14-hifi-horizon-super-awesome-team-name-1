@@ -1,0 +1,9 @@
+{
+  "name": "Hifi Horizon",
+  "short_name": "Hifi",
+  "theme_color": "#f54a00",
+  "background_color": "#f5f5f5",
+  "display": "browser",
+  "scope": "/",
+  "start_url": "/"
+}

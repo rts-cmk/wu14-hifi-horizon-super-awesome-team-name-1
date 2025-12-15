@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import {
 	FaApplePay,
 	FaCcMastercard,
@@ -8,16 +8,19 @@ import {
 } from "react-icons/fa";
 import { SiFedex } from "react-icons/si";
 import { CheckoutStepper } from "@/components/checkout-stepper";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/stores/cart";
 import { useCheckoutStore } from "@/stores/checkout";
 
 export const Route = createFileRoute("/payment")({
 	component: PaymentComponent,
+	beforeLoad: () => {
+		const { items } = useCartStore.getState();
+		if (items.length === 0) {
+			throw redirect({ to: "/cart" });
+		}
+	},
 });
-
-const formatPrice = (price: number) =>
-	`£ ${price.toLocaleString("en-GB", { minimumFractionDigits: 2 })}`;
 
 function PaymentComponent() {
 	const { items, total } = useCartStore();
@@ -50,9 +53,7 @@ function PaymentComponent() {
 				<h1 className="text-3xl font-bold text-[#495464] mb-8">Your info</h1>
 
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-					{/* Left Column - Forms */}
 					<div className="lg:col-span-2 space-y-8">
-						{/* Info Form */}
 						<div className="bg-white p-8 rounded-sm shadow-sm">
 							<div className="space-y-4">
 								<div>
@@ -160,7 +161,6 @@ function PaymentComponent() {
 							</div>
 						</div>
 
-						{/* Delivery Method */}
 						<div>
 							<h2 className="text-2xl font-bold text-[#495464] mb-4">
 								Select your prefered delivery method
@@ -311,7 +311,6 @@ function PaymentComponent() {
 							</div>
 						</div>
 
-						{/* Payment Method */}
 						<div>
 							<h2 className="text-2xl font-bold text-[#495464] mb-4">
 								Choose payment method
@@ -370,7 +369,6 @@ function PaymentComponent() {
 						</div>
 					</div>
 
-					{/* Right Column - Sticky Overview */}
 					<div className="lg:col-span-1">
 						<div className="sticky top-24 bg-white p-6 rounded-sm shadow-sm space-y-6">
 							<h2 className="text-2xl font-bold text-[#495464]">

@@ -6,7 +6,7 @@ import { ProductImageCarousel } from "@/components/product-image-carousel";
 import { ProductQuantitySelector } from "@/components/product-quantity-selector";
 import { ProductSpecifications } from "@/components/product-specifications";
 import { ProductStockIndicator } from "@/components/product-stock-indicator";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/stores/cart";
 import { useComparisonStore } from "@/stores/comparison";
 
@@ -17,9 +17,6 @@ export const Route = createFileRoute("/shop/$productId")({
 		return res.json();
 	},
 });
-
-const formatPrice = (price: number) =>
-	price.toLocaleString("en-GB", { style: "currency", currency: "GBP" });
 
 function RouteComponent() {
 	const product = Route.useLoaderData();

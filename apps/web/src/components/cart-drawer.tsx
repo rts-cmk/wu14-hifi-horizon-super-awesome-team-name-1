@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Minus, Plus, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/stores/cart";
 import { Drawer } from "./ui/drawer";
 
@@ -49,7 +49,7 @@ export function CartDrawer({ open, onClose, className }: CartDrawerProps) {
 								>
 									<button
 										type="button"
-										onClick={() => removeItem(item.id)}
+										onClick={() => removeItem(item.id, item.color)}
 										className="text-black transition-colors self-start"
 										aria-label={`Remove ${item.title}`}
 									>
@@ -79,7 +79,13 @@ export function CartDrawer({ open, onClose, className }: CartDrawerProps) {
 											<div className="flex items-center gap-2">
 												<button
 													type="button"
-													onClick={() => updateQuantity(item.id, item.quantity - 1)}
+													onClick={() =>
+														updateQuantity(
+															item.id,
+															item.quantity - 1,
+															item.color,
+														)
+													}
 													disabled={item.quantity <= 1}
 													className="size-8 flex items-center justify-center text-gray-600 hover:text-black transition-colors disabled:opacity-50"
 													aria-label="Decrease quantity"
@@ -91,7 +97,13 @@ export function CartDrawer({ open, onClose, className }: CartDrawerProps) {
 												</span>
 												<button
 													type="button"
-													onClick={() => updateQuantity(item.id, item.quantity + 1)}
+													onClick={() =>
+														updateQuantity(
+															item.id,
+															item.quantity + 1,
+															item.color,
+														)
+													}
 													disabled={item.quantity >= item.stock}
 													className="size-8 flex items-center justify-center text-gray-600 hover:text-black transition-colors disabled:opacity-50"
 													aria-label="Increase quantity"
@@ -101,10 +113,7 @@ export function CartDrawer({ open, onClose, className }: CartDrawerProps) {
 											</div>
 
 											<span className="font-medium text-sm text-black">
-												£{" "}
-												{(item.price * item.quantity).toLocaleString("en-GB", {
-													minimumFractionDigits: 2,
-												})}
+												{formatPrice(item.price * item.quantity)}
 											</span>
 										</div>
 									</div>
@@ -118,7 +127,7 @@ export function CartDrawer({ open, onClose, className }: CartDrawerProps) {
 					<div className="flex justify-between items-center">
 						<span className="font-medium text-black">Sub total:</span>
 						<span className="text-orange-500 font-bold text-xl">
-							£ {total().toLocaleString("en-GB", { minimumFractionDigits: 2 })}
+							{formatPrice(total())}
 						</span>
 					</div>
 

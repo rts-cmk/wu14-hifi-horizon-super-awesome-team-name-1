@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ProductCard } from "@/components/product-card";
 
 export const Route = createFileRoute("/")({
 	component: App,
@@ -32,31 +33,13 @@ function App() {
 
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-8">
 					{Array.from({ length: 4 }).map((_, index) => (
-						<article
+						<ProductCard
 							key={index.toString()}
-							className="w-full h-full flex flex-col gap-4 bg-white p-4 border border-gray-200"
-						>
-							<figure className="w-full flex-1 flex items-center justify-center overflow-hidden">
-								<img
-									src="https://placehold.co/300x300"
-									alt="Auralic Aries G2.1 Streamer"
-									className="w-full h-full object-cover"
-								/>
-							</figure>
-
-							<h3 className="text-black text-xl font-bold text-center">
-								Auralic Aries G2.1 Streamer (Digital Output)
-							</h3>
-							<span className="text-black text-xl font-bold text-center">
-								£ 4,799.00
-							</span>
-							<button
-								type="button"
-								className="bg-orange-500 text-white py-2 px-8 rounded-xs mt-auto w-fit mx-auto"
-							>
-								Read more
-							</button>
-						</article>
+							id={index + 1}
+							title="Auralic Aries G2.1 Streamer (Digital Output)"
+							price={479900}
+							image="https://placehold.co/300x300"
+						/>
 					))}
 				</div>
 			</section>
@@ -90,7 +73,6 @@ function App() {
 					<article className="flex flex-col gap-6 max-w-2xl">
 						<h2 className="text-white text-4xl font-semibold">Opening hours</h2>
 
-						{/* Edinburgh Location */}
 						<div className="flex flex-col gap-2 mt-2">
 							<h3 className="text-white text-base font-bold">Edinburgh</h3>
 							<p className="text-white text-base">
@@ -103,7 +85,6 @@ function App() {
 							</div>
 						</div>
 
-						{/* Falkirk Location */}
 						<div className="flex flex-col gap-2 mt-4">
 							<h3 className="text-white text-base font-bold">Falkirk</h3>
 							<p className="text-white text-base">
@@ -119,7 +100,6 @@ function App() {
 				</div>
 			</section>
 
-			{/* newsletter signup section */}
 			<section className="w-full bg-gray-200 py-16">
 				<div className="max-w-7xl mx-auto px-8">
 					<div className="bg-white p-8 text-center">
@@ -130,18 +110,20 @@ function App() {
 							Subscribing to our newsletter secures you up to date information
 							about HiFi Horizons latest updates and offers.
 						</p>
-						<form className="flex gap-2 justify-center">
+						<div className="flex flex-col sm:flex-row gap-2 justify-center items-center">
 							<input
+								id="email"
+								name="email"
 								type="email"
-								className="bg-[#E8E8E8] rounded-xs px-4 py-3 flex-1 max-w-md border-none outline-none"
+								className="bg-[#E8E8E8] rounded-xs px-4 py-3 flex-1 max-w-md border-none outline-none w-full sm:w-auto"
 							/>
 							<button
 								type="submit"
-								className="bg-orange-500 text-white py-2 px-8 rounded-xs"
+								className="bg-orange-500 text-white py-2 px-8 rounded-xs w-full sm:w-auto"
 							>
 								Sign up
 							</button>
-						</form>
+						</div>
 					</div>
 				</div>
 			</section>

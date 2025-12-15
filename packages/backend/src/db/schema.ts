@@ -1,8 +1,8 @@
+import { relations } from 'drizzle-orm'
 import { integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
 
-// Users
 export const users = pgTable('users', {
     id: serial('id').primaryKey(),
     fullName: text('full_name').notNull(),
@@ -39,12 +39,11 @@ export const updateUserSchema = createInsertSchema(users)
         path: ['confirmPassword']
     })
 
-// Products
 export const products = pgTable('products', {
     id: serial('id').primaryKey(),
     title: text('title').notNull(),
     brand: text('brand').notNull(),
-    price: integer('price').notNull(), // Price in cents
+    price: integer('price').notNull(),
     stock: integer('stock').notNull().default(0),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull()
@@ -81,9 +80,44 @@ export const productSpecifications = pgTable('product_specifications', {
     productId: integer('product_id')
         .notNull()
         .references(() => products.id, { onDelete: 'cascade' }),
-    label: text('label').notNull(), // e.g., "Frequency Response", "Connectivity"
-    value: text('value').notNull() // e.g., "20Hz - 20kHz", "WiFi, Bluetooth 5.0"
+    label: text('label').notNull(),
+    value: text('value').notNull()
 })
+
+export const productsRelations = relations(products, ({ many }) => ({
+    descriptions: many(productDescriptions),
+    colors: many(productColors),
+    images: many(productImages),
+    specifications: many(productSpecifications)
+}))
+
+export const productDescriptionsRelations = relations(productDescriptions, ({ one }) => ({
+    product: one(products, {
+        fields: [productDescriptions.productId],
+        references: [products.id]
+    })
+}))
+
+export const productColorsRelations = relations(productColors, ({ one }) => ({
+    product: one(products, {
+        fields: [productColors.productId],
+        references: [products.id]
+    })
+}))
+
+export const productImagesRelations = relations(productImages, ({ one }) => ({
+    product: one(products, {
+        fields: [productImages.productId],
+        references: [products.id]
+    })
+}))
+
+export const productSpecificationsRelations = relations(productSpecifications, ({ one }) => ({
+    product: one(products, {
+        fields: [productSpecifications.productId],
+        references: [products.id]
+    })
+}))
 
 export const productSchema = createSelectSchema(products)
 export const productInsertSchema = createInsertSchema(products).omit({
@@ -96,7 +130,6 @@ export const productUpdateSchema = createInsertSchema(products)
     .omit({ id: true, createdAt: true, updatedAt: true })
     .partial()
 
-// Hex color validation (e.g., "#1a1a1a" or "#fff")
 const hexColorSchema = z
     .string()
     .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Must be a valid hex color (e.g., #1a1a1a)')

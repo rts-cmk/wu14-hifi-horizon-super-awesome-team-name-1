@@ -28,22 +28,32 @@ export function MenuDrawer({ open, onClose, className }: MenuDrawerProps) {
 				</button>
 
 				<div className="flex-1 flex flex-col items-center justify-center gap-12">
-					<Link to="/" aria-label="HIFI Home">
+					<Link to="/" aria-label="HIFI Home" onClick={onClose}>
 						<figure>
-							<img src="/images/logo.svg" alt="HIFI Horizon" className="h-12" />
+							<img src="/logo.svg" alt="HIFI Horizon" className="h-12" />
 						</figure>
 					</Link>
 
 					<nav className="flex flex-col items-center gap-8 text-lg tracking-wide">
-						<Link to="/" className="hover:text-gray-300 transition-colors">
+						<Link 
+							to="/shop" 
+							search={{ category: undefined }} 
+							className="hover:text-gray-300 transition-colors"
+							onClick={onClose}
+						>
 							SHOP
 						</Link>
-						<Link to="/about" className="hover:text-gray-300 transition-colors">
+						<Link 
+							to="/about" 
+							className="hover:text-gray-300 transition-colors"
+							onClick={onClose}
+						>
 							ABOUT US
 						</Link>
 						<Link
 							to="/contact"
 							className="hover:text-gray-300 transition-colors"
+							onClick={onClose}
 						>
 							CONTACT US
 						</Link>
