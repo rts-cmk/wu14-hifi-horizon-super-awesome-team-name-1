@@ -1,0 +1,11 @@
+- [ ] footer
+- [x] contact form
+- [ ] contact form including post request
+- [ ] login page
+- [ ] register page
+- [ ] invoice page
+- [x] product page
+- [ ] product page including fetch request
+- [ ] chat system with ai & byok
+- [ ] users profile including patch request
+- [ ] users orders including fetch request
