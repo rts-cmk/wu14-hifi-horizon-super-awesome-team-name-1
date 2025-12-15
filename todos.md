@@ -1,8 +1,8 @@
 - [ ] footer
 - [x] contact form
 - [x] contact form including post request
-- [ ] login page
-- [ ] register page
+- [x] login page
+- [x] register page
 - [ ] invoice page
 - [x] product page
 - [ ] product page including fetch request

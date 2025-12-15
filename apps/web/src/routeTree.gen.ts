@@ -9,7 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PaymentRouteImport } from './routes/payment'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CompareRouteImport } from './routes/compare'
@@ -17,11 +20,28 @@ import { Route as CartRouteImport } from './routes/cart'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShopIndexRouteImport } from './routes/shop/index'
+import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as ShopProductIdRouteImport } from './routes/shop/$productId'
+import { Route as ProfileOrdersRouteImport } from './routes/profile/orders'
 
+const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
+  id: '/terms-of-service',
+  path: '/terms-of-service',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PaymentRoute = PaymentRouteImport.update({
   id: '/payment',
   path: '/payment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -59,9 +79,19 @@ const ShopIndexRoute = ShopIndexRouteImport.update({
   path: '/shop/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopProductIdRoute = ShopProductIdRouteImport.update({
   id: '/shop/$productId',
   path: '/shop/$productId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileOrdersRoute = ProfileOrdersRouteImport.update({
+  id: '/profile/orders',
+  path: '/profile/orders',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -72,8 +102,13 @@ export interface FileRoutesByFullPath {
   '/compare': typeof CompareRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
+  '/login': typeof LoginRoute
   '/payment': typeof PaymentRoute
+  '/register': typeof RegisterRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
+  '/profile/orders': typeof ProfileOrdersRoute
   '/shop/$productId': typeof ShopProductIdRoute
+  '/profile': typeof ProfileIndexRoute
   '/shop': typeof ShopIndexRoute
 }
 export interface FileRoutesByTo {
@@ -83,8 +118,13 @@ export interface FileRoutesByTo {
   '/compare': typeof CompareRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
+  '/login': typeof LoginRoute
   '/payment': typeof PaymentRoute
+  '/register': typeof RegisterRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
+  '/profile/orders': typeof ProfileOrdersRoute
   '/shop/$productId': typeof ShopProductIdRoute
+  '/profile': typeof ProfileIndexRoute
   '/shop': typeof ShopIndexRoute
 }
 export interface FileRoutesById {
@@ -95,8 +135,13 @@ export interface FileRoutesById {
   '/compare': typeof CompareRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
+  '/login': typeof LoginRoute
   '/payment': typeof PaymentRoute
+  '/register': typeof RegisterRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
+  '/profile/orders': typeof ProfileOrdersRoute
   '/shop/$productId': typeof ShopProductIdRoute
+  '/profile/': typeof ProfileIndexRoute
   '/shop/': typeof ShopIndexRoute
 }
 export interface FileRouteTypes {
@@ -108,8 +153,13 @@ export interface FileRouteTypes {
     | '/compare'
     | '/contact'
     | '/faq'
+    | '/login'
     | '/payment'
+    | '/register'
+    | '/terms-of-service'
+    | '/profile/orders'
     | '/shop/$productId'
+    | '/profile'
     | '/shop'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -119,8 +169,13 @@ export interface FileRouteTypes {
     | '/compare'
     | '/contact'
     | '/faq'
+    | '/login'
     | '/payment'
+    | '/register'
+    | '/terms-of-service'
+    | '/profile/orders'
     | '/shop/$productId'
+    | '/profile'
     | '/shop'
   id:
     | '__root__'
@@ -130,8 +185,13 @@ export interface FileRouteTypes {
     | '/compare'
     | '/contact'
     | '/faq'
+    | '/login'
     | '/payment'
+    | '/register'
+    | '/terms-of-service'
+    | '/profile/orders'
     | '/shop/$productId'
+    | '/profile/'
     | '/shop/'
   fileRoutesById: FileRoutesById
 }
@@ -142,18 +202,44 @@ export interface RootRouteChildren {
   CompareRoute: typeof CompareRoute
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
+  LoginRoute: typeof LoginRoute
   PaymentRoute: typeof PaymentRoute
+  RegisterRoute: typeof RegisterRoute
+  TermsOfServiceRoute: typeof TermsOfServiceRoute
+  ProfileOrdersRoute: typeof ProfileOrdersRoute
   ShopProductIdRoute: typeof ShopProductIdRoute
+  ProfileIndexRoute: typeof ProfileIndexRoute
   ShopIndexRoute: typeof ShopIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms-of-service': {
+      id: '/terms-of-service'
+      path: '/terms-of-service'
+      fullPath: '/terms-of-service'
+      preLoaderRoute: typeof TermsOfServiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/payment': {
       id: '/payment'
       path: '/payment'
       fullPath: '/payment'
       preLoaderRoute: typeof PaymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -205,11 +291,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile/': {
+      id: '/profile/'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop/$productId': {
       id: '/shop/$productId'
       path: '/shop/$productId'
       fullPath: '/shop/$productId'
       preLoaderRoute: typeof ShopProductIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile/orders': {
+      id: '/profile/orders'
+      path: '/profile/orders'
+      fullPath: '/profile/orders'
+      preLoaderRoute: typeof ProfileOrdersRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -222,8 +322,13 @@ const rootRouteChildren: RootRouteChildren = {
   CompareRoute: CompareRoute,
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
+  LoginRoute: LoginRoute,
   PaymentRoute: PaymentRoute,
+  RegisterRoute: RegisterRoute,
+  TermsOfServiceRoute: TermsOfServiceRoute,
+  ProfileOrdersRoute: ProfileOrdersRoute,
   ShopProductIdRoute: ShopProductIdRoute,
+  ProfileIndexRoute: ProfileIndexRoute,
   ShopIndexRoute: ShopIndexRoute,
 }
 export const routeTree = rootRouteImport
