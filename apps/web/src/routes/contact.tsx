@@ -48,7 +48,6 @@ function RouteComponent() {
 				subject: "",
 				message: "",
 			});
-
 		} catch (error) {
 			console.error("error submitting form:", error);
 		} finally {

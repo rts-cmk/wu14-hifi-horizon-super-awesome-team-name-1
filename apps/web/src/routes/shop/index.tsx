@@ -1,9 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import {
-	ShopFilters,
-	type ShopFiltersState,
-} from "@/components/shop-filters";
+import { ShopFilters, type ShopFiltersState } from "@/components/shop-filters";
 
 export const Route = createFileRoute("/shop/")({
 	component: ShopComponent,

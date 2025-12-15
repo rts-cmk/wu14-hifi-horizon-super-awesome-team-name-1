@@ -1,6 +1,6 @@
-import db from '@/db'
-import { contactMessageInsertSchema, contactMessages } from '@/db/schema'
 import type { z } from 'zod'
+import db from '@/db'
+import { type contactMessageInsertSchema, contactMessages } from '@/db/schema'
 
 export class ContactService {
     async createMessage(data: z.infer<typeof contactMessageInsertSchema>) {

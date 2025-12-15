@@ -1,9 +1,10 @@
 import { eq } from 'drizzle-orm'
+import type { z } from 'zod'
 import db from '@/db'
-import { users } from '@/db/schema'
+import { type updateUserSchema, type userInsertSchema, users } from '@/db/schema'
 
 export class AuthService {
-    async register(data: any) {
+    async register(data: z.infer<typeof userInsertSchema>) {
         const { password, ...restOfUser } = data
 
         const existingUser = await db.select().from(users).where(eq(users.email, data.email)).limit(1)
@@ -45,7 +46,7 @@ export class AuthService {
         return user
     }
 
-    async updateUser(userId: number, data: any) {
+    async updateUser(userId: number, data: z.infer<typeof updateUserSchema>) {
         const { password, ...rest } = data
 
         const updateData = {

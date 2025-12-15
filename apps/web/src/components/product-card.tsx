@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { formatPrice } from "@/lib/utils";
 
 interface ProductCardProps {
-	id: number;	
+	id: number;
 	title: string;
 	price: number;
 	image: string;

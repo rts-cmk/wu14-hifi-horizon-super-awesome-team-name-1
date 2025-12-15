@@ -22,16 +22,16 @@ export class ProductController {
 
     async getPaginated(req: Request, res: Response) {
         try {
-            const page = Math.max(1, parseInt(req.query.page as string) || 1);
-            const limit = Math.min(50, Math.max(1, parseInt(req.query.limit as string) || 9));
+            const page = Math.max(1, parseInt(req.query.page as string, 10) || 1)
+            const limit = Math.min(50, Math.max(1, parseInt(req.query.limit as string, 10) || 9))
 
-            const result = await productService.getPaginatedProducts(page, limit);
+            const result = await productService.getPaginatedProducts(page, limit)
 
             const formattedProducts = result.products.map(product => ({
                 ...product,
                 descriptions: product.descriptions.map(d => d.content),
                 colors: product.colors.map(c => c.color)
-            }));
+            }))
 
             return res.status(200).json({
                 products: formattedProducts,
@@ -42,7 +42,7 @@ export class ProductController {
                     hasNext: result.hasNext,
                     hasPrev: result.hasPrev
                 }
-            });
+            })
         } catch (error) {
             console.error(error)
             return res.status(500).json({ error: 'Internal server error' })

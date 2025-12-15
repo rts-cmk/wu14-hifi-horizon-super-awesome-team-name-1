@@ -1,6 +1,15 @@
-import { eq, desc, count } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
+import type { z } from 'zod'
 import db from '@/db'
-import { productColors, productDescriptions, productImages, productSpecifications, products } from '@/db/schema'
+import {
+    productColors,
+    type productCreateSchema,
+    productDescriptions,
+    productImages,
+    productSpecifications,
+    products,
+    type productUpdateWithRelationsSchema
+} from '@/db/schema'
 
 export class ProductService {
     async getAllProducts() {
@@ -17,9 +26,9 @@ export class ProductService {
     }
 
     async getPaginatedProducts(page: number = 1, limit: number = 9) {
-        const offset = (page - 1) * limit;
-        
-        const [productList, total] = await Promise.all([
+        const offset = (page - 1) * limit
+
+        const [productList, totalCount] = await Promise.all([
             db.query.products.findMany({
                 limit,
                 offset,
@@ -34,16 +43,16 @@ export class ProductService {
                 orderBy: (products, { desc }) => [desc(products.id)]
             }),
             db.select({ count: products.id }).from(products)
-        ]);
+        ])
 
         return {
             products: productList,
-            total: total.length,
+            total: totalCount.length,
             page,
-            totalPages: Math.ceil(total.length / limit),
-            hasNext: page * limit < total.length,
+            totalPages: Math.ceil(totalCount.length / limit),
+            hasNext: page * limit < totalCount.length,
             hasPrev: page > 1
-        };
+        }
     }
 
     async getProductById(id: number) {
@@ -60,7 +69,7 @@ export class ProductService {
         })
     }
 
-    async createProduct(data: any) {
+    async createProduct(data: z.infer<typeof productCreateSchema>) {
         const { descriptions, colors, images, specifications, ...productData } = data
 
         return await db.transaction(async tx => {
@@ -121,7 +130,7 @@ export class ProductService {
         })
     }
 
-    async updateProduct(id: number, data: any) {
+    async updateProduct(id: number, data: z.infer<typeof productUpdateWithRelationsSchema>) {
         const { descriptions, colors, images, specifications, ...productData } = data
 
         return await db.transaction(async tx => {
@@ -132,54 +141,42 @@ export class ProductService {
                     .where(eq(products.id, id))
             }
 
+            // Prepare updates array
+            const updates = []
+
             if (descriptions) {
-                await tx.delete(productDescriptions).where(eq(productDescriptions.productId, id))
-                if (descriptions.length > 0) {
-                    await tx.insert(productDescriptions).values(
-                        descriptions.map((content: string, index: number) => ({
-                            productId: id,
-                            content,
-                            sortOrder: index
-                        }))
-                    )
-                }
+                updates.push({
+                    table: productDescriptions,
+                    data: descriptions.map((content, index) => ({ productId: id, content, sortOrder: index }))
+                })
             }
 
             if (colors) {
-                await tx.delete(productColors).where(eq(productColors.productId, id))
-                if (colors.length > 0) {
-                    await tx.insert(productColors).values(
-                        colors.map((color: string) => ({
-                            productId: id,
-                            color
-                        }))
-                    )
-                }
+                updates.push({
+                    table: productColors,
+                    data: colors.map(color => ({ productId: id, color }))
+                })
             }
 
             if (images) {
-                await tx.delete(productImages).where(eq(productImages.productId, id))
-                if (images.length > 0) {
-                    await tx.insert(productImages).values(
-                        images.map((image: { url: string; alt?: string }) => ({
-                            productId: id,
-                            url: image.url,
-                            alt: image.alt
-                        }))
-                    )
-                }
+                updates.push({
+                    table: productImages,
+                    data: images.map(image => ({ productId: id, url: image.url, alt: image.alt }))
+                })
             }
 
             if (specifications) {
-                await tx.delete(productSpecifications).where(eq(productSpecifications.productId, id))
-                if (specifications.length > 0) {
-                    await tx.insert(productSpecifications).values(
-                        specifications.map((spec: { label: string; value: string }) => ({
-                            productId: id,
-                            label: spec.label,
-                            value: spec.value
-                        }))
-                    )
+                updates.push({
+                    table: productSpecifications,
+                    data: specifications.map(spec => ({ productId: id, label: spec.label, value: spec.value }))
+                })
+            }
+
+            // Execute all updates
+            for (const update of updates) {
+                await tx.delete(update.table).where(eq(update.table.productId, id))
+                if (update.data.length > 0) {
+                    await tx.insert(update.table).values(update.data)
                 }
             }
 
@@ -196,8 +193,15 @@ export class ProductService {
     }
 
     async deleteProduct(id: number) {
-        const [deletedProduct] = await db.delete(products).where(eq(products.id, id)).returning()
-        return deletedProduct
+        return await db.transaction(async tx => {
+            await tx.delete(productDescriptions).where(eq(productDescriptions.productId, id))
+            await tx.delete(productColors).where(eq(productColors.productId, id))
+            await tx.delete(productImages).where(eq(productImages.productId, id))
+            await tx.delete(productSpecifications).where(eq(productSpecifications.productId, id))
+
+            const [deletedProduct] = await tx.delete(products).where(eq(products.id, id)).returning()
+            return deletedProduct
+        })
     }
 }
 

@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Minus, Plus, X } from "lucide-react";
 import { CheckoutStepper } from "@/components/checkout-stepper";
-import { useCartStore } from "@/stores/cart";
 import { formatPrice } from "@/lib/utils";
+import { useCartStore } from "@/stores/cart";
 
 export const Route = createFileRoute("/cart")({
 	component: CartComponent,

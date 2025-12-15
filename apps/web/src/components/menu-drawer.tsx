@@ -35,16 +35,16 @@ export function MenuDrawer({ open, onClose, className }: MenuDrawerProps) {
 					</Link>
 
 					<nav className="flex flex-col items-center gap-8 text-lg tracking-wide">
-						<Link 
-							to="/shop" 
-							search={{ category: undefined }} 
+						<Link
+							to="/shop"
+							search={{ category: undefined }}
 							className="hover:text-gray-300 transition-colors"
 							onClick={onClose}
 						>
 							SHOP
 						</Link>
-						<Link 
-							to="/about" 
+						<Link
+							to="/about"
 							className="hover:text-gray-300 transition-colors"
 							onClick={onClose}
 						>
