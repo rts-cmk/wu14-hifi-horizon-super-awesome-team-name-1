@@ -45,59 +45,61 @@ export function ShopFilters({ filters, onFiltersChange }: ShopFiltersProps) {
 	};
 
 	return (
-		<aside className="w-[300px] shrink-0 h-fit bg-[#E8E8E8] p-4 rounded-xs">
+		<aside>
 			<h3 className="text-xl font-semibold text-gray-800 mb-6">Sort by</h3>
 
-			<FilterSection
-				title="Brand"
-				expanded={expandedSections.brand}
-				onToggle={() => toggleSection("brand")}
-			>
-				{brands.map((brand) => (
-					<FilterRadio
-						key={brand}
-						name="brand"
-						value={brand}
-						label={brand}
-						checked={filters.brand === brand}
-						onChange={() => updateFilter("brand", brand)}
-					/>
-				))}
-			</FilterSection>
+			<section className="w-[300px] shrink-0 h-fit rounded-xs">
+				<FilterSection
+					title="Brand"
+					expanded={expandedSections.brand}
+					onToggle={() => toggleSection("brand")}
+				>
+					{brands.map((brand) => (
+						<FilterRadio
+							key={brand}
+							name="brand"
+							value={brand}
+							label={brand}
+							checked={filters.brand === brand}
+							onChange={() => updateFilter("brand", brand)}
+						/>
+					))}
+				</FilterSection>
 
-			<FilterSection
-				title="Color"
-				expanded={expandedSections.color}
-				onToggle={() => toggleSection("color")}
-			>
-				{colors.map((color) => (
-					<FilterRadio
-						key={color}
-						name="color"
-						value={color}
-						label={color}
-						checked={filters.color === color}
-						onChange={() => updateFilter("color", color)}
-					/>
-				))}
-			</FilterSection>
+				<FilterSection
+					title="Color"
+					expanded={expandedSections.color}
+					onToggle={() => toggleSection("color")}
+				>
+					{colors.map((color) => (
+						<FilterRadio
+							key={color}
+							name="color"
+							value={color}
+							label={color}
+							checked={filters.color === color}
+							onChange={() => updateFilter("color", color)}
+						/>
+					))}
+				</FilterSection>
 
-			<FilterSection
-				title="Price"
-				expanded={expandedSections.price}
-				onToggle={() => toggleSection("price")}
-			>
-				{prices.map((price) => (
-					<FilterRadio
-						key={price}
-						name="price"
-						value={price}
-						label={price}
-						checked={filters.price === price}
-						onChange={() => updateFilter("price", price)}
-					/>
-				))}
-			</FilterSection>
+				<FilterSection
+					title="Price"
+					expanded={expandedSections.price}
+					onToggle={() => toggleSection("price")}
+				>
+					{prices.map((price) => (
+						<FilterRadio
+							key={price}
+							name="price"
+							value={price}
+							label={price}
+							checked={filters.price === price}
+							onChange={() => updateFilter("price", price)}
+						/>
+					))}
+				</FilterSection>
+			</section>
 		</aside>
 	);
 }

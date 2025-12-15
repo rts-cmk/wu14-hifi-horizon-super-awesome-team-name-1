@@ -14,11 +14,11 @@ export function FilterSection({
 	children,
 }: FilterSectionProps) {
 	return (
-		<div className="mb-6">
+		<div className="mb-6 rounded-xs overflow-visible">
 			<button
 				type="button"
 				onClick={onToggle}
-				className="w-full flex items-center justify-between py-2 text-gray-800 font-medium hover:text-gray-900 transition-colors"
+				className="w-full relative z-10 flex items-center justify-between p-4 bg-[#E8E8E8] text-gray-800 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.05)] font-medium hover:text-gray-900 transition-colors"
 			>
 				<span>{title}</span>
 				{expanded ? (
@@ -27,7 +27,7 @@ export function FilterSection({
 					<ChevronDown className="size-5 text-gray-600" />
 				)}
 			</button>
-			{expanded && <div className="mt-3 space-y-3">{children}</div>}
+			{expanded && <div className="space-y-3 p-4 bg-[#E8E8E8] relative z-0">{children}</div>}
 		</div>
 	);
 }
