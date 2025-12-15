@@ -62,13 +62,13 @@ export default function Header() {
 						<Search className="absolute right-3 top-1/2 -translate-y-1/2 size-5 text-black" />
 					</div>
 
-					<button
-						type="button"
+					<Link
+						to="/profile"
 						className="hover:text-gray-300 transition-colors"
 						aria-label="Profile"
 					>
 						<User className="size-6" />
-					</button>
+					</Link>
 
 					<button
 						type="button"
@@ -97,13 +97,13 @@ export default function Header() {
 						<Search className="size-6" />
 					</button>
 
-					<button
-						type="button"
+					<Link
+						to="/profile"
 						className="flex flex-col items-center gap-1 text-white transition-colors p-2"
 						aria-label="Profile"
 					>
 						<User className="size-6" />
-					</button>
+					</Link>
 
 					<button
 						type="button"

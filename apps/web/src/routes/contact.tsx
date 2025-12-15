@@ -56,7 +56,7 @@ function RouteComponent() {
 	};
 
 	return (
-		<main className="min-h-[calc(100vh-4rem)] w-full max-w-6xl mx-auto">
+		<main className="min-h-[calc(100vh-4rem)] w-full max-w-6xl p-4 md:p-0 mx-auto">
 			<h1 className="text-4xl text-[#495464] font-semibold py-10 uppercase">
 				Get in touch with us
 			</h1>

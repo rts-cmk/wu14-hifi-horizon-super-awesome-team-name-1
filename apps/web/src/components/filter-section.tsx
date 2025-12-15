@@ -27,7 +27,11 @@ export function FilterSection({
 					<ChevronDown className="size-5 text-gray-600" />
 				)}
 			</button>
-			{expanded && <div className="space-y-3 p-4 bg-[#E8E8E8] relative z-0">{children}</div>}
+			{expanded && (
+				<div className="space-y-3 p-4 bg-[#E8E8E8] relative z-0">
+					{children}
+				</div>
+			)}
 		</div>
 	);
 }

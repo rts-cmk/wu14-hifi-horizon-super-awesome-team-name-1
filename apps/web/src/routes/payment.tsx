@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import {
 	FaApplePay,
 	FaCcMastercard,
@@ -437,17 +437,18 @@ function PaymentComponent() {
 										checked={formData.terms}
 										onChange={handleChange}
 										className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+										required
 									/>
 									<span className="text-sm text-gray-700">
 										I accept the terms of trade{" "}
-										<a
-											href="/terms"
+										<Link
+											to="/terms-of-service"
 											target="_blank"
 											rel="noopener noreferrer"
 											className="font-bold"
 										>
 											(read in new window)
-										</a>
+										</Link>
 									</span>
 								</label>
 							</div>
