@@ -29,7 +29,7 @@ function RouteComponent() {
 		setIsSubmitting(true);
 
 		try {
-			const response = await fetch("/contact", {
+			const response = await fetch("/api/contact", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -48,8 +48,9 @@ function RouteComponent() {
 				subject: "",
 				message: "",
 			});
+
 		} catch (error) {
-			console.error("Error submitting form:", error);
+			console.error("error submitting form:", error);
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -66,7 +67,6 @@ function RouteComponent() {
 				className="bg-white p-8 space-y-1 text-balance"
 				id="contact-form"
 			>
-				{/* Full Name */}
 				<label
 					htmlFor="full-name"
 					className="flex items-center gap-1 text-lg font-medium text-gray-700"
@@ -84,7 +84,6 @@ function RouteComponent() {
 					className="bg-[#E8E8E8] py-3 w-full md:w-2xl px-4"
 				/>
 
-				{/* Email */}
 				<label
 					htmlFor="email"
 					className="flex items-center gap-1 text-lg font-medium text-gray-700"
@@ -102,7 +101,6 @@ function RouteComponent() {
 					className="bg-[#E8E8E8] py-3 w-full md:w-2xl px-4"
 				/>
 
-				{/* Subject */}
 				<label
 					htmlFor="subject"
 					className="flex items-center gap-1 text-lg font-medium text-gray-700"
@@ -120,7 +118,6 @@ function RouteComponent() {
 					className="bg-[#E8E8E8] py-3 w-full md:w-2xl px-4"
 				/>
 
-				{/* Message */}
 				<label
 					htmlFor="message"
 					className="flex items-center gap-1 text-lg font-medium text-gray-700"

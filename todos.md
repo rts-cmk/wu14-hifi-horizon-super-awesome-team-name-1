@@ -1,6 +1,6 @@
 - [ ] footer
 - [x] contact form
-- [ ] contact form including post request
+- [x] contact form including post request
 - [ ] login page
 - [ ] register page
 - [ ] invoice page

@@ -146,6 +146,21 @@ export const productCreateSchema = productInsertSchema.extend({
     specifications: z.array(specificationSchema).optional()
 })
 
+export const contactMessages = pgTable('contact_messages', {
+    id: serial('id').primaryKey(),
+    fullName: text('full_name').notNull(),
+    email: text('email').notNull(),
+    subject: text('subject').notNull(),
+    message: text('message').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull()
+})
+
+export const contactMessageSchema = createSelectSchema(contactMessages)
+export const contactMessageInsertSchema = createInsertSchema(contactMessages).omit({
+    id: true,
+    createdAt: true
+})
+
 export const productUpdateWithRelationsSchema = productUpdateSchema.extend({
     descriptions: z.array(z.string()).optional(),
     colors: z.array(hexColorSchema).optional(),
