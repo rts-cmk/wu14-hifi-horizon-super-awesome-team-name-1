@@ -8,8 +8,8 @@ export const users = pgTable('users', {
     fullName: text('full_name').notNull(),
     address: text('address').notNull(),
     address2: text('address2'),
-    zipCode: text('zip_code').notNull(),
-    city: text('city').notNull(),
+    zipCode: text('zip_code'),
+    city: text('city'),
     country: text('country'),
     phone: text('phone'),
     email: text('email').notNull().unique(),
@@ -20,12 +20,17 @@ export const users = pgTable('users', {
 })
 
 export const userSchema = createSelectSchema(users).omit({ password: true })
-export const userInsertSchema = createInsertSchema(users).omit({
-    id: true,
-    createdAt: true,
-    updatedAt: true,
-    role: true
-})
+export const userInsertSchema = createInsertSchema(users)
+    .omit({
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        role: true
+    })
+    .partial({
+        zipCode: true,
+        city: true
+    })
 
 export const updateUserSchema = createInsertSchema(users)
     .omit({ id: true, createdAt: true, updatedAt: true, password: true, role: true })
