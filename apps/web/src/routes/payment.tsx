@@ -442,7 +442,7 @@ function PaymentComponent() {
 									<span className="text-sm text-gray-700">
 										I accept the terms of trade{" "}
 										<Link
-											to="/terms-of-service"
+											to="/terms-and-conditions"
 											target="_blank"
 											rel="noopener noreferrer"
 											className="font-bold"
