@@ -50,7 +50,7 @@ export default function Footer() {
 						<li>
 							<Link
 								to="/faq"
-								hash="#return-and-refunds"
+								hash="refunds"
 								className="text-white hover:text-gray-300 text-base md:text-lg"
 							>
 								Return & Refunds
@@ -59,7 +59,7 @@ export default function Footer() {
 						<li>
 							<Link
 								to="/faq"
-								hash="#delivery"
+								hash="delivery"
 								className="text-white hover:text-gray-300 text-base md:text-lg"
 							>
 								Delivery

@@ -40,7 +40,10 @@ function RouteComponent() {
 					misuse.
 				</p>
 
-				<h2 className="text-black text-xl uppercase font-semibold mb-4">
+				<h2
+					id="refunds"
+					className="text-black text-xl uppercase font-semibold mb-4"
+				>
 					Refunds
 				</h2>
 				<p>
@@ -73,7 +76,10 @@ function RouteComponent() {
 					sales@hifi-horizon.com.
 				</p>
 
-				<h2 className="text-black text-xl uppercase font-semibold mt-4">
+				<h2
+					id="shipping"
+					className="text-black text-xl uppercase font-semibold mt-4"
+				>
 					Shipping
 				</h2>
 				<p>
@@ -92,7 +98,10 @@ function RouteComponent() {
 					trackable shipping service or purchasing shipping insurance. We cannot
 					guarantee that we will receive your returned item.
 				</p>
-				<h2 className="text-black text-xl uppercase font-semibold mt-4">
+				<h2
+					id="delivery"
+					className="text-black text-xl uppercase font-semibold mt-4"
+				>
 					Delivery
 				</h2>
 				<p>
@@ -110,7 +119,10 @@ function RouteComponent() {
 					is visibly damaged in transit, please sign for the delivery as
 					‘damaged’ and let us know as soon as possible.
 				</p>
-				<h2 className="text-black text-xl uppercase font-semibold mt-4">
+				<h2
+					id="returns"
+					className="text-black text-xl uppercase font-semibold mt-4"
+				>
 					Returns Process/Your Statutory Rights
 				</h2>
 				<p>
@@ -141,7 +153,10 @@ function RouteComponent() {
 					purchases bought in-store, you can also drop in and be refunded
 					instantly.
 				</p>
-				<h2 className="text-black text-xl uppercase font-semibold mt-4">
+				<h2
+					id="sale-items"
+					className="text-black text-xl uppercase font-semibold mt-4"
+				>
 					Sale Items
 				</h2>
 				<p>
@@ -150,7 +165,10 @@ function RouteComponent() {
 					found to be faulty on arrival. For more details about returning
 					secondhand or sale items, please contact sales@hifi-horizon.com.
 				</p>
-				<h2 className="text-black text-xl uppercase font-semibold mt-4">
+				<h2
+					id="exchanges"
+					className="text-black text-xl uppercase font-semibold mt-4"
+				>
 					Exchanges
 				</h2>
 				<p>
