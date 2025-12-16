@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { FilterRadio } from "./filter-radio";
 import { FilterSection } from "./filter-section";
 
@@ -29,6 +29,7 @@ export function ShopFilters({ filters, onFiltersChange }: ShopFiltersProps) {
 		color: true,
 		price: false,
 	});
+	const instanceId = useId();
 
 	const toggleSection = (section: keyof typeof expandedSections) => {
 		setExpandedSections((prev) => ({
@@ -57,7 +58,7 @@ export function ShopFilters({ filters, onFiltersChange }: ShopFiltersProps) {
 					{brands.map((brand) => (
 						<FilterRadio
 							key={brand}
-							name="brand"
+							name={`${instanceId}-brand-filter`}
 							value={brand}
 							label={brand}
 							checked={filters.brand === brand}
@@ -74,7 +75,7 @@ export function ShopFilters({ filters, onFiltersChange }: ShopFiltersProps) {
 					{colors.map((color) => (
 						<FilterRadio
 							key={color}
-							name="color"
+							name={`${instanceId}-color-filter`}
 							value={color}
 							label={color}
 							checked={filters.color === color}
@@ -91,7 +92,7 @@ export function ShopFilters({ filters, onFiltersChange }: ShopFiltersProps) {
 					{prices.map((price) => (
 						<FilterRadio
 							key={price}
-							name="price"
+							name={`${instanceId}-price-filter`}
 							value={price}
 							label={price}
 							checked={filters.price === price}

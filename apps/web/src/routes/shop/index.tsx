@@ -27,7 +27,7 @@ function ShopComponent() {
 	const { addItem } = useCartStore();
 
 	const [filters, setFilters] = useState<ShopFiltersState>({
-		brand: "Logitech",
+		brand: null,
 		color: null,
 		price: null,
 	});
@@ -86,7 +86,7 @@ function ShopComponent() {
 									key={product.id}
 									to="/shop/$productId"
 									params={{ productId: product.id }}
-									className="bg-white rounded-xs p-6 flex flex-col h-full hover:shadow-lg transition-shadow cursor-pointer group"
+									className="bg-white rounded-xs p-6 flex flex-col h-full shadow-[0px_4px_10px_0px_rgba(0,0,0,0.1)] cursor-pointer group"
 								>
 									<div className="flex justify-end mb-4">
 										<button

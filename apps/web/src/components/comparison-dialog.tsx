@@ -61,9 +61,8 @@ export function ComparisonDialog({
 				onClick={() => onOpenChange(false)}
 				aria-label="Close dialog"
 			/>
-
 			<div className="relative bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col z-50">
-				<div className="flex items-center justify-between p-4 border-b shrink-0">
+				<div className="flex items-center justify-between p-4 shrink-0">
 					<h2 className="text-lg md:text-xl font-semibold">
 						Add Product to Compare
 					</h2>
@@ -76,7 +75,7 @@ export function ComparisonDialog({
 					</button>
 				</div>
 
-				<div className="p-4 border-b shrink-0">
+				<div className="p-4 shrink-0">
 					<div className="relative">
 						<Search className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-gray-400" />
 						<input
@@ -100,17 +99,14 @@ export function ComparisonDialog({
 						<div className="space-y-2">
 							{filteredProducts.map((product) => {
 								const inComparison = isInComparison(product.id);
-								const isMaxReached =
-									!inComparison && compareProducts.length >= 3;
+								const isMaxReached = !inComparison && compareProducts.length >= 3;
 
 								return (
 									<div
 										key={product.id}
 										className={cn(
-											"flex items-center gap-3 p-3 border rounded-sm",
-											inComparison
-												? "bg-gray-50 border-gray-300"
-												: "border-gray-200",
+											"flex items-center gap-3 p-3",
+											inComparison ? "bg-gray-50" : "",
 										)}
 									>
 										<div className="w-16 h-16 bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100">
