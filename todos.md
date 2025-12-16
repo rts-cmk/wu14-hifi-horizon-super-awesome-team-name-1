@@ -1,4 +1,4 @@
-- [ ] footer
+- [x] footer
 - [x] contact form
 - [x] contact form including post request
 - [x] login page

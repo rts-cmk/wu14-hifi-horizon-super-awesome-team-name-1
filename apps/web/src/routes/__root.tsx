@@ -2,6 +2,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { ComparisonBar } from "@/components/comparison-bar";
+import Footer from "@/components/footer";
 import Header from "@/components/header";
 
 export const Route = createRootRoute({
@@ -9,6 +10,7 @@ export const Route = createRootRoute({
 		<>
 			<Header />
 			<Outlet />
+			<Footer />
 			<ComparisonBar />
 			<TanStackDevtools
 				config={{

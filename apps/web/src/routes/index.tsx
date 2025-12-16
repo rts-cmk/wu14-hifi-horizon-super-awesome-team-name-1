@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({
 
 function App() {
 	return (
-		<main className="w-full h-[calc(100vh-4.5rem)]">
+		<main className="w-full min-h-screen">
 			<section className="w-full h-full">
 				<video
 					src="/assets/video.mp4"

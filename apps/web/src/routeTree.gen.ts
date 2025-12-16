@@ -9,7 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
+import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-conditions'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as LoginRouteImport } from './routes/login'
@@ -24,9 +24,9 @@ import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as ShopProductIdRouteImport } from './routes/shop/$productId'
 import { Route as ProfileOrdersRouteImport } from './routes/profile/orders'
 
-const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
-  id: '/terms-of-service',
-  path: '/terms-of-service',
+const TermsAndConditionsRoute = TermsAndConditionsRouteImport.update({
+  id: '/terms-and-conditions',
+  path: '/terms-and-conditions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegisterRoute = RegisterRouteImport.update({
@@ -105,7 +105,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/payment': typeof PaymentRoute
   '/register': typeof RegisterRoute
-  '/terms-of-service': typeof TermsOfServiceRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/profile/orders': typeof ProfileOrdersRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/profile': typeof ProfileIndexRoute
@@ -121,7 +121,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/payment': typeof PaymentRoute
   '/register': typeof RegisterRoute
-  '/terms-of-service': typeof TermsOfServiceRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/profile/orders': typeof ProfileOrdersRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/profile': typeof ProfileIndexRoute
@@ -138,7 +138,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/payment': typeof PaymentRoute
   '/register': typeof RegisterRoute
-  '/terms-of-service': typeof TermsOfServiceRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/profile/orders': typeof ProfileOrdersRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/profile/': typeof ProfileIndexRoute
@@ -156,7 +156,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/payment'
     | '/register'
-    | '/terms-of-service'
+    | '/terms-and-conditions'
     | '/profile/orders'
     | '/shop/$productId'
     | '/profile'
@@ -172,7 +172,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/payment'
     | '/register'
-    | '/terms-of-service'
+    | '/terms-and-conditions'
     | '/profile/orders'
     | '/shop/$productId'
     | '/profile'
@@ -188,7 +188,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/payment'
     | '/register'
-    | '/terms-of-service'
+    | '/terms-and-conditions'
     | '/profile/orders'
     | '/shop/$productId'
     | '/profile/'
@@ -205,7 +205,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PaymentRoute: typeof PaymentRoute
   RegisterRoute: typeof RegisterRoute
-  TermsOfServiceRoute: typeof TermsOfServiceRoute
+  TermsAndConditionsRoute: typeof TermsAndConditionsRoute
   ProfileOrdersRoute: typeof ProfileOrdersRoute
   ShopProductIdRoute: typeof ShopProductIdRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
@@ -214,11 +214,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/terms-of-service': {
-      id: '/terms-of-service'
-      path: '/terms-of-service'
-      fullPath: '/terms-of-service'
-      preLoaderRoute: typeof TermsOfServiceRouteImport
+    '/terms-and-conditions': {
+      id: '/terms-and-conditions'
+      path: '/terms-and-conditions'
+      fullPath: '/terms-and-conditions'
+      preLoaderRoute: typeof TermsAndConditionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register': {
@@ -325,7 +325,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PaymentRoute: PaymentRoute,
   RegisterRoute: RegisterRoute,
-  TermsOfServiceRoute: TermsOfServiceRoute,
+  TermsAndConditionsRoute: TermsAndConditionsRoute,
   ProfileOrdersRoute: ProfileOrdersRoute,
   ShopProductIdRoute: ShopProductIdRoute,
   ProfileIndexRoute: ProfileIndexRoute,
