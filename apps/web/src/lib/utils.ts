@@ -5,8 +5,8 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export function formatPrice(priceInCents: number) {
-	return (priceInCents / 100).toLocaleString("en-GB", {
+export function formatPrice(price: number) {
+	return price.toLocaleString("en-GB", {
 		style: "currency",
 		currency: "GBP",
 	});

@@ -33,23 +33,12 @@ function RouteComponent() {
 	const inComparison = isInComparison(product.id);
 
 	const handleAddToCompare = () => {
-		addProduct({
-			id: product.id,
-			title: product.title,
-			price: product.price,
-			images: product.images,
-			specifications: product.specifications,
-		});
+		addProduct({ ...product, color: selectedColor });
 	};
 
 	const handleAddToCart = () => {
 		addItem({
-			id: product.id,
-			title: product.title,
-			brand: product.brand,
-			price: product.price,
-			stock: product.stock,
-			images: product.images,
+			...product,
 			quantity: quantity,
 			color: selectedColor,
 		});
