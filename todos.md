@@ -5,7 +5,7 @@
 - [x] register page
 - [ ] invoice page
 - [x] product page
-- [ ] product page including fetch request
+- [x] product page including fetch request
 - [ ] chat system with ai & byok
 - [ ] users profile including patch request
 - [ ] users orders including fetch request

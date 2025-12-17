@@ -99,7 +99,8 @@ export function ComparisonDialog({
 						<div className="space-y-2">
 							{filteredProducts.map((product) => {
 								const inComparison = isInComparison(product.id);
-								const isMaxReached = !inComparison && compareProducts.length >= 3;
+								const isMaxReached =
+									!inComparison && compareProducts.length >= 3;
 
 								return (
 									<div

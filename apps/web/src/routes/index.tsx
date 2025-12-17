@@ -3,9 +3,18 @@ import { ProductCard } from "@/components/product-card";
 
 export const Route = createFileRoute("/")({
 	component: App,
+	loader: async () => {
+		const response = await fetch("/api/products/paginated?page=1&limit=4", {
+			method: "GET",
+		});
+		const products = await response.json();
+		return products;
+	},
 });
 
 function App() {
+	const { products } = Route.useLoaderData();
+
 	return (
 		<main className="w-full min-h-screen">
 			<section className="w-full h-full">
@@ -32,19 +41,12 @@ function App() {
 				</div>
 
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-8">
-					{Array.from({ length: 4 }).map((_, index) => (
-						<ProductCard
-							key={index.toString()}
-							id={index + 1}
-							title="Auralic Aries G2.1 Streamer (Digital Output)"
-							price={479900}
-							image="https://placehold.co/300x300"
-						/>
+					{products.map((product: any) => (
+						<ProductCard key={product.id} product={product} />
 					))}
 				</div>
 			</section>
 
-			{/* what we do & opening hours section */}
 			<section className="w-full bg-black py-12">
 				<div className="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-8">
 					<article className="flex flex-col gap-4 max-w-2xl text-balance">
