@@ -48,6 +48,7 @@ export const products = pgTable('products', {
     id: serial('id').primaryKey(),
     title: text('title').notNull(),
     brand: text('brand').notNull(),
+    category: text('category'),
     price: integer('price').notNull(),
     stock: integer('stock').notNull().default(0),
     createdAt: timestamp('created_at').defaultNow().notNull(),

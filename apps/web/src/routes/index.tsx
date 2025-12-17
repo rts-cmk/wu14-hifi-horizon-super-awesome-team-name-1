@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ProductCard } from "@/components/product-card";
+import type { Product } from "@/types/product";
 
 export const Route = createFileRoute("/")({
 	component: App,
@@ -41,7 +42,7 @@ function App() {
 				</div>
 
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-8">
-					{products.map((product: any) => (
+					{products.map((product: Product) => (
 						<ProductCard key={product.id} product={product} />
 					))}
 				</div>

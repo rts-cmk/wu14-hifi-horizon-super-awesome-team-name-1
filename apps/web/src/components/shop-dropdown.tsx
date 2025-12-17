@@ -30,8 +30,14 @@ export function ShopDropdown({ className }: ShopDropdownProps) {
 					<Link
 						key={category}
 						to="/shop"
-						search={{ category }}
-						className="block px-4 py-2 text-[#A39161] hover:bg-gray-100 transition-colors"
+						search={{
+							search: undefined,
+							brand: undefined,
+							color: undefined,
+							price: undefined,
+							category,
+						}}
+						className="block px-4 py-2 hover:bg-gray-100 transition-colors"
 					>
 						{category}
 					</Link>

@@ -1,7 +1,7 @@
 interface FilterRadioProps {
 	name: string;
 	value: string;
-	label: string;
+	label: React.ReactNode;
 	checked: boolean;
 	onChange: () => void;
 }

@@ -26,8 +26,14 @@ export default function Header() {
 						<div className="relative group">
 							<Link
 								to="/shop"
-								search={{ category: undefined }}
-								className="hover:text-gray-300 transition-colors font-medium"
+								search={{
+									search: undefined,
+									brand: undefined,
+									color: undefined,
+									price: undefined,
+									category: undefined,
+								}}
+								className="text-white hover:text-gray-300 text-base md:text-lg font-medium"
 							>
 								SHOP
 							</Link>

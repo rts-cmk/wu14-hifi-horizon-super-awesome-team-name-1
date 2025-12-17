@@ -42,8 +42,14 @@ function CompareComponent() {
 					</p>
 					<Link
 						to="/shop"
-						search={{ category: undefined }}
-						className="inline-block bg-orange-500 text-white px-6 py-3 rounded-sm hover:bg-orange-600 transition-colors"
+						search={{
+							search: undefined,
+							brand: undefined,
+							color: undefined,
+							price: undefined,
+							category: undefined,
+						}}
+						className="bg-orange-500 text-white px-6 py-3 rounded-sm hover:bg-orange-600 transition-colors"
 					>
 						Browse Products
 					</Link>

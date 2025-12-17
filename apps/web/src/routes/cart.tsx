@@ -21,8 +21,14 @@ function CartComponent() {
 						<p className="text-gray-500 mb-4">Your cart is empty</p>
 						<Link
 							to="/shop"
-							search={{ category: undefined }}
-							className="inline-block bg-orange-500 text-white px-6 py-3 rounded-sm hover:bg-orange-600 transition-colors"
+							search={{
+								search: undefined,
+								brand: undefined,
+								color: undefined,
+								price: undefined,
+								category: undefined,
+							}}
+							className="text-orange-500 hover:text-orange-600 font-medium"
 						>
 							Browse Products
 						</Link>

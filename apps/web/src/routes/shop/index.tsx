@@ -1,15 +1,20 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { SlidersHorizontal } from "lucide-react";
-import { useState } from "react";
 import { ProductStockIndicator } from "@/components/product-stock-indicator";
 import { ShopFilters, type ShopFiltersState } from "@/components/shop-filters";
+import { useProductSearch } from "@/hooks/use-product-search";
 import { cn, formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/stores/cart";
 import { useComparisonStore } from "@/stores/comparison";
+import type { Product } from "@/types/product";
 
 export const Route = createFileRoute("/shop/")({
 	component: ShopComponent,
 	validateSearch: (search: Record<string, unknown>) => ({
+		search: typeof search.search === "string" ? search.search : undefined,
+		brand: typeof search.brand === "string" ? search.brand : undefined,
+		color: typeof search.color === "string" ? search.color : undefined,
+		price: typeof search.price === "string" ? search.price : undefined,
 		category: typeof search.category === "string" ? search.category : undefined,
 	}),
 	loader: async () => {
@@ -23,14 +28,35 @@ export const Route = createFileRoute("/shop/")({
 
 function ShopComponent() {
 	const data = Route.useLoaderData();
+	const searchParams = Route.useSearch();
+	const navigate = useNavigate({ from: Route.fullPath });
+
+	const { filteredProducts, availableFilters } = useProductSearch(
+		data,
+		searchParams.search || "",
+		{
+			brand: searchParams.brand || null,
+			color: searchParams.color || null,
+			price: searchParams.price || null,
+			category: searchParams.category || null,
+		},
+	);
+
 	const { addProduct, isInComparison } = useComparisonStore();
 	const { addItem } = useCartStore();
 
-	const [filters, setFilters] = useState<ShopFiltersState>({
-		brand: null,
-		color: null,
-		price: null,
-	});
+	const handleFiltersChange = (newFilters: ShopFiltersState) => {
+		navigate({
+			search: (prev) => ({
+				...prev,
+				category: newFilters.category || undefined,
+				brand: newFilters.brand || undefined,
+				color: newFilters.color || undefined,
+				price: newFilters.price || undefined,
+			}),
+			replace: true,
+		});
+	};
 
 	return (
 		<main className="min-h-screen w-full px-6 py-10">
@@ -44,25 +70,43 @@ function ShopComponent() {
 
 			<div className="flex gap-8">
 				<aside className="w-72 hidden lg:block">
-					<ShopFilters filters={filters} onFiltersChange={setFilters} />
+					<ShopFilters
+						filters={{
+							category: searchParams.category || null,
+							brand: searchParams.brand || null,
+							color: searchParams.color || null,
+							price: searchParams.price || null,
+						}}
+						onFiltersChange={handleFiltersChange}
+						options={availableFilters}
+					/>
 				</aside>
 
 				<section className="flex-1">
 					<div className="block lg:hidden mb-6">
-						<ShopFilters filters={filters} onFiltersChange={setFilters} />
+						<ShopFilters
+							filters={{
+								category: searchParams.category || null,
+								brand: searchParams.brand || null,
+								color: searchParams.color || null,
+								price: searchParams.price || null,
+							}}
+							onFiltersChange={handleFiltersChange}
+							options={availableFilters}
+						/>
 					</div>
 
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-						{data.map((product: any) => {
-							const thumbnail = product.images?.[0]?.url ?? product.image;
+						{filteredProducts.map((product: Product) => {
+							const thumbnail = product.images[0].url;
 							const inComparison = isInComparison(product.id);
 
 							const handleAddToCompare = () => {
 								addProduct({
 									id: product.id,
-									title: product.title || product.name,
+									title: product.title,
 									price: product.price,
-									images: product.images || [],
+									images: product.images,
 									specifications: product.specifications || [],
 								});
 							};
@@ -72,11 +116,11 @@ function ShopComponent() {
 								e.stopPropagation();
 								addItem({
 									id: product.id,
-									title: product.title || product.name,
-									brand: product.brand || "",
+									title: product.title,
+									brand: product.brand,
 									price: product.price,
 									stock: product.stock,
-									images: product.images || [],
+									images: product.images,
 									quantity: 1,
 								});
 							};
@@ -85,7 +129,7 @@ function ShopComponent() {
 								<Link
 									key={product.id}
 									to="/shop/$productId"
-									params={{ productId: product.id }}
+									params={{ productId: product.id.toString() }}
 									className="bg-white rounded-xs p-6 flex flex-col h-full shadow-[0px_4px_10px_0px_rgba(0,0,0,0.1)] cursor-pointer group"
 								>
 									<div className="flex justify-end mb-4">
@@ -112,7 +156,7 @@ function ShopComponent() {
 									<figure className="aspect-square bg-gray-200 mb-4 shrink-0">
 										<img
 											src={thumbnail}
-											alt={product.name}
+											alt={product.title}
 											className="object-cover w-full h-full"
 										/>
 									</figure>

@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { formatPrice } from "@/lib/utils";
+import type { Product } from "@/types/product";
 
 interface ProductCardProps {
-	product: any;
+	product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
@@ -10,7 +11,7 @@ export function ProductCard({ product }: ProductCardProps) {
 		<article className="w-full h-full flex flex-col gap-4 bg-white p-4 border border-gray-200">
 			<figure className="w-full flex-1 flex items-center justify-center overflow-hidden h-[300px]">
 				<img
-					src={product.images?.[0]?.url ?? product.image}
+					src={product.images[0].url}
 					alt={product.title}
 					className="w-full h-full object-contain"
 				/>

@@ -27,7 +27,13 @@ export default function Footer() {
 							<li>
 								<Link
 									to="/shop"
-									search={{ category: undefined }}
+									search={{
+										search: undefined,
+										brand: undefined,
+										color: undefined,
+										price: undefined,
+										category: undefined,
+									}}
 									className="text-white hover:text-gray-300 text-base md:text-lg"
 								>
 									Shop
