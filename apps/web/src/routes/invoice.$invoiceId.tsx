@@ -49,18 +49,10 @@ function RouteComponent() {
 				<div className="space-y-4">
 					<div className="space-y-0.5">
 						<Text className="font-bold text-base">{order.user.fullName}</Text>
-						<Text className="text-sm text-gray-600">
-							{order.user.address}
-						</Text>
-						<Text className="text-sm text-gray-600">
-							{order.user.country}
-						</Text>
-						<Text className="text-sm text-gray-600">
-							P: {order.user.phone}
-						</Text>
-						<Text className="text-sm text-gray-600">
-							M: {order.user.email}
-						</Text>
+						<Text className="text-sm text-gray-600">{order.user.address}</Text>
+						<Text className="text-sm text-gray-600">{order.user.country}</Text>
+						<Text className="text-sm text-gray-600">P: {order.user.phone}</Text>
+						<Text className="text-sm text-gray-600">M: {order.user.email}</Text>
 					</div>
 				</div>
 
