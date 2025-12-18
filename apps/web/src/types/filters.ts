@@ -5,8 +5,8 @@ export interface FilterOptions {
 }
 
 export interface ActiveFilters {
-	brand: string | null;
-	color: string | null;
+	brand: string[] | null;
+	color: string[] | null;
 	price: string | null;
-	category: string | null;
+	category: string[] | null;
 }

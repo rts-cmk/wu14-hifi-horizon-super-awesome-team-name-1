@@ -10,13 +10,22 @@ import type { Product } from "@/types/product";
 
 export const Route = createFileRoute("/shop/")({
 	component: ShopComponent,
-	validateSearch: (search: Record<string, unknown>) => ({
-		search: typeof search.search === "string" ? search.search : undefined,
-		brand: typeof search.brand === "string" ? search.brand : undefined,
-		color: typeof search.color === "string" ? search.color : undefined,
-		price: typeof search.price === "string" ? search.price : undefined,
-		category: typeof search.category === "string" ? search.category : undefined,
-	}),
+	validateSearch: (search: Record<string, unknown>) => {
+		const normalizeToArr = (val: unknown): string[] | undefined => {
+			if (Array.isArray(val))
+				return val.filter((v): v is string => typeof v === "string");
+			if (typeof val === "string") return [val];
+			return undefined;
+		};
+
+		return {
+			search: typeof search.search === "string" ? search.search : undefined,
+			brand: normalizeToArr(search.brand),
+			color: normalizeToArr(search.color),
+			price: typeof search.price === "string" ? search.price : undefined,
+			category: normalizeToArr(search.category),
+		};
+	},
 	loader: async () => {
 		const response = await fetch("/api/products", {
 			method: "GET",
@@ -49,9 +58,18 @@ function ShopComponent() {
 		navigate({
 			search: (prev) => ({
 				...prev,
-				category: newFilters.category || undefined,
-				brand: newFilters.brand || undefined,
-				color: newFilters.color || undefined,
+				category:
+					newFilters.category && newFilters.category.length > 0
+						? newFilters.category
+						: undefined,
+				brand:
+					newFilters.brand && newFilters.brand.length > 0
+						? newFilters.brand
+						: undefined,
+				color:
+					newFilters.color && newFilters.color.length > 0
+						? newFilters.color
+						: undefined,
 				price: newFilters.price || undefined,
 			}),
 			replace: true,
@@ -157,6 +175,7 @@ function ShopComponent() {
 										<img
 											src={thumbnail}
 											alt={product.title}
+											loading="lazy"
 											className="object-cover w-full h-full"
 										/>
 									</figure>

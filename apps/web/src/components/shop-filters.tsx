@@ -1,13 +1,14 @@
 import { useId, useState } from "react";
 import type { FilterOptions } from "@/types/filters";
+import { FilterCheckbox } from "./filter-checkbox";
 import { FilterRadio } from "./filter-radio";
 import { FilterSection } from "./filter-section";
 
 export interface ShopFiltersState {
-	brand: string | null;
-	color: string | null;
+	brand: string[] | null;
+	color: string[] | null;
 	price: string | null;
-	category: string | null;
+	category: string[] | null;
 }
 
 interface ShopFiltersProps {
@@ -44,7 +45,19 @@ export function ShopFilters({
 		}));
 	};
 
-	const updateFilter = (key: keyof ShopFiltersState, value: string) => {
+	const toggleMultiFilter = (key: keyof ShopFiltersState, value: string) => {
+		const currentValues = (filters[key] as string[]) || [];
+		const newValues = currentValues.includes(value)
+			? currentValues.filter((v) => v !== value)
+			: [...currentValues, value];
+
+		onFiltersChange({
+			...filters,
+			[key]: newValues.length > 0 ? newValues : null,
+		});
+	};
+
+	const setSingleFilter = (key: keyof ShopFiltersState, value: string) => {
 		onFiltersChange({
 			...filters,
 			[key]: value,
@@ -62,13 +75,12 @@ export function ShopFilters({
 					onToggle={() => toggleSection("category")}
 				>
 					{options.categories.map((category) => (
-						<FilterRadio
+						<FilterCheckbox
 							key={category}
-							name={`${instanceId}-category-filter`}
-							value={category}
+							id={`${instanceId}-category-${category}`}
 							label={category}
-							checked={filters.category === category}
-							onChange={() => updateFilter("category", category)}
+							checked={filters.category?.includes(category) || false}
+							onChange={() => toggleMultiFilter("category", category)}
 						/>
 					))}
 				</FilterSection>
@@ -79,13 +91,12 @@ export function ShopFilters({
 					onToggle={() => toggleSection("brand")}
 				>
 					{options.brands.map((brand) => (
-						<FilterRadio
+						<FilterCheckbox
 							key={brand}
-							name={`${instanceId}-brand-filter`}
-							value={brand}
+							id={`${instanceId}-brand-${brand}`}
 							label={brand}
-							checked={filters.brand === brand}
-							onChange={() => updateFilter("brand", brand)}
+							checked={filters.brand?.includes(brand) || false}
+							onChange={() => toggleMultiFilter("brand", brand)}
 						/>
 					))}
 				</FilterSection>
@@ -98,10 +109,9 @@ export function ShopFilters({
 					{options.colors.map((color) => {
 						const isHex = /^#[0-9A-Fa-f]{6}$/.test(color);
 						return (
-							<FilterRadio
+							<FilterCheckbox
 								key={color}
-								name={`${instanceId}-color-filter`}
-								value={color}
+								id={`${instanceId}-color-${color}`}
 								label={
 									isHex ? (
 										<div className="flex items-center gap-2">
@@ -115,8 +125,8 @@ export function ShopFilters({
 										color
 									)
 								}
-								checked={filters.color === color}
-								onChange={() => updateFilter("color", color)}
+								checked={filters.color?.includes(color) || false}
+								onChange={() => toggleMultiFilter("color", color)}
 							/>
 						);
 					})}
@@ -134,7 +144,7 @@ export function ShopFilters({
 							value={price}
 							label={price}
 							checked={filters.price === price}
-							onChange={() => updateFilter("price", price)}
+							onChange={() => setSingleFilter("price", price)}
 						/>
 					))}
 				</FilterSection>

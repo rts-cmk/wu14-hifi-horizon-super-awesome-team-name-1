@@ -46,17 +46,20 @@ export function useProductSearch(
 		if (searchQuery.trim()) {
 			result = fuse.search(searchQuery).map((r) => r.item);
 		}
-		if (filters.category) {
-			result = result.filter((p) => p.category === filters.category);
+		if (filters.category && filters.category.length > 0) {
+			result = result.filter(
+				(p) => p.category && filters.category?.includes(p.category),
+			);
 		}
 
-		if (filters.brand) {
-			result = result.filter((p) => p.brand === filters.brand);
+		if (filters.brand && filters.brand.length > 0) {
+			result = result.filter((p) => filters.brand?.includes(p.brand));
 		}
 
-		if (filters.color) {
-			const colorFilter = filters.color;
-			result = result.filter((p) => p.colors?.includes(colorFilter));
+		if (filters.color && filters.color.length > 0) {
+			result = result.filter((p) =>
+				p.colors?.some((c) => filters.color?.includes(c)),
+			);
 		}
 
 		if (filters.price) {
