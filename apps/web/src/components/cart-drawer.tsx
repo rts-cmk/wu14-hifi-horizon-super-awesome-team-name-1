@@ -23,8 +23,8 @@ export function CartDrawer({ open, onClose, className }: CartDrawerProps) {
 			className={cn(className)}
 		>
 			<div className="flex flex-col h-full bg-white">
-				<div className="flex items-center justify-between p-6">
-					<h2 className="text-[#495464] text-2xl font-semibold">
+				<div className="flex items-center justify-between p-4 md:p-6">
+					<h2 className="text-[#495464] text-xl md:text-2xl font-semibold">
 						Cart{" "}
 						<span className="text-black text-lg">( {itemCount} items)</span>
 					</h2>
@@ -58,7 +58,7 @@ export function CartDrawer({ open, onClose, className }: CartDrawerProps) {
 					)}
 				</div>
 
-				<div className="p-6 space-y-4">
+				<div className="p-4 md:p-6 space-y-4">
 					<div className="flex justify-between items-center">
 						<span className="font-medium text-black">Sub total:</span>
 						<span className="text-orange-500 font-bold text-xl">

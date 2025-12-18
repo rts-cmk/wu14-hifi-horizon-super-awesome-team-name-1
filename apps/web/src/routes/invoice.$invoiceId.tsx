@@ -44,19 +44,27 @@ function RouteComponent() {
 	const subtotal = order.total - vat - 4;
 
 	return (
-		<main className="bg-white py-10 px-12 md:py-16 md:px-20 max-w-5xl mx-auto font-sans text-gray-900 leading-normal shadow-sm my-10 border border-gray-100">
-			<div className="flex justify-between items-start mb-6">
+		<main className="bg-white py-6 px-4 md:py-16 md:px-20 max-w-5xl mx-auto font-sans text-gray-900 leading-normal shadow-sm my-10 border border-gray-100">
+			<div className="flex flex-col md:flex-row justify-between items-start mb-6 gap-8 md:gap-0">
 				<div className="space-y-4">
 					<div className="space-y-0.5">
 						<Text className="font-bold text-base">{order.user.fullName}</Text>
-						<Text className="text-sm text-gray-600">{order.user.address}</Text>
-						<Text className="text-sm text-gray-600">{order.user.country}</Text>
-						<Text className="text-sm text-gray-600">P: {order.user.phone}</Text>
-						<Text className="text-sm text-gray-600">M: {order.user.email}</Text>
+						<Text className="text-sm text-gray-600">
+							{order.user.address}
+						</Text>
+						<Text className="text-sm text-gray-600">
+							{order.user.country}
+						</Text>
+						<Text className="text-sm text-gray-600">
+							P: {order.user.phone}
+						</Text>
+						<Text className="text-sm text-gray-600">
+							M: {order.user.email}
+						</Text>
 					</div>
 				</div>
 
-				<div className="text-right">
+				<div className="text-left md:text-right">
 					<div className="bg-black text-white p-3 mb-6 inline-block">
 						<div className="font-bold text-[10px] tracking-tighter leading-none">
 							HI
@@ -70,11 +78,11 @@ function RouteComponent() {
 						<Text className="font-bold text-sm">Central Region, FK1 1PU</Text>
 					</div>
 					<div className="mt-4 text-sm text-gray-600 space-y-2">
-						<div className="flex justify-end items-center gap-2">
+						<div className="flex justify-start md:justify-end items-center gap-2">
 							<span className="font-medium">0131 556 7901</span>
 							<Phone className="size-4 text-gray-500" />
 						</div>
-						<div className="flex justify-end items-center gap-2">
+						<div className="flex justify-start md:justify-end items-center gap-2">
 							<span className="font-medium">sales@hifi-horizon.com</span>
 							<Mail className="size-4 text-gray-500" />
 						</div>
@@ -95,8 +103,8 @@ function RouteComponent() {
 				</div>
 			</div>
 
-			<div className="flex justify-end mb-12">
-				<div className="w-[380px] border-b border-gray-200 pb-6">
+			<div className="flex flex-col md:flex-row justify-end mb-12">
+				<div className="w-full md:w-[380px] border-b border-gray-200 pb-6">
 					<Heading
 						variant="h1"
 						className="text-4xl text-[#7A8BB1] font-medium mb-2"
@@ -106,7 +114,7 @@ function RouteComponent() {
 					<div className="grid grid-cols-[140px_1fr] gap-y-3">
 						<Text className="text-sm text-gray-500">Order number</Text>
 						<div>
-							<span className="bg-[#80BDFF]/40 text-[#0062CC] px-2 py-0.5 text-sm font-medium">
+							<span className="text-gray-900 text-sm font-medium">
 								{order.id}
 							</span>
 						</div>
@@ -127,65 +135,67 @@ function RouteComponent() {
 				</div>
 			</div>
 
-			<table className="w-full mb-16 border-collapse">
-				<thead>
-					<tr className="border-b border-gray-300">
-						<th className="text-left py-4 px-2 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900">
-							Item Description
-						</th>
-						<th className="text-right py-4 px-2 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900">
-							Price
-						</th>
-						<th className="text-center py-4 px-2 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900">
-							Quantity
-						</th>
-						<th className="text-right py-4 px-2 pr-4 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900">
-							Total
-						</th>
-					</tr>
-				</thead>
-				<tbody className="text-sm">
-					{order.items.map((item, idx) => (
-						<tr
-							key={`${item.description}-${idx}`}
-							className={idx % 2 === 1 ? "bg-[#EDEDED]/60" : ""}
-						>
-							<td className="py-5 px-2 text-gray-800 font-medium">
-								{item.description}
-							</td>
-							<td className="py-5 px-2 text-right text-gray-800">
-								{formatPrice(item.price)}
-							</td>
-							<td className="py-5 px-2 text-center text-gray-800">
-								{item.quantity}
-							</td>
-							<td className="py-5 px-2 text-right font-medium text-gray-800 pr-4">
-								{formatPrice(item.total)}
-							</td>
+			<div className="overflow-x-auto mb-16">
+				<table className="w-full border-collapse min-w-[500px]">
+					<thead>
+						<tr className="border-b border-gray-300">
+							<th className="text-left py-4 px-2 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900">
+								Item Description
+							</th>
+							<th className="text-right py-4 px-2 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900">
+								Price
+							</th>
+							<th className="text-center py-4 px-2 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900">
+								Quantity
+							</th>
+							<th className="text-right py-4 px-2 pr-4 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-900">
+								Total
+							</th>
 						</tr>
-					))}
-				</tbody>
-			</table>
+					</thead>
+					<tbody className="text-sm">
+						{order.items.map((item, idx) => (
+							<tr
+								key={`${item.description}-${idx}`}
+								className={idx % 2 === 1 ? "bg-[#EDEDED]/60" : ""}
+							>
+								<td className="py-5 px-2 text-gray-800 font-medium">
+									{item.description}
+								</td>
+								<td className="py-5 px-2 text-right text-gray-800">
+									{formatPrice(item.price)}
+								</td>
+								<td className="py-5 px-2 text-center text-gray-800">
+									{item.quantity}
+								</td>
+								<td className="py-5 px-2 text-right font-medium text-gray-800 pr-4">
+									{formatPrice(item.total)}
+								</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
 
-			<div className="flex flex-col items-end gap-3 mb-20 pr-4">
-				<div className="flex justify-between w-[280px]">
-					<Text className="text-[11px] font-bold uppercase tracking-[0.1em] text-gray-600">
+			<div className="flex flex-col items-end gap-3 mb-20 pr-0 md:pr-4">
+				<div className="flex justify-between w-full md:w-[280px]">
+					<Text className="text-[11px] font-bold uppercase tracking-widest text-gray-600">
 						Subtotal:
 					</Text>
 					<Text className="text-sm text-gray-900 font-medium">
 						{formatPrice(subtotal)}
 					</Text>
 				</div>
-				<div className="flex justify-between w-[280px]">
-					<Text className="text-[11px] font-bold uppercase tracking-[0.1em] text-gray-600">
+				<div className="flex justify-between w-full md:w-[280px]">
+					<Text className="text-[11px] font-bold uppercase tracking-widest text-gray-600">
 						Vat:
 					</Text>
 					<Text className="text-sm text-gray-900 font-medium">
 						{formatPrice(vat)}
 					</Text>
 				</div>
-				<div className="flex justify-between w-[280px]">
-					<Text className="text-[11px] font-bold uppercase tracking-[0.1em] text-gray-600">
+				<div className="flex justify-between w-full md:w-[280px]">
+					<Text className="text-[11px] font-bold uppercase tracking-widest text-gray-600">
 						Delivery:
 					</Text>
 					<Text className="text-sm text-gray-900 font-medium">
@@ -193,7 +203,7 @@ function RouteComponent() {
 					</Text>
 				</div>
 
-				<div className="w-[380px] bg-[#424D5E] text-white p-5 mt-10 flex justify-between items-center shadow-lg rounded-none">
+				<div className="w-full md:w-[380px] bg-[#424D5E] text-white p-5 mt-10 flex justify-between items-center shadow-lg rounded-none">
 					<Text className="font-bold uppercase tracking-[0.3em] text-[11px] text-white/90">
 						Total
 					</Text>
@@ -203,8 +213,8 @@ function RouteComponent() {
 				</div>
 			</div>
 
-			<div className="pt-10 border-t border-gray-100 flex justify-center">
-				<Text className="text-[11px] text-gray-500 whitespace-nowrap">
+			<div className="pt-10 border-t border-gray-100 flex justify-center text-center">
+				<Text className="text-[11px] text-gray-500">
 					<span className="font-bold text-gray-800">Address:</span> 44 Cow Wynd,
 					Falkirk, Central Region, FK1 1PU |
 					<span className="font-bold text-gray-800 ml-2">Phone:</span> 0131 556

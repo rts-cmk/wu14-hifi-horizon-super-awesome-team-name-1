@@ -33,7 +33,7 @@ const checkoutSchema = z.object({
 	zipCode: z.string().min(2, "Zip code is required"),
 	city: z.string().min(1, "City is required"),
 	address: z.string().min(5, "Address must be at least 5 characters"),
-	email: z.string().email("Please enter a valid email address"),
+	email: z.email("Please enter a valid email address"),
 	phone: z.string().min(5, "Phone number is required"),
 	newsletter: z.boolean().optional(),
 	terms: z.boolean().refine((val) => val === true, {
@@ -97,14 +97,16 @@ function PaymentComponent() {
 		},
 	});
 
-	// Sync with store on change if needed, or just on submit.
-	// We'll watch and sync to maintain persistence as before.
 	const formValues = watch();
-	React.useEffect(() => {
-		setStoreData(formValues);
-	}, [formValues, setStoreData]);
 
-	const onCheckout = async (data: CheckoutFormValues) => {
+	React.useEffect(() => {
+		const subscription = watch((value) => {
+			setStoreData(value as Partial<CheckoutFormValues>);
+		});
+		return () => subscription.unsubscribe();
+	}, [watch, setStoreData]);
+
+	const onCheckout = async () => {
 		try {
 			const orderItems = items.map((item) => ({
 				productId: item.id,
@@ -164,17 +166,17 @@ function PaymentComponent() {
 										{...register("fullName")}
 									/>
 
-									<div className="grid grid-cols-3 gap-4">
-										<div className="col-span-1">
+									<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+										<div className="sm:col-span-1">
 											<Input
 												id="zipCode"
-												label="Zip-code"
+												label="Zip Code"
 												requiredIndicator
 												error={errors.zipCode?.message}
 												{...register("zipCode")}
 											/>
 										</div>
-										<div className="col-span-2">
+										<div className="sm:col-span-2">
 											<Input
 												id="city"
 												label="City"

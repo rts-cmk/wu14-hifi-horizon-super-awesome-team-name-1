@@ -10,11 +10,11 @@ function RouteComponent() {
 	return (
 		<main className="min-h-screen w-full px-4 md:px-8 pb-32">
 			<div className="max-w-6xl mx-auto">
-				<PageHeader>Terms of Service</PageHeader>
+				<PageHeader>Terms and Conditions</PageHeader>
 
 				<article className="bg-white p-8 space-y-8 rounded-xs shadow-sm border border-gray-100">
 					<Text className="text-sm italic text-gray-400">
-						Last Updated: October 2023
+						Last Updated: December 2025
 					</Text>
 
 					<section className="space-y-3">

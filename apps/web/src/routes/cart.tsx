@@ -66,14 +66,14 @@ function CartComponent() {
 					))}
 				</div>
 
-				<div className="mt-8 flex flex-col items-end gap-6">
-					<div className="text-xl text-[#495464]">
-						Sub total{" "}
+				<div className="mt-8 flex flex-col items-stretch sm:items-end gap-6">
+					<div className="text-xl text-[#495464] flex justify-between sm:justify-end gap-2">
+						<span>Sub total</span>
 						<span className="text-orange-500 font-bold ml-2">
 							{formatPrice(total())}
 						</span>
 					</div>
-					<Button asChild size="lg" className="px-8 shadow-sm">
+					<Button asChild size="lg" className="px-8 shadow-sm w-full sm:w-auto">
 						<Link to="/payment">Go to payment</Link>
 					</Button>
 				</div>

@@ -10,9 +10,11 @@ const registerSchema = z
 		fullName: z.string().min(2, "Full name must be at least 2 characters"),
 		address: z.string().min(5, "Address must be at least 5 characters"),
 		address2: z.string().optional(),
-		country: z.string().min(1, "Country is required"),
-		phoneNo: z.string().min(5, "Phone number is required"),
-		email: z.string().email("Please enter a valid email address"),
+		zipCode: z.string().min(2, "Zip code is required"),
+		city: z.string().min(2, "City is required"),
+		country: z.string().optional(),
+		phoneNo: z.string().optional(),
+		email: z.email("Please enter a valid email address"),
 		password: z.string().min(8, "Password must be at least 8 characters"),
 		repeatPassword: z.string(),
 		storageConsent: z.boolean().refine((val) => val === true, {
@@ -43,6 +45,8 @@ function RouteComponent() {
 		resolver: zodResolver(registerSchema),
 		defaultValues: {
 			address2: "",
+			country: "",
+			phoneNo: "",
 			storageConsent: false,
 			newsletterConsent: false,
 		},
@@ -108,17 +112,30 @@ function RouteComponent() {
 						{...register("address2")}
 					/>
 
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<Input
+							label="Zip Code"
+							requiredIndicator
+							error={errors.zipCode?.message}
+							{...register("zipCode")}
+						/>
+						<Input
+							label="City"
+							requiredIndicator
+							error={errors.city?.message}
+							{...register("city")}
+						/>
+					</div>
+
 					<div className="flex gap-4 justify-between max-w-3xl">
 						<Input
 							label="Country"
-							requiredIndicator
 							error={errors.country?.message}
 							{...register("country")}
 						/>
 
 						<Input
 							label="Phone no."
-							requiredIndicator
 							error={errors.phoneNo?.message}
 							{...register("phoneNo")}
 						/>
