@@ -173,3 +173,59 @@ export const productUpdateWithRelationsSchema = productUpdateSchema.extend({
     images: z.array(z.object({ url: z.url(), alt: z.string().optional() })).optional(),
     specifications: z.array(specificationSchema).optional()
 })
+
+export const orders = pgTable('orders', {
+    id: serial('id').primaryKey(),
+    orderNumber: text('order_number').notNull().unique(),
+    userId: integer('user_id')
+        .notNull()
+        .references(() => users.id, { onDelete: 'cascade' }),
+    total: integer('total').notNull(),
+    status: text('status').notNull().default('processing'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull()
+})
+
+export const orderItems = pgTable('order_items', {
+    id: serial('id').primaryKey(),
+    orderId: integer('order_id')
+        .notNull()
+        .references(() => orders.id, { onDelete: 'cascade' }),
+    productId: integer('product_id')
+        .notNull()
+        .references(() => products.id, { onDelete: 'cascade' }),
+    quantity: integer('quantity').notNull(),
+    price: integer('price').notNull()
+})
+
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+    user: one(users, {
+        fields: [orders.userId],
+        references: [users.id]
+    }),
+    items: many(orderItems)
+}))
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+    order: one(orders, {
+        fields: [orderItems.orderId],
+        references: [orders.id]
+    }),
+    product: one(products, {
+        fields: [orderItems.productId],
+        references: [products.id]
+    })
+}))
+
+export const orderSchema = createSelectSchema(orders)
+export const orderInsertSchema = createInsertSchema(orders).omit({
+    id: true,
+    orderNumber: true,
+    createdAt: true,
+    updatedAt: true
+})
+
+export const orderItemSchema = createSelectSchema(orderItems)
+export const orderItemInsertSchema = createInsertSchema(orderItems).omit({
+    id: true
+})

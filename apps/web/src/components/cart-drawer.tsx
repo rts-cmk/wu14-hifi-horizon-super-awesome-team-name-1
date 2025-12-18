@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Minus, Plus, X } from "lucide-react";
+import { X } from "lucide-react";
 import { cn, formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/stores/cart";
+import { CartItem } from "./cart-item";
 import { Drawer } from "./ui/drawer";
 
 interface CartDrawerProps {
@@ -43,81 +44,15 @@ export function CartDrawer({ open, onClose, className }: CartDrawerProps) {
 					) : (
 						<div>
 							{items.map((item) => (
-								<div
+								<CartItem
 									key={item.id}
-									className="p-4 flex gap-3 [border-block-end:1px_solid_#D2D2D2]"
-								>
-									<button
-										type="button"
-										onClick={() => removeItem(item.id, item.color)}
-										className="text-black transition-colors self-start"
-										aria-label={`Remove ${item.title}`}
-									>
-										<X className="size-4" />
-									</button>
-
-									<div className="w-24 h-16 shrink-0 overflow-hidden bg-gray-100 flex items-center justify-center">
-										<img
-											src={item.images[0].url}
-											alt={item.title}
-											className="size-full object-contain"
-										/>
-									</div>
-
-									<div className="flex-1 min-w-0">
-										<h3 className="font-semibold text-sm leading-tight text-black">
-											{item.title}
-										</h3>
-										{item.stock > 0 && (
-											<p className="text-sm text-gray-600 flex items-center gap-1 mt-1">
-												In stock
-												<span className="inline-block size-2 bg-green-500 rounded-full" />
-											</p>
-										)}
-
-										<div className="flex items-center justify-between mt-3">
-											<div className="flex items-center gap-2">
-												<button
-													type="button"
-													onClick={() =>
-														updateQuantity(
-															item.id,
-															item.quantity - 1,
-															item.color,
-														)
-													}
-													disabled={item.quantity <= 1}
-													className="size-8 flex items-center justify-center text-gray-600 hover:text-black transition-colors disabled:opacity-50"
-													aria-label="Decrease quantity"
-												>
-													<Minus className="size-4" />
-												</button>
-												<span className="size-8 flex items-center justify-center border border-gray-300 text-sm font-medium text-black">
-													{item.quantity}
-												</span>
-												<button
-													type="button"
-													onClick={() =>
-														updateQuantity(
-															item.id,
-															item.quantity + 1,
-															item.color,
-														)
-													}
-													disabled={item.quantity >= item.stock}
-													className="size-8 flex items-center justify-center text-gray-600 hover:text-black transition-colors disabled:opacity-50"
-													aria-label="Increase quantity"
-												>
-													<Plus className="size-4" />
-												</button>
-											</div>
-
-											<span className="font-medium text-sm text-black">
-												{formatPrice(item.price * item.quantity)}
-											</span>
-										</div>
-									</div>
-								</div>
+									item={item}
+									variant="drawer"
+									onRemove={() => removeItem(item.id, item.color)}
+									onUpdateQuantity={(q) =>
+										updateQuantity(item.id, q, item.color)
+									}
+								/>
 							))}
 						</div>
 					)}

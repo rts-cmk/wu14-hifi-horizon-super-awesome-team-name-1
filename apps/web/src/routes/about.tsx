@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PageHeader } from "@/components/ui/page-header";
+import { Heading, Text } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/about")({
@@ -12,7 +14,6 @@ interface HistorySectionData {
 	image: {
 		alt: string;
 	};
-	imagePosition: "left" | "right";
 }
 
 const historyData: HistorySectionData[] = [
@@ -27,7 +28,6 @@ const historyData: HistorySectionData[] = [
 		image: {
 			alt: "Historical photo of HiFi Horizon founders",
 		},
-		imagePosition: "left",
 	},
 	{
 		title: "Hear The Difference",
@@ -40,7 +40,6 @@ const historyData: HistorySectionData[] = [
 		image: {
 			alt: "Customer listening demonstration",
 		},
-		imagePosition: "right",
 	},
 	{
 		title: "Services",
@@ -55,7 +54,6 @@ const historyData: HistorySectionData[] = [
 		image: {
 			alt: "Technical services and setup",
 		},
-		imagePosition: "left",
 	},
 	{
 		title: "Tailored For You",
@@ -68,19 +66,16 @@ const historyData: HistorySectionData[] = [
 		image: {
 			alt: "Customized audio system",
 		},
-		imagePosition: "right",
 	},
 ];
 
 function RouteComponent() {
 	return (
-		<main className="min-h-screen w-full px-12">
-			<h1 className="text-4xl text-[#495464] font-semibold py-10">
-				OUR HISTORY
-			</h1>
+		<main className="min-h-screen w-full px-4 md:px-8 pb-32">
+			<div className="max-w-7xl mx-auto">
+				<PageHeader>OUR HISTORY</PageHeader>
 
-			<article className="bg-white p-8 space-y-4 text-balance">
-				<div className="flex flex-col gap-8">
+				<article className="space-y-12 bg-white p-8">
 					{historyData.map((section, idx) => {
 						const imageSrc = `/assets/about/${section.title
 							.toLowerCase()
@@ -88,51 +83,58 @@ function RouteComponent() {
 
 						const imageLeftOnDesktop = idx % 2 === 0;
 
-						const imageWrapperClass = cn(
-							"p-4 rounded w-full md:w-1/2",
-							"order-2",
-							imageLeftOnDesktop ? "md:order-1" : "md:order-2",
-						);
-
-						const textWrapperClass = cn(
-							"p-4 rounded text-center space-y-4 w-full md:w-1/2",
-							"order-1",
-							imageLeftOnDesktop ? "md:order-2" : "md:order-1",
-						);
-
 						return (
 							<section key={section.title} className="w-full">
-								<div className="flex flex-col md:flex-row items-center gap-4">
-									<div className={imageWrapperClass}>
+								<div className="flex flex-col md:flex-row items-stretch gap-8">
+									<div
+										className={cn(
+											"w-full md:w-1/2 order-2",
+											imageLeftOnDesktop ? "md:order-1" : "md:order-2",
+										)}
+									>
 										<img
 											src={imageSrc}
 											alt={section.image.alt}
-											className="w-full h-auto rounded"
+											className="w-full h-full object-cover rounded shadow-sm border border-gray-100"
 										/>
 									</div>
 
-									<div className={textWrapperClass}>
-										<h3 className="text-black font-bold text-lg">
-											{section.title}
-										</h3>
-										<h4 className="text-orange-500 text-base">
-											{section.description}
-										</h4>
-										{section.paragraphs.map((paragraph) => (
-											<p
-												key={paragraph.slice(0, 50)}
-												className="text-black text-base leading-relaxed"
-											>
-												{paragraph}
-											</p>
-										))}
+									<div
+										className={cn(
+											"w-full md:w-1/2 flex flex-col justify-center order-1",
+											imageLeftOnDesktop ? "md:order-2" : "md:order-1",
+										)}
+									>
+										<div className="h-full flex flex-col justify-center">
+											<div className="text-center space-y-4">
+												<Heading variant="h2" className="text-black font-bold">
+													{section.title}
+												</Heading>
+												<Text
+													variant="default"
+													className="text-orange-500 font-medium"
+												>
+													{section.description}
+												</Text>
+												<div className="space-y-4">
+													{section.paragraphs.map((paragraph) => (
+														<Text
+															key={paragraph.slice(0, 50)}
+															className="text-gray-700 leading-relaxed"
+														>
+															{paragraph}
+														</Text>
+													))}
+												</div>
+											</div>
+										</div>
 									</div>
 								</div>
 							</section>
 						);
 					})}
-				</div>
-			</article>
+				</article>
+			</div>
 		</main>
 	);
 }

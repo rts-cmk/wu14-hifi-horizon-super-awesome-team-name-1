@@ -24,6 +24,7 @@ import { Route as ShopIndexRouteImport } from './routes/shop/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as ShopProductIdRouteImport } from './routes/shop/$productId'
 import { Route as ProfileOrdersRouteImport } from './routes/profile/orders'
+import { Route as InvoiceInvoiceIdRouteImport } from './routes/invoice.$invoiceId'
 
 const TermsAndConditionsRoute = TermsAndConditionsRouteImport.update({
   id: '/terms-and-conditions',
@@ -100,6 +101,11 @@ const ProfileOrdersRoute = ProfileOrdersRouteImport.update({
   path: '/profile/orders',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InvoiceInvoiceIdRoute = InvoiceInvoiceIdRouteImport.update({
+  id: '/invoice/$invoiceId',
+  path: '/invoice/$invoiceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/register': typeof RegisterRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
+  '/invoice/$invoiceId': typeof InvoiceInvoiceIdRoute
   '/profile/orders': typeof ProfileOrdersRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/profile': typeof ProfileIndexRoute
@@ -130,6 +137,7 @@ export interface FileRoutesByTo {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/register': typeof RegisterRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
+  '/invoice/$invoiceId': typeof InvoiceInvoiceIdRoute
   '/profile/orders': typeof ProfileOrdersRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/profile': typeof ProfileIndexRoute
@@ -148,6 +156,7 @@ export interface FileRoutesById {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/register': typeof RegisterRoute
   '/terms-and-conditions': typeof TermsAndConditionsRoute
+  '/invoice/$invoiceId': typeof InvoiceInvoiceIdRoute
   '/profile/orders': typeof ProfileOrdersRoute
   '/shop/$productId': typeof ShopProductIdRoute
   '/profile/': typeof ProfileIndexRoute
@@ -167,6 +176,7 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/register'
     | '/terms-and-conditions'
+    | '/invoice/$invoiceId'
     | '/profile/orders'
     | '/shop/$productId'
     | '/profile'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/register'
     | '/terms-and-conditions'
+    | '/invoice/$invoiceId'
     | '/profile/orders'
     | '/shop/$productId'
     | '/profile'
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/register'
     | '/terms-and-conditions'
+    | '/invoice/$invoiceId'
     | '/profile/orders'
     | '/shop/$productId'
     | '/profile/'
@@ -219,6 +231,7 @@ export interface RootRouteChildren {
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   RegisterRoute: typeof RegisterRoute
   TermsAndConditionsRoute: typeof TermsAndConditionsRoute
+  InvoiceInvoiceIdRoute: typeof InvoiceInvoiceIdRoute
   ProfileOrdersRoute: typeof ProfileOrdersRoute
   ShopProductIdRoute: typeof ShopProductIdRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
@@ -332,6 +345,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileOrdersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/invoice/$invoiceId': {
+      id: '/invoice/$invoiceId'
+      path: '/invoice/$invoiceId'
+      fullPath: '/invoice/$invoiceId'
+      preLoaderRoute: typeof InvoiceInvoiceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -347,6 +367,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   RegisterRoute: RegisterRoute,
   TermsAndConditionsRoute: TermsAndConditionsRoute,
+  InvoiceInvoiceIdRoute: InvoiceInvoiceIdRoute,
   ProfileOrdersRoute: ProfileOrdersRoute,
   ShopProductIdRoute: ShopProductIdRoute,
   ProfileIndexRoute: ProfileIndexRoute,

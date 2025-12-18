@@ -9,6 +9,7 @@ import { openApiSpec } from '@/openapi'
 import authRoute from '@/routes/auth.route'
 import contactRoute from '@/routes/contact.route'
 import indexRoute from '@/routes/index.route'
+import ordersRoute from '@/routes/orders.route'
 import productsRoute from '@/routes/products.route'
 import env from './env'
 
@@ -21,6 +22,7 @@ app.use('/', indexRoute)
 app.use('/', authRoute)
 app.use('/contact', contactRoute)
 app.use('/', productsRoute)
+app.use('/', ordersRoute)
 
 app.use(
     '/docs',

@@ -1,4 +1,11 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	Link,
+	redirect,
+	useLoaderData,
+	useNavigate,
+} from "@tanstack/react-router";
+import * as React from "react";
 import {
 	FaApplePay,
 	FaCcMastercard,
@@ -8,6 +15,11 @@ import {
 } from "react-icons/fa";
 import { SiFedex } from "react-icons/si";
 import { CheckoutStepper } from "@/components/checkout-stepper";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { SelectionGroup } from "@/components/ui/selection-group";
+import { Heading, Text } from "@/components/ui/typography";
 import { cn, formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/stores/cart";
 import { useCheckoutStore } from "@/stores/checkout";
@@ -20,10 +32,24 @@ export const Route = createFileRoute("/payment")({
 			throw redirect({ to: "/cart" });
 		}
 	},
+	loader: async () => {
+		try {
+			const response = await fetch("/api/me", { credentials: "include" });
+			if (response.ok) {
+				const data = await response.json();
+				return data.user;
+			}
+		} catch (error) {
+			console.error("Failed to fetch user data", error);
+		}
+		return null;
+	},
 });
 
 function PaymentComponent() {
-	const { items, total } = useCartStore();
+	const user = useLoaderData({ from: "/payment" });
+	const navigate = useNavigate();
+	const { items, total, clearCart } = useCartStore();
 	const {
 		formData,
 		deliveryMethod,
@@ -33,6 +59,22 @@ function PaymentComponent() {
 		setPaymentMethod,
 	} = useCheckoutStore();
 
+	const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+	// Pre-fill user data if logged in
+	React.useEffect(() => {
+		if (user && !formData.fullName) {
+			setFormData({
+				fullName: user.fullName || "",
+				email: user.email || "",
+				phone: user.phone || "",
+				address: user.address || "",
+				city: user.city || "",
+				zipCode: user.zipCode || "",
+			});
+		}
+	}, [user, setFormData, formData.fullName]);
+
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value, type, checked } = e.target;
 		setFormData({
@@ -40,344 +82,253 @@ function PaymentComponent() {
 		});
 	};
 
+	const handleCheckout = async () => {
+		if (!formData.terms) {
+			alert("Please accept the terms of trade.");
+			return;
+		}
+
+		setIsSubmitting(true);
+		try {
+			const orderItems = items.map((item) => ({
+				productId: item.id,
+				quantity: item.quantity,
+				price: item.price,
+			}));
+
+			const response = await fetch("/api/orders", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ items: orderItems }),
+				credentials: "include",
+			});
+
+			if (!response.ok) {
+				const error = await response.json();
+				throw new Error(error.error || "Failed to place order");
+			}
+
+			clearCart();
+			navigate({ to: "/profile/orders" });
+		} catch (error: unknown) {
+			console.error("Checkout error:", error);
+			const errorMessage =
+				error instanceof Error
+					? error.message
+					: "An error occurred during checkout. Please try again.";
+			alert(errorMessage);
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
+
 	const subTotal = total();
 	const deliveryCost = 4;
-	const calculatedVat = subTotal * 0.2;
 	const grandTotal = subTotal + deliveryCost;
+	const calculatedVat = subTotal * 0.2;
 
 	return (
 		<main className="min-h-screen w-full bg-[#F5F5F5] pt-10 pb-20">
 			<div className="max-w-7xl mx-auto px-4">
 				<CheckoutStepper currentStep="payment" />
 
-				<h1 className="text-3xl font-bold text-[#495464] mb-8">Your info</h1>
+				<Heading variant="h1" className="text-3xl font-bold mb-8">
+					Your info
+				</Heading>
 
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 					<div className="lg:col-span-2 space-y-8">
-						<div className="bg-white p-8 rounded-sm shadow-sm">
+						<Card padding="lg">
 							<div className="space-y-4">
-								<div>
-									<label
-										htmlFor="fullName"
-										className="block text-sm font-bold text-gray-700 mb-1"
-									>
-										Full name <span className="text-red-500">*</span>
-									</label>
-									<input
-										id="fullName"
-										type="text"
-										name="fullName"
-										value={formData.fullName}
-										onChange={handleChange}
-										className="w-full bg-[#E8E8E8] border-none rounded-sm p-3 focus:ring-2 focus:ring-orange-500"
-									/>
-								</div>
+								<Input
+									id="fullName"
+									label="Full name"
+									requiredIndicator
+									name="fullName"
+									value={formData.fullName}
+									onChange={handleChange}
+								/>
 
 								<div className="grid grid-cols-3 gap-4">
 									<div className="col-span-1">
-										<label
-											htmlFor="zipCode"
-											className="block text-sm font-bold text-gray-700 mb-1"
-										>
-											Zip-code <span className="text-red-500">*</span>
-										</label>
-										<input
+										<Input
 											id="zipCode"
-											type="text"
+											label="Zip-code"
+											requiredIndicator
 											name="zipCode"
 											value={formData.zipCode}
 											onChange={handleChange}
-											className="w-full bg-[#E8E8E8] border-none rounded-sm p-3 focus:ring-2 focus:ring-orange-500"
 										/>
 									</div>
 									<div className="col-span-2">
-										<label
-											htmlFor="city"
-											className="block text-sm font-bold text-gray-700 mb-1"
-										>
-											City <span className="text-red-500">*</span>
-										</label>
-										<input
+										<Input
 											id="city"
-											type="text"
+											label="City"
+											requiredIndicator
 											name="city"
 											value={formData.city}
 											onChange={handleChange}
-											className="w-full bg-[#E8E8E8] border-none rounded-sm p-3 focus:ring-2 focus:ring-orange-500"
 										/>
 									</div>
 								</div>
 
-								<div>
-									<label
-										htmlFor="address"
-										className="block text-sm font-bold text-gray-700 mb-1"
-									>
-										Address <span className="text-red-500">*</span>
-									</label>
-									<input
-										id="address"
-										type="text"
-										name="address"
-										value={formData.address}
-										onChange={handleChange}
-										className="w-full bg-[#E8E8E8] border-none rounded-sm p-3 focus:ring-2 focus:ring-orange-500"
-									/>
-								</div>
+								<Input
+									id="address"
+									label="Address"
+									requiredIndicator
+									name="address"
+									value={formData.address}
+									onChange={handleChange}
+								/>
 
-								<div>
-									<label
-										htmlFor="email"
-										className="block text-sm font-bold text-gray-700 mb-1"
-									>
-										Email <span className="text-red-500">*</span>
-									</label>
-									<input
-										id="email"
-										type="email"
-										name="email"
-										value={formData.email}
-										onChange={handleChange}
-										className="w-full bg-[#E8E8E8] border-none rounded-sm p-3 focus:ring-2 focus:ring-orange-500"
-									/>
-								</div>
+								<Input
+									id="email"
+									label="Email"
+									type="email"
+									requiredIndicator
+									name="email"
+									value={formData.email}
+									onChange={handleChange}
+								/>
 
-								<div>
-									<label
-										htmlFor="phone"
-										className="block text-sm font-bold text-gray-700 mb-1"
-									>
-										Phone no. <span className="text-red-500">*</span>
-									</label>
-									<input
-										id="phone"
-										type="tel"
-										name="phone"
-										value={formData.phone}
-										onChange={handleChange}
-										className="w-full bg-[#E8E8E8] border-none rounded-sm p-3 focus:ring-2 focus:ring-orange-500"
-									/>
-								</div>
+								<Input
+									id="phone"
+									label="Phone no."
+									type="tel"
+									requiredIndicator
+									name="phone"
+									value={formData.phone}
+									onChange={handleChange}
+								/>
 							</div>
-						</div>
+						</Card>
 
-						<div>
-							<h2 className="text-2xl font-bold text-[#495464] mb-4">
+						<div className="space-y-4">
+							<Heading variant="h2" className="text-2xl font-bold mb-0">
 								Select your prefered delivery method
-							</h2>
-							<div className="bg-white p-8 rounded-sm shadow-sm">
-								<div className="flex gap-4 mb-8">
-									<button
-										type="button"
-										onClick={() => setDeliveryMethod("home")}
-										className={cn(
-											"px-6 py-2 rounded-sm text-sm font-medium border transition-colors",
-											deliveryMethod === "home"
-												? "bg-[#495464] text-white border-[#495464]"
-												: "bg-white text-gray-500 border-gray-300 hover:border-gray-400",
-										)}
-									>
-										Home delivery
-									</button>
-									<button
-										type="button"
-										onClick={() => setDeliveryMethod("collect")}
-										className={cn(
-											"px-6 py-2 rounded-sm text-sm font-medium border transition-colors",
-											deliveryMethod === "collect"
-												? "bg-[#495464] text-white border-[#495464]"
-												: "bg-white text-gray-500 border-gray-300 hover:border-gray-400",
-										)}
-									>
-										Click-and-collect
-									</button>
-									<button
-										type="button"
-										onClick={() => setDeliveryMethod("post")}
-										className={cn(
-											"px-6 py-2 rounded-sm text-sm font-medium border transition-colors",
-											deliveryMethod === "post"
-												? "bg-[#495464] text-white border-[#495464]"
-												: "bg-white text-gray-500 border-gray-300 hover:border-gray-400",
-										)}
-									>
-										Postoffice
-									</button>
-								</div>
+							</Heading>
+							<Card padding="lg">
+								<SelectionGroup
+									className="mb-8"
+									options={[
+										{ id: "home", label: "Home delivery" },
+										{ id: "collect", label: "Click-and-collect" },
+										{ id: "post", label: "Postoffice" },
+									]}
+									selectedValue={deliveryMethod}
+									onSelect={(val) =>
+										setDeliveryMethod(val as "home" | "collect" | "post")
+									}
+								/>
 
 								{deliveryMethod === "home" && (
-									<div>
-										<h3 className="font-bold text-black mb-2">
+									<div className="space-y-2">
+										<Text variant="default" className="font-bold">
 											Your order will be shipped to
-										</h3>
+										</Text>
 										<div className="text-gray-700">
-											<p>{formData.address || "No address provided"}</p>
-											<p>{formData.city || "No city"}</p>
-											<p>{formData.zipCode || "No zip code"}</p>
-											<p>United Kingdom</p>
+											<Text>{formData.address || "No address provided"}</Text>
+											<Text>{formData.city || "No city"}</Text>
+											<Text>{formData.zipCode || "No zip code"}</Text>
+											<Text>United Kingdom</Text>
 										</div>
 									</div>
 								)}
 
 								{deliveryMethod === "collect" && (
 									<div className="space-y-6">
-										<h3 className="font-bold text-black mb-2">
+										<Text variant="default" className="font-bold">
 											Your order will be shipped to
-										</h3>
+										</Text>
 										<div className="space-y-4">
-											<label className="flex items-start gap-3 cursor-pointer">
-												<input
-													type="radio"
-													name="store"
-													className="mt-1"
-													defaultChecked
-												/>
-												<div>
-													<span className="font-bold text-black block">
-														Edinburgh
-													</span>
-													<span className="text-sm text-gray-600 block">
-														2 Joppa Rd, Edinburgh, EH15 2EU
-													</span>
-													<span className="text-sm text-gray-600 block">
-														Monday to Friday: 10:00am - 5:30pm
-													</span>
-													<span className="text-sm text-gray-600 block">
-														Saturday: 10:00am - 5:30pm
-													</span>
-													<span className="text-sm text-gray-600 block">
-														Sunday: Closed
-													</span>
-												</div>
-											</label>
-											<label className="flex items-start gap-3 cursor-pointer">
-												<input type="radio" name="store" className="mt-1" />
-												<div>
-													<span className="font-bold text-black block">
-														Falkirk
-													</span>
-													<span className="text-sm text-gray-600 block">
-														44 Cow Wynd, Falkirk, Central Region, FK1 1PU
-													</span>
-													<span className="text-sm text-gray-600 block">
-														Monday to Friday: 10:00am - 5:30pm
-													</span>
-													<span className="text-sm text-gray-600 block">
-														Saturday - By appointment only
-													</span>
-													<span className="text-sm text-gray-600 block">
-														Sunday: Closed
-													</span>
-												</div>
-											</label>
+											<StoreOption
+												city="Edinburgh"
+												address="2 Joppa Rd, Edinburgh, EH15 2EU"
+												hours={[
+													"Monday to Friday: 10:00am - 5:30pm",
+													"Saturday: 10:00am - 5:30pm",
+													"Sunday: Closed",
+												]}
+												defaultChecked
+											/>
+											<StoreOption
+												city="Falkirk"
+												address="44 Cow Wynd, Falkirk, Central Region, FK1 1PU"
+												hours={[
+													"Monday to Friday: 10:00am - 5:30pm",
+													"Saturday - By appointment only",
+													"Sunday: Closed",
+												]}
+											/>
 										</div>
 									</div>
 								)}
 
 								{deliveryMethod === "post" && (
-									<div>
-										<h3 className="font-bold text-black mb-4 flex items-center gap-2">
+									<div className="space-y-4">
+										<Text
+											variant="default"
+											className="font-bold flex items-center gap-2"
+										>
 											Your order will be shipped with{" "}
 											<SiFedex className="text-[#4D148C] text-4xl inline-block" />{" "}
 											selected a postoffice
-										</h3>
-										<div className="h-48 bg-gray-200 w-full mb-6 rounded-sm flex items-center justify-center text-gray-500">
+										</Text>
+										<div className="h-48 bg-gray-200 w-full rounded-sm flex items-center justify-center text-gray-500">
 											Map Placeholder
 										</div>
-										<div className="space-y-4">
-											<label className="flex items-center gap-3 cursor-pointer p-3 border rounded-sm hover:border-gray-400">
-												<input type="radio" name="postoffice" defaultChecked />
-												<span className="text-sm">
-													Postoffice - 4 Leah Close, Edinburgh, United Kingdom
-												</span>
-											</label>
-											<label className="flex items-center gap-3 cursor-pointer p-3 border rounded-sm hover:border-gray-400">
-												<input type="radio" name="postoffice" />
-												<span className="text-sm">
-													Postoffice - 7 The Old School House, Edinburgh, United
-													Kingdom
-												</span>
-											</label>
-											<label className="flex items-center gap-3 cursor-pointer p-3 border rounded-sm hover:border-gray-400">
-												<input type="radio" name="postoffice" />
-												<span className="text-sm">
-													Postoffice - 28 Thwaites Oak Close, Edinburgh, United
-													Kingdom
-												</span>
-											</label>
+										<div className="space-y-2">
+											<PostOfficeOption
+												address="Postoffice - 4 Leah Close, Edinburgh, United Kingdom"
+												defaultChecked
+											/>
+											<PostOfficeOption address="Postoffice - 7 The Old School House, Edinburgh, United Kingdom" />
+											<PostOfficeOption address="Postoffice - 28 Thwaites Oak Close, Edinburgh, United Kingdom" />
 										</div>
 									</div>
 								)}
-							</div>
+							</Card>
 						</div>
 
-						<div>
-							<h2 className="text-2xl font-bold text-[#495464] mb-4">
+						<div className="space-y-4">
+							<Heading variant="h2" className="text-2xl font-bold mb-0">
 								Choose payment method
-							</h2>
-							<div className="bg-white rounded-sm shadow-sm divide-y">
-								<label className="flex items-center gap-4 p-6 cursor-pointer">
-									<input
-										type="radio"
-										name="payment"
-										checked={paymentMethod === "card"}
-										onChange={() => setPaymentMethod("card")}
-										className="text-orange-500 focus:ring-orange-500"
-									/>
-									<div className="flex gap-2 items-center">
-										<div className="h-10 w-14 bg-black text-white rounded flex items-center justify-center">
-											<FaCcStripe className="text-4xl" />
-										</div>
-										<div className="h-10 w-14 bg-black text-white rounded flex items-center justify-center">
-											<FaCcVisa className="text-4xl" />
-										</div>
-										<div className="h-10 w-14 bg-black text-white rounded flex items-center justify-center">
-											<FaCcMastercard className="text-4xl" />
-										</div>
-									</div>
-									<span className="font-medium">Pay with credit card</span>
-								</label>
-
-								<label className="flex items-center gap-4 p-6 cursor-pointer">
-									<input
-										type="radio"
-										name="payment"
-										checked={paymentMethod === "paypal"}
-										onChange={() => setPaymentMethod("paypal")}
-										className="text-orange-500 focus:ring-orange-500"
-									/>
-									<div className="h-10 w-14 bg-black text-white rounded flex items-center justify-center">
-										<FaCcPaypal className="text-4xl" />
-									</div>
-									<span className="font-medium">Pay with Paypal</span>
-								</label>
-
-								<label className="flex items-center gap-4 p-6 cursor-pointer">
-									<input
-										type="radio"
-										name="payment"
-										checked={paymentMethod === "apple"}
-										onChange={() => setPaymentMethod("apple")}
-										className="text-orange-500 focus:ring-orange-500"
-									/>
-									<div className="h-10 w-14 bg-black text-white rounded flex items-center justify-center">
-										<FaApplePay className="text-4xl" />
-									</div>
-									<span className="font-medium">Pay with Apple pay</span>
-								</label>
-							</div>
+							</Heading>
+							<Card padding="none" className="divide-y overflow-hidden">
+								<PaymentMethodOption
+									checked={paymentMethod === "card"}
+									onChange={() => setPaymentMethod("card")}
+									label="Pay with credit card"
+									icons={[FaCcStripe, FaCcVisa, FaCcMastercard]}
+								/>
+								<PaymentMethodOption
+									checked={paymentMethod === "paypal"}
+									onChange={() => setPaymentMethod("paypal")}
+									label="Pay with Paypal"
+									icons={[FaCcPaypal]}
+								/>
+								<PaymentMethodOption
+									checked={paymentMethod === "apple"}
+									onChange={() => setPaymentMethod("apple")}
+									label="Pay with Apple pay"
+									icons={[FaApplePay]}
+								/>
+							</Card>
 						</div>
 					</div>
 
 					<div className="lg:col-span-1">
-						<div className="sticky top-24 bg-white p-6 rounded-sm shadow-sm space-y-6">
-							<h2 className="text-2xl font-bold text-[#495464]">
+						<Card className="sticky top-24 space-y-6">
+							<Heading variant="h2" className="text-2xl font-bold mb-0">
 								Payment overview
-							</h2>
+							</Heading>
 
 							<ul className="space-y-3 pb-6 border-b border-gray-200">
-								{items.map((item) => (
-									<li key={item.id} className="flex justify-between text-sm">
+								{items.map((item, idx) => (
+									<li
+										key={`${item.id}-${idx}`}
+										className="flex justify-between text-sm"
+									>
 										<span className="text-gray-600 truncate flex-1 pr-4">
 											{item.title}
 										</span>
@@ -388,64 +339,69 @@ function PaymentComponent() {
 								))}
 							</ul>
 
-							<div className="flex justify-between items-end">
-								<span className="text-sm text-gray-600">Price</span>
-								<span className="font-bold text-black">
-									{formatPrice(subTotal)}
-								</span>
-							</div>
-
-							<div className="space-y-2 py-4 border-b border-gray-200">
-								<div className="flex justify-between text-sm">
-									<span className="text-gray-600">Delivery price</span>
-									<span className="text-gray-900">
-										{formatPrice(deliveryCost)}
-									</span>
+							<div className="space-y-4">
+								<div className="flex justify-between items-end">
+									<Text variant="small" className="text-gray-600">
+										Price
+									</Text>
+									<Text className="font-bold">{formatPrice(subTotal)}</Text>
 								</div>
-								<div className="flex justify-between text-sm">
-									<span className="text-gray-600">VAT</span>
-									<span className="text-gray-900">
-										{formatPrice(calculatedVat)}
-									</span>
-								</div>
-							</div>
 
-							<div className="flex justify-between items-end">
-								<span className="font-medium text-gray-600">Total price</span>
-								<span className="font-bold text-black text-xl">
-									{formatPrice(grandTotal)}
-								</span>
+								<div className="space-y-2 py-4 border-b border-gray-200">
+									<div className="flex justify-between text-sm">
+										<Text variant="small" className="text-gray-600">
+											Delivery price
+										</Text>
+										<Text variant="small" className="text-gray-900">
+											{formatPrice(deliveryCost)}
+										</Text>
+									</div>
+									<div className="flex justify-between text-sm">
+										<Text variant="small" className="text-gray-600">
+											VAT
+										</Text>
+										<Text variant="small" className="text-gray-900">
+											{formatPrice(calculatedVat)}
+										</Text>
+									</div>
+								</div>
+
+								<div className="flex justify-between items-end">
+									<Text className="font-medium text-gray-600">Total price</Text>
+									<Text className="font-bold text-xl">
+										{formatPrice(grandTotal)}
+									</Text>
+								</div>
 							</div>
 
 							<div className="space-y-3 pt-4">
-								<label className="flex items-center gap-2 cursor-pointer">
+								<label className="flex items-center gap-2 cursor-pointer group">
 									<input
 										type="checkbox"
 										name="newsletter"
 										checked={formData.newsletter}
 										onChange={handleChange}
-										className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+										className="rounded border-gray-300 text-orange-500 focus:ring-orange-500 cursor-pointer"
 									/>
-									<span className="text-sm text-gray-700">
+									<span className="text-sm text-gray-700 group-hover:text-black transition-colors">
 										Subscribe to newsletter
 									</span>
 								</label>
-								<label className="flex items-center gap-2 cursor-pointer">
+								<label className="flex items-center gap-2 cursor-pointer group">
 									<input
 										type="checkbox"
 										name="terms"
 										checked={formData.terms}
 										onChange={handleChange}
-										className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+										className="rounded border-gray-300 text-orange-500 focus:ring-orange-500 cursor-pointer"
 										required
 									/>
-									<span className="text-sm text-gray-700">
+									<span className="text-sm text-gray-700 group-hover:text-black transition-colors">
 										I accept the terms of trade{" "}
 										<Link
 											to="/terms-and-conditions"
 											target="_blank"
-											rel="noopener noreferrer"
-											className="font-bold"
+											className="font-bold hover:underline"
 										>
 											(read in new window)
 										</Link>
@@ -453,16 +409,113 @@ function PaymentComponent() {
 								</label>
 							</div>
 
-							<button
-								type="button"
-								className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 rounded-sm transition-colors shadow-sm"
+							<Button
+								size="xl"
+								className="w-full"
+								onClick={handleCheckout}
+								disabled={isSubmitting}
 							>
-								Checkout
-							</button>
-						</div>
+								{isSubmitting ? "Processing..." : "Checkout"}
+							</Button>
+						</Card>
 					</div>
 				</div>
 			</div>
 		</main>
+	);
+}
+
+function StoreOption({
+	city,
+	address,
+	hours,
+	defaultChecked,
+}: {
+	city: string;
+	address: string;
+	hours: string[];
+	defaultChecked?: boolean;
+}) {
+	return (
+		<label className="flex items-start gap-3 cursor-pointer group">
+			<input
+				type="radio"
+				name="store"
+				className="mt-1 accent-orange-500 cursor-pointer"
+				defaultChecked={defaultChecked}
+			/>
+			<div>
+				<span className="font-bold text-black block group-hover:text-orange-500 transition-colors">
+					{city}
+				</span>
+				<span className="text-sm text-gray-600 block">{address}</span>
+				{hours.map((h) => (
+					<span key={h} className="text-sm text-gray-400 block">
+						{h}
+					</span>
+				))}
+			</div>
+		</label>
+	);
+}
+
+function PostOfficeOption({
+	address,
+	defaultChecked,
+}: {
+	address: string;
+	defaultChecked?: boolean;
+}) {
+	return (
+		<label className="flex items-center gap-3 cursor-pointer p-4 border rounded-sm hover:border-orange-500 transition-all bg-[#F9FAFB]">
+			<input
+				type="radio"
+				name="postoffice"
+				defaultChecked={defaultChecked}
+				className="accent-orange-500 cursor-pointer"
+			/>
+			<span className="text-sm text-gray-700">{address}</span>
+		</label>
+	);
+}
+
+function PaymentMethodOption({
+	label,
+	icons: Icons,
+	checked,
+	onChange,
+}: {
+	label: string;
+	icons: React.ElementType[];
+	checked: boolean;
+	onChange: () => void;
+}) {
+	return (
+		<label
+			className={cn(
+				"flex items-center gap-4 p-6 cursor-pointer transition-colors hover:bg-gray-50",
+				checked && "bg-orange-50/20",
+			)}
+		>
+			<input
+				type="radio"
+				name="payment"
+				checked={checked}
+				onChange={onChange}
+				className="accent-orange-500 size-4 cursor-pointer"
+			/>
+			<div className="flex gap-2 items-center">
+				{Icons.map((Icon, i) => (
+					<div
+						// biome-ignore lint/suspicious/noArrayIndexKey: static list
+						key={i}
+						className="h-10 w-14 bg-black text-white rounded flex items-center justify-center"
+					>
+						<Icon className="text-3xl" />
+					</div>
+				))}
+			</div>
+			<span className="font-medium text-[#495464]">{label}</span>
+		</label>
 	);
 }

@@ -4,6 +4,7 @@ import { CartDrawer } from "@/components/cart-drawer";
 import { MenuDrawer } from "@/components/menu-drawer";
 import { SearchBar } from "@/components/search-bar";
 import { ShopDropdown } from "@/components/shop-dropdown";
+import { Input } from "@/components/ui/input";
 import { useCartStore } from "@/stores/cart";
 import { useNav } from "@/stores/navigation";
 
@@ -60,10 +61,10 @@ export default function Header() {
 
 				<div className="flex items-center gap-6">
 					<div className="relative">
-						<input
+						<Input
 							type="search"
 							placeholder="Search product..."
-							className="bg-white text-black placeholder:text-black px-4 py-2 pr-10 rounded-xs w-64 focus:outline-0"
+							className="bg-white text-black placeholder:text-black px-4 py-2 pr-10 rounded-xs w-64 focus:outline-0 shadow-none"
 						/>
 						<Search className="absolute right-3 top-1/2 -translate-y-1/2 size-5 text-black" />
 					</div>
