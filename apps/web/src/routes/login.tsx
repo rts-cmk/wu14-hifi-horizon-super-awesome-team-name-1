@@ -1,34 +1,73 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Input } from "@/components/ui/input";
+
+const loginSchema = z.object({
+	email: z.string().email("Please enter a valid email address"),
+	password: z.string().min(1, "Password is required"),
+	rememberMe: z.boolean(),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const Route = createFileRoute("/login")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		formState: { errors },
+	} = useForm<LoginFormValues>({
+		resolver: zodResolver(loginSchema),
+		defaultValues: {
+			email: "",
+			password: "",
+			rememberMe: false,
+		},
+	});
 
-		const data = new FormData(e.target as HTMLFormElement);
-		const formData = Object.fromEntries(data.entries());
+	useEffect(() => {
+		const rememberedEmail = localStorage.getItem("rememberedEmail");
+		if (rememberedEmail) {
+			setValue("email", rememberedEmail);
+			setValue("rememberMe", true);
+		}
+	}, [setValue]);
 
+	const onSubmit = async (data: LoginFormValues) => {
 		try {
 			const res = await fetch("/api/login", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify(formData),
+				body: JSON.stringify(data),
 			});
 
 			if (!res.ok) {
 				throw new Error((await res.text()) || "Failed to log in");
 			}
 
-			alert("Login successful");
-			(e.target as HTMLFormElement).reset();
+			if (data.rememberMe) {
+				localStorage.setItem("rememberedEmail", data.email);
+			} else {
+				localStorage.removeItem("rememberedEmail");
+			}
+
+			toast.success("Logged in successfully");
+			// maybe redirect, e.g., to profile or index page
 		} catch (err) {
 			console.error("Login error:", err);
-			alert(`Error: ${err instanceof Error ? err.message : "Unknown error"}`);
+			toast.error(
+				`Error: ${err instanceof Error ? err.message : "Unknown error"}`,
+			);
 		}
 	};
 
@@ -41,7 +80,7 @@ function RouteComponent() {
 			<form
 				className="bg-white p-8 space-y-1 text-balance shadow-[2px_4px_4px_0px_rgba(0,0,0,0.25)]"
 				id="contact-form"
-				onSubmit={handleSubmit}
+				onSubmit={handleSubmit(onSubmit)}
 			>
 				<h2 className="text-2xl text-black font-semibold mb-6 uppercase">
 					Registered customers
@@ -49,56 +88,52 @@ function RouteComponent() {
 				<p>If you have an account, sign in with your email address.</p>
 
 				<div className="mt-12 space-y-6">
-					<div>
-						<label
-							htmlFor="email"
-							className="flex items-center gap-1 text-lg font-medium text-gray-700"
-						>
-							Email
-							<span className="text-sm text-orange-500 font-semibold">*</span>
-						</label>
-						<input
-							id="email"
-							name="email"
-							type="email"
-							required
-							className="bg-[#E8E8E8] py-3 w-full md:w-3xl px-4 shadow-[1px_2px_4px_0px_rgba(0,0,0,0.25)]"
-						/>
-					</div>
+					<Input
+						label="Email"
+						requiredIndicator
+						type="email"
+						error={errors.email?.message}
+						{...register("email")}
+					/>
 
-					<div>
-						<label
-							htmlFor="password"
-							className="flex items-center gap-1 text-lg font-medium text-gray-700"
-						>
-							Password
-							<span className="text-sm text-orange-500 font-semibold">*</span>
-						</label>
-						<input
-							id="password"
-							name="password"
-							type="password"
-							required
-							className="bg-[#E8E8E8] py-3 w-full md:w-3xl px-4 shadow-[1px_2px_4px_0px_rgba(0,0,0,0.25)]"
-						/>
-					</div>
+					<Input
+						label="Password"
+						requiredIndicator
+						type="password"
+						error={errors.password?.message}
+						{...register("password")}
+					/>
 				</div>
 
-				<input type="checkbox" id="remember-me" className="mt-6" />
-				<label htmlFor="remember-me" className="ml-2 text-gray-700">
-					Remember me
-				</label>
+				<div className="flex items-center mt-6">
+					<input
+						type="checkbox"
+						id="remember-me"
+						{...register("rememberMe")}
+						className="w-4 h-4 cursor-pointer"
+					/>
+					<label
+						htmlFor="remember-me"
+						className="ml-2 text-gray-700 cursor-pointer"
+					>
+						Remember me
+					</label>
+				</div>
 
 				<div className="mt-8">
 					<button
 						type="submit"
-						className="bg-orange-500 text-white py-3 px-10 hover:bg-orange-600 transition-colors"
+						className="bg-orange-500 text-white py-3 px-10 hover:bg-orange-600 transition-colors cursor-pointer"
 					>
 						Sign in
 					</button>
 				</div>
 
-				<p className="mt-4">Forgot your Password?</p>
+				<Link to="/forgot-password" title="Forgot Password">
+					<p className="mt-4 hover:underline text-orange-500 cursor-pointer">
+						Forgot your Password?
+					</p>
+				</Link>
 			</form>
 
 			<section className="w-full py-16">
@@ -113,8 +148,8 @@ function RouteComponent() {
 						</p>
 						<div className="flex flex-col sm:flex-row gap-2 justify-center items-center">
 							<button
-								type="submit"
-								className="bg-orange-500 text-white py-2 px-8 rounded-xs w-full sm:w-auto"
+								type="button"
+								className="bg-orange-500 text-white py-2 px-8 rounded-xs w-full sm:w-auto cursor-pointer"
 							>
 								<Link to="/register" className="text-white">
 									Create an Account

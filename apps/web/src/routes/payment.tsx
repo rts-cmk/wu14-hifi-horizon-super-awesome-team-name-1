@@ -1,3 +1,4 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	createFileRoute,
 	Link,
@@ -6,6 +7,7 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import * as React from "react";
+import { useForm } from "react-hook-form";
 import {
 	FaApplePay,
 	FaCcMastercard,
@@ -14,6 +16,8 @@ import {
 	FaCcVisa,
 } from "react-icons/fa";
 import { SiFedex } from "react-icons/si";
+import { toast } from "sonner";
+import { z } from "zod";
 import { CheckoutStepper } from "@/components/checkout-stepper";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -23,6 +27,21 @@ import { Heading, Text } from "@/components/ui/typography";
 import { cn, formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/stores/cart";
 import { useCheckoutStore } from "@/stores/checkout";
+
+const checkoutSchema = z.object({
+	fullName: z.string().min(2, "Full name must be at least 2 characters"),
+	zipCode: z.string().min(2, "Zip code is required"),
+	city: z.string().min(1, "City is required"),
+	address: z.string().min(5, "Address must be at least 5 characters"),
+	email: z.string().email("Please enter a valid email address"),
+	phone: z.string().min(5, "Phone number is required"),
+	newsletter: z.boolean().optional(),
+	terms: z.boolean().refine((val) => val === true, {
+		message: "You must accept the terms to proceed",
+	}),
+});
+
+type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 export const Route = createFileRoute("/payment")({
 	component: PaymentComponent,
@@ -51,44 +70,41 @@ function PaymentComponent() {
 	const navigate = useNavigate();
 	const { items, total, clearCart } = useCartStore();
 	const {
-		formData,
+		formData: storeData,
 		deliveryMethod,
 		paymentMethod,
-		setFormData,
+		setFormData: setStoreData,
 		setDeliveryMethod,
 		setPaymentMethod,
 	} = useCheckoutStore();
 
-	const [isSubmitting, setIsSubmitting] = React.useState(false);
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, isSubmitting },
+		watch,
+	} = useForm<CheckoutFormValues>({
+		resolver: zodResolver(checkoutSchema),
+		defaultValues: {
+			fullName: storeData.fullName || user?.fullName || "",
+			zipCode: storeData.zipCode || user?.zipCode || "",
+			city: storeData.city || user?.city || "",
+			address: storeData.address || user?.address || "",
+			email: storeData.email || user?.email || "",
+			phone: storeData.phone || user?.phone || "",
+			newsletter: storeData.newsletter || false,
+			terms: storeData.terms || false,
+		},
+	});
 
-	// Pre-fill user data if logged in
+	// Sync with store on change if needed, or just on submit.
+	// We'll watch and sync to maintain persistence as before.
+	const formValues = watch();
 	React.useEffect(() => {
-		if (user && !formData.fullName) {
-			setFormData({
-				fullName: user.fullName || "",
-				email: user.email || "",
-				phone: user.phone || "",
-				address: user.address || "",
-				city: user.city || "",
-				zipCode: user.zipCode || "",
-			});
-		}
-	}, [user, setFormData, formData.fullName]);
+		setStoreData(formValues);
+	}, [formValues, setStoreData]);
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value, type, checked } = e.target;
-		setFormData({
-			[name]: type === "checkbox" ? checked : value,
-		});
-	};
-
-	const handleCheckout = async () => {
-		if (!formData.terms) {
-			alert("Please accept the terms of trade.");
-			return;
-		}
-
-		setIsSubmitting(true);
+	const onCheckout = async (data: CheckoutFormValues) => {
 		try {
 			const orderItems = items.map((item) => ({
 				productId: item.id,
@@ -108,6 +124,7 @@ function PaymentComponent() {
 				throw new Error(error.error || "Failed to place order");
 			}
 
+			toast.success("Order placed successfully!");
 			clearCart();
 			navigate({ to: "/profile/orders" });
 		} catch (error: unknown) {
@@ -116,9 +133,7 @@ function PaymentComponent() {
 				error instanceof Error
 					? error.message
 					: "An error occurred during checkout. Please try again.";
-			alert(errorMessage);
-		} finally {
-			setIsSubmitting(false);
+			toast.error(errorMessage);
 		}
 	};
 
@@ -136,290 +151,292 @@ function PaymentComponent() {
 					Your info
 				</Heading>
 
-				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-					<div className="lg:col-span-2 space-y-8">
-						<Card padding="lg">
-							<div className="space-y-4">
-								<Input
-									id="fullName"
-									label="Full name"
-									requiredIndicator
-									name="fullName"
-									value={formData.fullName}
-									onChange={handleChange}
-								/>
-
-								<div className="grid grid-cols-3 gap-4">
-									<div className="col-span-1">
-										<Input
-											id="zipCode"
-											label="Zip-code"
-											requiredIndicator
-											name="zipCode"
-											value={formData.zipCode}
-											onChange={handleChange}
-										/>
-									</div>
-									<div className="col-span-2">
-										<Input
-											id="city"
-											label="City"
-											requiredIndicator
-											name="city"
-											value={formData.city}
-											onChange={handleChange}
-										/>
-									</div>
-								</div>
-
-								<Input
-									id="address"
-									label="Address"
-									requiredIndicator
-									name="address"
-									value={formData.address}
-									onChange={handleChange}
-								/>
-
-								<Input
-									id="email"
-									label="Email"
-									type="email"
-									requiredIndicator
-									name="email"
-									value={formData.email}
-									onChange={handleChange}
-								/>
-
-								<Input
-									id="phone"
-									label="Phone no."
-									type="tel"
-									requiredIndicator
-									name="phone"
-									value={formData.phone}
-									onChange={handleChange}
-								/>
-							</div>
-						</Card>
-
-						<div className="space-y-4">
-							<Heading variant="h2" className="text-2xl font-bold mb-0">
-								Select your prefered delivery method
-							</Heading>
+				<form onSubmit={handleSubmit(onCheckout)}>
+					<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+						<div className="lg:col-span-2 space-y-8">
 							<Card padding="lg">
-								<SelectionGroup
-									className="mb-8"
-									options={[
-										{ id: "home", label: "Home delivery" },
-										{ id: "collect", label: "Click-and-collect" },
-										{ id: "post", label: "Postoffice" },
-									]}
-									selectedValue={deliveryMethod}
-									onSelect={(val) =>
-										setDeliveryMethod(val as "home" | "collect" | "post")
-									}
-								/>
+								<div className="space-y-4">
+									<Input
+										id="fullName"
+										label="Full name"
+										requiredIndicator
+										error={errors.fullName?.message}
+										{...register("fullName")}
+									/>
 
-								{deliveryMethod === "home" && (
-									<div className="space-y-2">
-										<Text variant="default" className="font-bold">
-											Your order will be shipped to
-										</Text>
-										<div className="text-gray-700">
-											<Text>{formData.address || "No address provided"}</Text>
-											<Text>{formData.city || "No city"}</Text>
-											<Text>{formData.zipCode || "No zip code"}</Text>
-											<Text>United Kingdom</Text>
-										</div>
-									</div>
-								)}
-
-								{deliveryMethod === "collect" && (
-									<div className="space-y-6">
-										<Text variant="default" className="font-bold">
-											Your order will be shipped to
-										</Text>
-										<div className="space-y-4">
-											<StoreOption
-												city="Edinburgh"
-												address="2 Joppa Rd, Edinburgh, EH15 2EU"
-												hours={[
-													"Monday to Friday: 10:00am - 5:30pm",
-													"Saturday: 10:00am - 5:30pm",
-													"Sunday: Closed",
-												]}
-												defaultChecked
+									<div className="grid grid-cols-3 gap-4">
+										<div className="col-span-1">
+											<Input
+												id="zipCode"
+												label="Zip-code"
+												requiredIndicator
+												error={errors.zipCode?.message}
+												{...register("zipCode")}
 											/>
-											<StoreOption
-												city="Falkirk"
-												address="44 Cow Wynd, Falkirk, Central Region, FK1 1PU"
-												hours={[
-													"Monday to Friday: 10:00am - 5:30pm",
-													"Saturday - By appointment only",
-													"Sunday: Closed",
-												]}
+										</div>
+										<div className="col-span-2">
+											<Input
+												id="city"
+												label="City"
+												requiredIndicator
+												error={errors.city?.message}
+												{...register("city")}
 											/>
 										</div>
 									</div>
-								)}
 
-								{deliveryMethod === "post" && (
-									<div className="space-y-4">
-										<Text
-											variant="default"
-											className="font-bold flex items-center gap-2"
-										>
-											Your order will be shipped with{" "}
-											<SiFedex className="text-[#4D148C] text-4xl inline-block" />{" "}
-											selected a postoffice
-										</Text>
-										<div className="h-48 bg-gray-200 w-full rounded-sm flex items-center justify-center text-gray-500">
-											Map Placeholder
-										</div>
-										<div className="space-y-2">
-											<PostOfficeOption
-												address="Postoffice - 4 Leah Close, Edinburgh, United Kingdom"
-												defaultChecked
-											/>
-											<PostOfficeOption address="Postoffice - 7 The Old School House, Edinburgh, United Kingdom" />
-											<PostOfficeOption address="Postoffice - 28 Thwaites Oak Close, Edinburgh, United Kingdom" />
-										</div>
-									</div>
-								)}
+									<Input
+										id="address"
+										label="Address"
+										requiredIndicator
+										error={errors.address?.message}
+										{...register("address")}
+									/>
+
+									<Input
+										id="email"
+										label="Email"
+										type="email"
+										requiredIndicator
+										error={errors.email?.message}
+										{...register("email")}
+									/>
+
+									<Input
+										id="phone"
+										label="Phone no."
+										type="tel"
+										requiredIndicator
+										error={errors.phone?.message}
+										{...register("phone")}
+									/>
+								</div>
 							</Card>
-						</div>
-
-						<div className="space-y-4">
-							<Heading variant="h2" className="text-2xl font-bold mb-0">
-								Choose payment method
-							</Heading>
-							<Card padding="none" className="divide-y overflow-hidden">
-								<PaymentMethodOption
-									checked={paymentMethod === "card"}
-									onChange={() => setPaymentMethod("card")}
-									label="Pay with credit card"
-									icons={[FaCcStripe, FaCcVisa, FaCcMastercard]}
-								/>
-								<PaymentMethodOption
-									checked={paymentMethod === "paypal"}
-									onChange={() => setPaymentMethod("paypal")}
-									label="Pay with Paypal"
-									icons={[FaCcPaypal]}
-								/>
-								<PaymentMethodOption
-									checked={paymentMethod === "apple"}
-									onChange={() => setPaymentMethod("apple")}
-									label="Pay with Apple pay"
-									icons={[FaApplePay]}
-								/>
-							</Card>
-						</div>
-					</div>
-
-					<div className="lg:col-span-1">
-						<Card className="sticky top-24 space-y-6">
-							<Heading variant="h2" className="text-2xl font-bold mb-0">
-								Payment overview
-							</Heading>
-
-							<ul className="space-y-3 pb-6 border-b border-gray-200">
-								{items.map((item, idx) => (
-									<li
-										key={`${item.id}-${idx}`}
-										className="flex justify-between text-sm"
-									>
-										<span className="text-gray-600 truncate flex-1 pr-4">
-											{item.title}
-										</span>
-										<span className="text-gray-900 font-medium whitespace-nowrap">
-											{formatPrice(item.price * item.quantity)}
-										</span>
-									</li>
-								))}
-							</ul>
 
 							<div className="space-y-4">
-								<div className="flex justify-between items-end">
-									<Text variant="small" className="text-gray-600">
-										Price
-									</Text>
-									<Text className="font-bold">{formatPrice(subTotal)}</Text>
-								</div>
+								<Heading variant="h2" className="text-2xl font-bold mb-0">
+									Select your prefered delivery method
+								</Heading>
+								<Card padding="lg">
+									<SelectionGroup
+										className="mb-8"
+										options={[
+											{ id: "home", label: "Home delivery" },
+											{ id: "collect", label: "Click-and-collect" },
+											{ id: "post", label: "Postoffice" },
+										]}
+										selectedValue={deliveryMethod}
+										onSelect={(val) =>
+											setDeliveryMethod(val as "home" | "collect" | "post")
+										}
+									/>
 
-								<div className="space-y-2 py-4 border-b border-gray-200">
-									<div className="flex justify-between text-sm">
-										<Text variant="small" className="text-gray-600">
-											Delivery price
-										</Text>
-										<Text variant="small" className="text-gray-900">
-											{formatPrice(deliveryCost)}
-										</Text>
-									</div>
-									<div className="flex justify-between text-sm">
-										<Text variant="small" className="text-gray-600">
-											VAT
-										</Text>
-										<Text variant="small" className="text-gray-900">
-											{formatPrice(calculatedVat)}
-										</Text>
-									</div>
-								</div>
+									{deliveryMethod === "home" && (
+										<div className="space-y-2">
+											<Text variant="default" className="font-bold">
+												Your order will be shipped to
+											</Text>
+											<div className="text-gray-700">
+												<Text>
+													{formValues.address || "No address provided"}
+												</Text>
+												<Text>{formValues.city || "No city"}</Text>
+												<Text>{formValues.zipCode || "No zip code"}</Text>
+												<Text>United Kingdom</Text>
+											</div>
+										</div>
+									)}
 
-								<div className="flex justify-between items-end">
-									<Text className="font-medium text-gray-600">Total price</Text>
-									<Text className="font-bold text-xl">
-										{formatPrice(grandTotal)}
-									</Text>
-								</div>
+									{deliveryMethod === "collect" && (
+										<div className="space-y-6">
+											<Text variant="default" className="font-bold">
+												Your order will be shipped to
+											</Text>
+											<div className="space-y-4">
+												<StoreOption
+													city="Edinburgh"
+													address="2 Joppa Rd, Edinburgh, EH15 2EU"
+													hours={[
+														"Monday to Friday: 10:00am - 5:30pm",
+														"Saturday: 10:00am - 5:30pm",
+														"Sunday: Closed",
+													]}
+													defaultChecked
+												/>
+												<StoreOption
+													city="Falkirk"
+													address="44 Cow Wynd, Falkirk, Central Region, FK1 1PU"
+													hours={[
+														"Monday to Friday: 10:00am - 5:30pm",
+														"Saturday - By appointment only",
+														"Sunday: Closed",
+													]}
+												/>
+											</div>
+										</div>
+									)}
+
+									{deliveryMethod === "post" && (
+										<div className="space-y-4">
+											<Text
+												variant="default"
+												className="font-bold flex items-center gap-2"
+											>
+												Your order will be shipped with{" "}
+												<SiFedex className="text-[#4D148C] text-4xl inline-block" />{" "}
+												selected a postoffice
+											</Text>
+											<div className="h-48 bg-gray-200 w-full rounded-sm flex items-center justify-center text-gray-500">
+												Map Placeholder
+											</div>
+											<div className="space-y-2">
+												<PostOfficeOption
+													address="Postoffice - 4 Leah Close, Edinburgh, United Kingdom"
+													defaultChecked
+												/>
+												<PostOfficeOption address="Postoffice - 7 The Old School House, Edinburgh, United Kingdom" />
+												<PostOfficeOption address="Postoffice - 28 Thwaites Oak Close, Edinburgh, United Kingdom" />
+											</div>
+										</div>
+									)}
+								</Card>
 							</div>
 
-							<div className="space-y-3 pt-4">
-								<label className="flex items-center gap-2 cursor-pointer group">
-									<input
-										type="checkbox"
-										name="newsletter"
-										checked={formData.newsletter}
-										onChange={handleChange}
-										className="rounded border-gray-300 text-orange-500 focus:ring-orange-500 cursor-pointer"
+							<div className="space-y-4">
+								<Heading variant="h2" className="text-2xl font-bold mb-0">
+									Choose payment method
+								</Heading>
+								<Card padding="none" className="divide-y overflow-hidden">
+									<PaymentMethodOption
+										checked={paymentMethod === "card"}
+										onChange={() => setPaymentMethod("card")}
+										label="Pay with credit card"
+										icons={[FaCcStripe, FaCcVisa, FaCcMastercard]}
 									/>
-									<span className="text-sm text-gray-700 group-hover:text-black transition-colors">
-										Subscribe to newsletter
-									</span>
-								</label>
-								<label className="flex items-center gap-2 cursor-pointer group">
-									<input
-										type="checkbox"
-										name="terms"
-										checked={formData.terms}
-										onChange={handleChange}
-										className="rounded border-gray-300 text-orange-500 focus:ring-orange-500 cursor-pointer"
-										required
+									<PaymentMethodOption
+										checked={paymentMethod === "paypal"}
+										onChange={() => setPaymentMethod("paypal")}
+										label="Pay with Paypal"
+										icons={[FaCcPaypal]}
 									/>
-									<span className="text-sm text-gray-700 group-hover:text-black transition-colors">
-										I accept the terms of trade{" "}
-										<Link
-											to="/terms-and-conditions"
-											target="_blank"
-											className="font-bold hover:underline"
+									<PaymentMethodOption
+										checked={paymentMethod === "apple"}
+										onChange={() => setPaymentMethod("apple")}
+										label="Pay with Apple pay"
+										icons={[FaApplePay]}
+									/>
+								</Card>
+							</div>
+						</div>
+
+						<div className="lg:col-span-1">
+							<Card className="sticky top-24 space-y-6">
+								<Heading variant="h2" className="text-2xl font-bold mb-0">
+									Payment overview
+								</Heading>
+
+								<ul className="space-y-3 pb-6 border-b border-gray-200">
+									{items.map((item, idx) => (
+										<li
+											key={`${item.id}-${idx}`}
+											className="flex justify-between text-sm"
 										>
-											(read in new window)
-										</Link>
-									</span>
-								</label>
-							</div>
+											<span className="text-gray-600 truncate flex-1 pr-4">
+												{item.title}
+											</span>
+											<span className="text-gray-900 font-medium whitespace-nowrap">
+												{formatPrice(item.price * item.quantity)}
+											</span>
+										</li>
+									))}
+								</ul>
 
-							<Button
-								size="xl"
-								className="w-full"
-								onClick={handleCheckout}
-								disabled={isSubmitting}
-							>
-								{isSubmitting ? "Processing..." : "Checkout"}
-							</Button>
-						</Card>
+								<div className="space-y-4">
+									<div className="flex justify-between items-end">
+										<Text variant="small" className="text-gray-600">
+											Price
+										</Text>
+										<Text className="font-bold">{formatPrice(subTotal)}</Text>
+									</div>
+
+									<div className="space-y-2 py-4 border-b border-gray-200">
+										<div className="flex justify-between text-sm">
+											<Text variant="small" className="text-gray-600">
+												Delivery price
+											</Text>
+											<Text variant="small" className="text-gray-900">
+												{formatPrice(deliveryCost)}
+											</Text>
+										</div>
+										<div className="flex justify-between text-sm">
+											<Text variant="small" className="text-gray-600">
+												VAT
+											</Text>
+											<Text variant="small" className="text-gray-900">
+												{formatPrice(calculatedVat)}
+											</Text>
+										</div>
+									</div>
+
+									<div className="flex justify-between items-end">
+										<Text className="font-medium text-gray-600">
+											Total price
+										</Text>
+										<Text className="font-bold text-xl">
+											{formatPrice(grandTotal)}
+										</Text>
+									</div>
+								</div>
+
+								<div className="space-y-3 pt-4">
+									<label className="flex items-center gap-2 cursor-pointer group">
+										<input
+											type="checkbox"
+											className="rounded border-gray-300 text-orange-500 focus:ring-orange-500 cursor-pointer"
+											{...register("newsletter")}
+										/>
+										<span className="text-sm text-gray-700 group-hover:text-black transition-colors">
+											Subscribe to newsletter
+										</span>
+									</label>
+									<div>
+										<label className="flex items-center gap-2 cursor-pointer group">
+											<input
+												type="checkbox"
+												className="rounded border-gray-300 text-orange-500 focus:ring-orange-500 cursor-pointer"
+												{...register("terms")}
+											/>
+											<span className="text-sm text-gray-700 group-hover:text-black transition-colors">
+												I accept the terms of trade{" "}
+												<Link
+													to="/terms-and-conditions"
+													target="_blank"
+													className="font-bold hover:underline"
+												>
+													(read in new window)
+												</Link>
+											</span>
+										</label>
+										{errors.terms && (
+											<p className="text-red-500 text-xs mt-1">
+												{errors.terms.message}
+											</p>
+										)}
+									</div>
+								</div>
+
+								<Button
+									size="xl"
+									className="w-full"
+									type="submit"
+									disabled={isSubmitting}
+								>
+									{isSubmitting ? "Processing..." : "Checkout"}
+								</Button>
+							</Card>
+						</div>
 					</div>
-				</div>
+				</form>
 			</div>
 		</main>
 	);

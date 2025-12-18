@@ -1,3 +1,4 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	createFileRoute,
 	redirect,
@@ -16,10 +17,50 @@ import {
 	X,
 } from "lucide-react";
 import * as React from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs } from "@/components/ui/tabs";
 import { Heading, Text } from "@/components/ui/typography";
+
+const profileSchema = z
+	.object({
+		fullName: z
+			.string()
+			.min(2, "Full name must be at least 2 characters")
+			.optional(),
+		phone: z.string().optional(),
+		email: z.email("Please enter a valid email address").optional(),
+		password: z
+			.string()
+			.min(8, "Password must be at least 8 characters")
+			.optional(),
+		confirmPassword: z.string().optional(),
+		address: z
+			.string()
+			.min(5, "Address must be at least 5 characters")
+			.optional(),
+		address2: z.string().optional(),
+		city: z.string().min(1, "City is required").optional(),
+		zipCode: z.string().min(1, "Zip code is required").optional(),
+		country: z.string().min(1, "Country is required").optional(),
+	})
+	.refine(
+		(data) => {
+			if (data.password && data.password !== data.confirmPassword) {
+				return false;
+			}
+			return true;
+		},
+		{
+			message: "Passwords do not match",
+			path: ["confirmPassword"],
+		},
+	);
+
+type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export const Route = createFileRoute("/profile/")({
 	component: RouteComponent,
@@ -38,7 +79,7 @@ interface EditDialogProps {
 	onClose: () => void;
 	title: string;
 	children: React.ReactNode;
-	onSave: (e: React.FormEvent<HTMLFormElement>) => void;
+	onSave: () => void;
 	isLoading: boolean;
 }
 
@@ -70,7 +111,12 @@ function EditDialog({
 						<X className="size-5 text-gray-500" />
 					</button>
 				</div>
-				<form onSubmit={onSave}>
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						onSave();
+					}}
+				>
 					<div className="p-8 space-y-6">{children}</div>
 					<div className="p-6 border-t border-gray-100 flex justify-end gap-3">
 						<Button
@@ -145,6 +191,33 @@ function RouteComponent() {
 	const [editingField, setEditingField] = React.useState<string | null>(null);
 	const [isLoading, setIsLoading] = React.useState(false);
 
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+		reset,
+		setValue,
+	} = useForm<ProfileFormValues>({
+		resolver: zodResolver(profileSchema),
+	});
+
+	React.useEffect(() => {
+		if (editingField === "name") setValue("fullName", user.fullName);
+		if (editingField === "phone") setValue("phone", user.phone || "");
+		if (editingField === "mail") setValue("email", user.email);
+		if (editingField === "address") {
+			setValue("address", user.address);
+			setValue("address2", user.address2 || "");
+			setValue("city", user.city || "");
+			setValue("zipCode", user.zipCode || "");
+			setValue("country", user.country || "");
+		}
+		if (editingField === "password") {
+			setValue("password", "");
+			setValue("confirmPassword", "");
+		}
+	}, [editingField, user, setValue]);
+
 	const tabs = [
 		{ id: "profile", label: "Profile" },
 		{ id: "orders", label: "Orders" },
@@ -156,12 +229,8 @@ function RouteComponent() {
 		}
 	};
 
-	const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
+	const onSubmit = async (data: ProfileFormValues) => {
 		setIsLoading(true);
-
-		const formData = new FormData(e.currentTarget);
-		const data = Object.fromEntries(formData.entries());
 
 		try {
 			const res = await fetch("/api/me", {
@@ -173,10 +242,12 @@ function RouteComponent() {
 			if (!res.ok) throw new Error("Failed to update profile");
 
 			await router.invalidate();
+			toast.success("Profile updated successfully");
 			setEditingField(null);
+			reset();
 		} catch (err) {
 			console.error(err);
-			alert("Failed to save changes. Please try again.");
+			toast.error("Failed to save changes. Please try again.");
 		} finally {
 			setIsLoading(false);
 		}
@@ -248,46 +319,48 @@ function RouteComponent() {
 				isOpen={!!editingField}
 				onClose={() => setEditingField(null)}
 				title={`Edit ${editingField}`}
-				onSave={handleSave}
+				onSave={handleSubmit(onSubmit)}
 				isLoading={isLoading}
 			>
 				{editingField === "name" && (
 					<Input
 						label="Full Name"
-						name="fullName"
-						defaultValue={user.fullName}
-						required
+						error={errors.fullName?.message}
+						{...register("fullName")}
+						requiredIndicator
 					/>
 				)}
 				{editingField === "phone" && (
 					<Input
 						label="Phone Number"
-						name="phone"
-						defaultValue={user.phone || ""}
+						error={errors.phone?.message}
+						{...register("phone")}
 					/>
 				)}
 				{editingField === "mail" && (
 					<Input
 						label="Email"
-						name="email"
 						type="email"
-						defaultValue={user.email}
-						required
+						error={errors.email?.message}
+						{...register("email")}
+						requiredIndicator
 					/>
 				)}
 				{editingField === "password" && (
 					<div className="space-y-4">
 						<Input
 							label="New Password"
-							name="password"
 							type="password"
-							required
+							error={errors.password?.message}
+							{...register("password")}
+							requiredIndicator
 						/>
 						<Input
 							label="Confirm Password"
-							name="confirmPassword"
 							type="password"
-							required
+							error={errors.confirmPassword?.message}
+							{...register("confirmPassword")}
+							requiredIndicator
 						/>
 					</div>
 				)}
@@ -295,34 +368,34 @@ function RouteComponent() {
 					<div className="space-y-4">
 						<Input
 							label="Street Address"
-							name="address"
-							defaultValue={user.address}
-							required
+							error={errors.address?.message}
+							{...register("address")}
+							requiredIndicator
 						/>
 						<Input
 							label="Apartment, suite, etc."
-							name="address2"
-							defaultValue={user.address2 || ""}
+							error={errors.address2?.message}
+							{...register("address2")}
 						/>
 						<div className="grid grid-cols-2 gap-4">
 							<Input
 								label="City"
-								name="city"
-								defaultValue={user.city || ""}
-								required
+								error={errors.city?.message}
+								{...register("city")}
+								requiredIndicator
 							/>
 							<Input
 								label="Zip Code"
-								name="zipCode"
-								defaultValue={user.zipCode || ""}
-								required
+								error={errors.zipCode?.message}
+								{...register("zipCode")}
+								requiredIndicator
 							/>
 						</div>
 						<Input
 							label="Country"
-							name="country"
-							defaultValue={user.country || ""}
-							required
+							error={errors.country?.message}
+							{...register("country")}
+							requiredIndicator
 						/>
 					</div>
 				)}

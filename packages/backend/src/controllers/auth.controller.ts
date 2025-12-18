@@ -7,7 +7,8 @@ import { authService } from '@/services/auth.service'
 
 const loginSchema = z.object({
     email: z.email(),
-    password: z.string().min(1)
+    password: z.string().min(1),
+    rememberMe: z.boolean().optional()
 })
 
 export class AuthController {
@@ -91,19 +92,22 @@ export class AuthController {
                 return res.status(401).json({ error: 'Invalid credentials' })
             }
 
+            const expiresIn = validatedData.rememberMe ? '30d' : '1h'
+            const maxAge = validatedData.rememberMe ? 30 * 24 * 60 * 60 * 1000 : 3_600_000
+
             const token = jwt.sign(
                 {
                     userId: user.id,
                     email: user.email
                 },
                 env.JWT_SECRET,
-                { expiresIn: '1h' }
+                { expiresIn }
             )
 
             res.cookie('token', token, {
                 httpOnly: true,
                 secure: env.NODE_ENV === 'production',
-                maxAge: 3_600_000,
+                maxAge,
                 sameSite: 'lax'
             })
 

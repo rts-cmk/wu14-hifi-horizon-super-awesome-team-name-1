@@ -1,57 +1,61 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
+const contactSchema = z.object({
+	fullName: z.string().min(2, "Full name must be at least 2 characters"),
+	email: z.string().email("Please enter a valid email address"),
+	subject: z.string().min(3, "Subject must be at least 3 characters"),
+	message: z.string().min(10, "Message must be at least 10 characters"),
+});
+
+type ContactFormValues = z.infer<typeof contactSchema>;
 
 export const Route = createFileRoute("/contact")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const [formData, setFormData] = useState({
-		fullName: "",
-		email: "",
-		subject: "",
-		message: "",
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, isSubmitting },
+		reset,
+	} = useForm<ContactFormValues>({
+		resolver: zodResolver(contactSchema),
+		defaultValues: {
+			fullName: "",
+			email: "",
+			subject: "",
+			message: "",
+		},
 	});
-	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const handleChange = (
-		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-	) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({
-			...prev,
-			[name]: value,
-		}));
-	};
-
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		setIsSubmitting(true);
-
+	const onSubmit = async (data: ContactFormValues) => {
 		try {
 			const response = await fetch("/api/contact", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify(formData),
+				body: JSON.stringify(data),
 			});
 
 			if (!response.ok) {
 				throw new Error("Failed to submit form");
 			}
 
-			// reset form on success
-			setFormData({
-				fullName: "",
-				email: "",
-				subject: "",
-				message: "",
-			});
+			toast.success("Message sent successfully");
+			reset();
 		} catch (error) {
 			console.error("error submitting form:", error);
-		} finally {
-			setIsSubmitting(false);
+			toast.error(
+				`Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+			);
 		}
 	};
 
@@ -62,82 +66,49 @@ function RouteComponent() {
 			</h1>
 
 			<form
-				onSubmit={handleSubmit}
-				className="bg-white p-8 space-y-1 text-balance"
+				onSubmit={handleSubmit(onSubmit)}
+				className="bg-white p-8 space-y-6 text-balance shadow-[2px_4px_4px_0px_rgba(0,0,0,0.25)]"
 				id="contact-form"
 			>
-				<label
-					htmlFor="full-name"
-					className="flex items-center gap-1 text-lg font-medium text-gray-700"
-				>
-					Full Name
-					<span className="text-sm text-orange-500 font-semibold">*</span>
-				</label>
-				<input
-					id="full-name"
-					name="fullName"
-					type="text"
-					value={formData.fullName}
-					onChange={handleChange}
-					required
-					className="bg-[#E8E8E8] py-3 w-full md:w-2xl px-4"
+				<Input
+					label="Full Name"
+					requiredIndicator
+					placeholder="Full name"
+					{...register("fullName")}
+					error={errors.fullName?.message}
 				/>
 
-				<label
-					htmlFor="email"
-					className="flex items-center gap-1 text-lg font-medium text-gray-700"
-				>
-					Email
-					<span className="text-sm text-orange-500 font-semibold">*</span>
-				</label>
-				<input
-					id="email"
-					name="email"
+				<Input
+					label="Email"
+					requiredIndicator
 					type="email"
-					value={formData.email}
-					onChange={handleChange}
-					required
-					className="bg-[#E8E8E8] py-3 w-full md:w-2xl px-4"
+					placeholder="Email"
+					{...register("email")}
+					error={errors.email?.message}
 				/>
 
-				<label
-					htmlFor="subject"
-					className="flex items-center gap-1 text-lg font-medium text-gray-700"
-				>
-					Subject
-					<span className="text-sm text-orange-500 font-semibold">*</span>
-				</label>
-				<input
-					id="subject"
-					name="subject"
-					type="text"
-					value={formData.subject}
-					onChange={handleChange}
-					required
-					className="bg-[#E8E8E8] py-3 w-full md:w-2xl px-4"
+				<Input
+					label="Subject"
+					requiredIndicator
+					placeholder="Subject"
+					{...register("subject")}
+					error={errors.subject?.message}
 				/>
 
-				<label
-					htmlFor="message"
-					className="flex items-center gap-1 text-lg font-medium text-gray-700"
-				>
-					Message
-					<span className="text-sm text-orange-500 font-semibold">*</span>
-				</label>
-				<textarea
-					id="message"
-					name="message"
-					value={formData.message}
-					onChange={handleChange}
-					required
-					className="bg-[#E8E8E8] py-3 px-4 resize-none w-full h-40"
+				<Textarea
+					label="Message"
+					requiredIndicator
+					placeholder="Your message..."
+					{...register("message")}
+					error={errors.message?.message}
+					className="h-40"
 				/>
 
 				<div className="flex justify-end py-8">
 					<button
 						type="submit"
 						disabled={isSubmitting}
-						className="bg-orange-500 text-white py-2 px-4 rounded-xs disabled:opacity-50 disabled:cursor-not-allowed"
+						className="bg-orange-500 text-white py-2 px-4 rounded-xs disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
 					>
 						{isSubmitting ? "Submitting..." : "Submit"}
 					</button>
