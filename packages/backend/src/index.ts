@@ -5,12 +5,12 @@ dotenv.config()
 import { apiReference } from '@scalar/express-api-reference'
 import cookieParser from 'cookie-parser'
 import express, { type NextFunction, type Request, type Response } from 'express'
-import { openApiSpec } from '@/openapi'
-import authRoute from '@/routes/auth.route'
-import contactRoute from '@/routes/contact.route'
-import indexRoute from '@/routes/index.route'
-import ordersRoute from '@/routes/orders.route'
-import productsRoute from '@/routes/products.route'
+import { openApiSpec } from './openapi'
+import authRoute from './routes/auth.route'
+import contactRoute from './routes/contact.route'
+import indexRoute from './routes/index.route'
+import ordersRoute from './routes/orders.route'
+import productsRoute from './routes/products.route'
 
 const app = express()
 
