@@ -12,8 +12,12 @@ export class ApiError extends Error {
 class ApiClient {
 	private baseUrl: string;
 
-	constructor(baseUrl: string = "/api") {
-		this.baseUrl = baseUrl;
+	constructor(baseUrl?: string) {
+		if (import.meta.env.DEV) {
+			this.baseUrl = baseUrl || "/api";
+		} else {
+			this.baseUrl = import.meta.env.VITE_API_URL || baseUrl || "/api";
+		}
 	}
 
 	async get<T>(endpoint: string, options?: RequestInit): Promise<T> {

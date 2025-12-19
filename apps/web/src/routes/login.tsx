@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -19,6 +19,8 @@ export const Route = createFileRoute("/login")({
 });
 
 function RouteComponent() {
+	const navigate = useNavigate();
+
 	const {
 		register,
 		handleSubmit,
@@ -62,6 +64,7 @@ function RouteComponent() {
 			}
 
 			toast.success("Logged in successfully");
+			navigate({ to: "/profile", replace: true });
 		} catch (err) {
 			console.error("Login error:", err);
 			toast.error(

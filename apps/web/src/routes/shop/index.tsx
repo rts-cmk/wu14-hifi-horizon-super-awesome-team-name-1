@@ -4,6 +4,7 @@ import { ProductStockIndicator } from "@/components/product-stock-indicator";
 import { ShopFilters, type ShopFiltersState } from "@/components/shop-filters";
 import { useProductSearch } from "@/hooks/use-product-search";
 import { cn, formatPrice } from "@/lib/utils";
+import { getApiUrl } from "@/lib/get-api-url";
 import { useCartStore } from "@/stores/cart";
 import { useComparisonStore } from "@/stores/comparison";
 import type { Product } from "@/types/product";
@@ -27,7 +28,7 @@ export const Route = createFileRoute("/shop/")({
 		};
 	},
 	loader: async () => {
-		const response = await fetch("/api/products", {
+		const response = await fetch(getApiUrl("/api/products"), {
 			method: "GET",
 		});
 		const products = await response.json();

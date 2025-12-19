@@ -8,7 +8,15 @@
     },
     "files": {
         "ignoreUnknown": false,
-        "includes": ["**", "!migrations", "!**/migrations", "!**/dist", "!**/.next", "!**/node_modules"],
+        "includes": [
+            "**",
+            "!migrations",
+            "!**/migrations",
+            "!**/dist",
+            "!**/.next",
+            "!**/node_modules",
+            "!**/.vitepress"
+        ],
         "maxSize": 1048576
     },
     "formatter": {

@@ -5,11 +5,16 @@
         "jsxImportSource": "hono/jsx",
         "module": "ESNext",
         "moduleResolution": "Bundler",
+        "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"]
         },
         "types": ["bun"],
         "strict": true,
-        "skipLibCheck": true
-    }
+        "skipLibCheck": true,
+        "outDir": "./dist",
+        "rootDir": "./src"
+    },
+    "include": ["./src/**/*"],
+    "exclude": ["node_modules"]
 }
