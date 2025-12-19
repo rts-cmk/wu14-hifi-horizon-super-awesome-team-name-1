@@ -1,0 +1,33 @@
+{
+    "name": "backend",
+    "type": "module",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "bun --watch src/index.ts",
+        "start": "bun src/index.ts"
+    },
+    "devDependencies": {
+        "@types/bun": "latest",
+        "@types/cookie-parser": "^1.4.10",
+        "@types/express": "^5.0.6",
+        "@types/jsonwebtoken": "^9.0.10"
+    },
+    "peerDependencies": {
+        "typescript": "^5.9.3"
+    },
+    "dependencies": {
+        "@scalar/express-api-reference": "^0.8.28",
+        "@types/node": "^25.0.0",
+        "cookie-parser": "^1.4.7",
+        "dotenv": "^17.2.3",
+        "drizzle-kit": "^0.31.8",
+        "drizzle-orm": "^0.45.1",
+        "drizzle-zod": "^0.8.3",
+        "express": "^5.2.1",
+        "jsonwebtoken": "^9.0.3",
+        "postgres": "^3.4.7",
+        "uuid": "^13.0.0",
+        "zod": "^4.1.13"
+    }
+}
