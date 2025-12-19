@@ -12,7 +12,12 @@ export type Env = z.infer<typeof envSchema>
 let env: Env
 
 try {
-    env = envSchema.parse(process.env)
+    env = envSchema.parse({
+        NODE_ENV: process.env.NODE_ENV,
+        PORT: process.env.PORT,
+        DATABASE_URL: process.env.DATABASE_URL,
+        JWT_SECRET: process.env.JWT_SECRET
+    })
 } catch (e) {
     const error = e as z.ZodError
     console.error('❌ invalid environment variables:', z.treeifyError(error))
