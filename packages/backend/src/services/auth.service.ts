@@ -15,8 +15,6 @@ export class AuthService {
 
         const hashedPassword = await Bun.password.hash(password)
 
-        // spread the validated input and explicitly coerce undefined -> null for nullable DB columns.
-        // assert to InferInsertModel to satisfy Drizzle's `.values()` typing.
         const insertValues = {
             ...restOfUser,
             password: hashedPassword,
@@ -54,7 +52,6 @@ export class AuthService {
     ): Promise<InferSelectModel<typeof users> | undefined> {
         const { password, ...rest } = data
 
-        // partial of the insert model is fine for updates.
         const updateData: Partial<InferInsertModel<typeof users>> = {
             ...rest,
             updatedAt: new Date()

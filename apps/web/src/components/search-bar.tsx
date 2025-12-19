@@ -27,15 +27,13 @@ interface SearchBarProps {
 export function SearchBar({ className }: SearchBarProps) {
 	const { searchOpen, close } = useNav();
 
-	// loose strictness for global search access
 	const searchParams = useSearch({ strict: false });
 	const initialQuery = searchParams?.search || "";
 	const [key, setKey] = useState(0);
 
-	// Force re-render of input when search opens to ensure fresh state if needed
 	useEffect(() => {
 		if (searchOpen) {
-			setKey(prev => prev + 1);
+			setKey((prev) => prev + 1);
 		}
 	}, [searchOpen]);
 

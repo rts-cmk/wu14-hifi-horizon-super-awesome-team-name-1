@@ -62,7 +62,6 @@ function RouteComponent() {
 			}
 
 			toast.success("Logged in successfully");
-			// maybe redirect, e.g., to profile or index page
 		} catch (err) {
 			console.error("Login error:", err);
 			toast.error(

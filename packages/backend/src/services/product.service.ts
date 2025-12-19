@@ -141,7 +141,6 @@ export class ProductService {
                     .where(eq(products.id, id))
             }
 
-            // Prepare updates array
             const updates = []
 
             if (descriptions) {
@@ -172,7 +171,6 @@ export class ProductService {
                 })
             }
 
-            // Execute all updates
             for (const update of updates) {
                 await tx.delete(update.table).where(eq(update.table.productId, id))
                 if (update.data.length > 0) {

@@ -524,10 +524,9 @@ function PaymentMethodOption({
 				className="accent-orange-500 size-4 cursor-pointer"
 			/>
 			<div className="flex gap-2 items-center">
-				{Icons.map((Icon, i) => (
+				{Icons.map((Icon) => (
 					<div
-						// biome-ignore lint/suspicious/noArrayIndexKey: static list
-						key={i}
+						key={`icon-${label}`}
 						className="h-10 w-14 bg-black text-white rounded flex items-center justify-center"
 					>
 						<Icon className="text-3xl" />

@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-router";
 import {
 	Lock,
+	LogOut,
 	type LucideIcon,
 	Mail,
 	MapPin,
@@ -15,7 +16,6 @@ import {
 	Phone,
 	User,
 	X,
-	LogOut,
 } from "lucide-react";
 import * as React from "react";
 import { useForm } from "react-hook-form";

@@ -47,7 +47,6 @@ export class OrdersController {
                 return res.status(404).json({ error: 'Order not found' })
             }
 
-            // map and format for the invoice
             const formattedOrder = {
                 id: order.orderNumber,
                 date: new Date(order.createdAt).toLocaleDateString('en-US', {

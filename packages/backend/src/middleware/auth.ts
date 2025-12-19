@@ -19,11 +19,9 @@ function auth(req: Request, res: Response, next: NextFunction) {
         })
     }
 
-    // if this line throws, it goes to error handler automatically
     const decoded = jwt.verify(token, env.JWT_SECRET) as JwtPayload
     req.user = decoded
 
-    // move to the next handler in the chain
     return next()
 }
 

@@ -37,7 +37,6 @@ export class OrdersService {
         const orderNumber = this.generateOrderNumber()
 
         return await db.transaction(async tx => {
-            // validate and reduce stock for each item
             for (const item of items) {
                 const [product] = await tx.select().from(products).where(eq(products.id, item.productId)).limit(1)
 
@@ -55,7 +54,6 @@ export class OrdersService {
                     .where(eq(products.id, item.productId))
             }
 
-            // create the order
             const [newOrder] = await tx
                 .insert(orders)
                 .values({
@@ -66,7 +64,6 @@ export class OrdersService {
                 })
                 .returning()
 
-            // create the order items
             if (items.length > 0) {
                 await tx.insert(orderItems).values(
                     items.map(item => ({
