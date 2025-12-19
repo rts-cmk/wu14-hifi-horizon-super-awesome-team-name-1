@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -36,6 +36,8 @@ export const Route = createFileRoute("/register")({
 });
 
 function RouteComponent() {
+	const navigate = useNavigate();
+
 	const {
 		register,
 		handleSubmit,
@@ -68,6 +70,8 @@ function RouteComponent() {
 
 			toast.success("Account created successfully");
 			reset();
+
+			navigate({ to: "/login" });
 		} catch (err) {
 			console.error("Registration error:", err);
 			toast.error(
