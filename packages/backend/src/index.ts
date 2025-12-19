@@ -11,7 +11,6 @@ import contactRoute from '@/routes/contact.route'
 import indexRoute from '@/routes/index.route'
 import ordersRoute from '@/routes/orders.route'
 import productsRoute from '@/routes/products.route'
-import env from './env'
 
 const app = express()
 
@@ -36,11 +35,5 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     const message = status === 403 ? 'invalid token.' : 'internal server error.'
     res.status(status).json({ error: message })
 })
-
-if (process.env.NODE_ENV !== 'production') {
-    app.listen(env.PORT, () => {
-        console.log(`🚀 Server running on port ${env.PORT}`)
-    })
-}
 
 export default app
