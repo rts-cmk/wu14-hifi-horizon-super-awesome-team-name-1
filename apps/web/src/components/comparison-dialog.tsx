@@ -1,6 +1,7 @@
 import { Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn, formatPrice } from "@/lib/utils";
+import { getApiUrl } from "@/lib/get-api-url";
 import { type CompareProduct, useComparisonStore } from "@/stores/comparison";
 
 interface ComparisonDialogProps {
@@ -27,7 +28,7 @@ export function ComparisonDialog({
 		const fetchProducts = async () => {
 			setLoading(true);
 			try {
-				const res = await fetch("/api/products");
+				const res = await fetch(getApiUrl("/api/products"));
 				const data = await res.json();
 				setProducts(data);
 			} catch (error) {

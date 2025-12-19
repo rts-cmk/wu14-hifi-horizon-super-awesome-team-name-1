@@ -37,4 +37,10 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     res.status(status).json({ error: message })
 })
 
-app.listen(env.PORT)
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(env.PORT, () => {
+        console.log(`🚀 Server running on port ${env.PORT}`)
+    })
+}
+
+export default app

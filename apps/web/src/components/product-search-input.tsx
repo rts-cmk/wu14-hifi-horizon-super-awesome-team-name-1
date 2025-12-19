@@ -3,6 +3,7 @@ import Fuse from "fuse.js";
 import { Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { cn, formatPrice } from "@/lib/utils";
+import { getApiUrl } from "@/lib/get-api-url";
 import type { Product } from "@/types/product";
 
 interface ProductSearchInputProps {
@@ -27,7 +28,7 @@ export function ProductSearchInput({
 	useEffect(() => {
 		async function fetchProducts() {
 			try {
-				const response = await fetch("/api/products");
+				const response = await fetch(getApiUrl("/api/products"));
 				if (response.ok) {
 					const data = await response.json();
 					setProducts(data);

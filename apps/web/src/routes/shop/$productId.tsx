@@ -7,13 +7,14 @@ import { ProductQuantitySelector } from "@/components/product-quantity-selector"
 import { ProductSpecifications } from "@/components/product-specifications";
 import { ProductStockIndicator } from "@/components/product-stock-indicator";
 import { cn, formatPrice } from "@/lib/utils";
+import { getApiUrl } from "@/lib/get-api-url";
 import { useCartStore } from "@/stores/cart";
 import { useComparisonStore } from "@/stores/comparison";
 
 export const Route = createFileRoute("/shop/$productId")({
 	component: RouteComponent,
 	loader: async ({ params }) => {
-		const res = await fetch(`/api/products/${params.productId}`);
+		const res = await fetch(getApiUrl(`/api/products/${params.productId}`));
 		return res.json();
 	},
 });

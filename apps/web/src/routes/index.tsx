@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ProductCard } from "@/components/product-card";
 import type { Product } from "@/types/product";
+import { getApiUrl } from "@/lib/get-api-url";
 
 export const Route = createFileRoute("/")({
 	component: App,
 	loader: async () => {
-		const response = await fetch("/api/products/paginated?page=1&limit=4", {
+		const response = await fetch(getApiUrl("/api/products/paginated?page=1&limit=4"), {
 			method: "GET",
 		});
 		const products = await response.json();
