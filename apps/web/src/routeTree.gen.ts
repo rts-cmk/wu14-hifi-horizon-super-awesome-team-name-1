@@ -13,6 +13,7 @@ import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-condi
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as PaymentRouteImport } from './routes/payment'
+import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FaqRouteImport } from './routes/faq'
@@ -45,6 +46,11 @@ const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
 const PaymentRoute = PaymentRouteImport.update({
   id: '/payment',
   path: '/payment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogoutRoute = LogoutRouteImport.update({
+  id: '/logout',
+  path: '/logout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/faq': typeof FaqRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/payment': typeof PaymentRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/register': typeof RegisterRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/faq': typeof FaqRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/payment': typeof PaymentRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/register': typeof RegisterRoute
@@ -161,6 +169,7 @@ export interface FileRoutesById {
   '/faq': typeof FaqRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/payment': typeof PaymentRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/register': typeof RegisterRoute
@@ -182,6 +191,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/forgot-password'
     | '/login'
+    | '/logout'
     | '/payment'
     | '/privacy-policy'
     | '/register'
@@ -201,6 +211,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/forgot-password'
     | '/login'
+    | '/logout'
     | '/payment'
     | '/privacy-policy'
     | '/register'
@@ -220,6 +231,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/forgot-password'
     | '/login'
+    | '/logout'
     | '/payment'
     | '/privacy-policy'
     | '/register'
@@ -240,6 +252,7 @@ export interface RootRouteChildren {
   FaqRoute: typeof FaqRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  LogoutRoute: typeof LogoutRoute
   PaymentRoute: typeof PaymentRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   RegisterRoute: typeof RegisterRoute
@@ -279,6 +292,13 @@ declare module '@tanstack/react-router' {
       path: '/payment'
       fullPath: '/payment'
       preLoaderRoute: typeof PaymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logout': {
+      id: '/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof LogoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -384,6 +404,7 @@ const rootRouteChildren: RootRouteChildren = {
   FaqRoute: FaqRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  LogoutRoute: LogoutRoute,
   PaymentRoute: PaymentRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   RegisterRoute: RegisterRoute,

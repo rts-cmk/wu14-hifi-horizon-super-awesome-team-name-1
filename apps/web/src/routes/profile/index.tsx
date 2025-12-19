@@ -15,6 +15,7 @@ import {
 	Phone,
 	User,
 	X,
+	LogOut,
 } from "lucide-react";
 import * as React from "react";
 import { useForm } from "react-hook-form";
@@ -311,6 +312,17 @@ function RouteComponent() {
 							value={addressLines.length > 0 ? addressLines : "Not provided"}
 							onEdit={() => setEditingField("address")}
 						/>
+					</div>
+
+					<div className="mt-12 pt-8 border-t border-gray-100">
+						<Button
+							variant="ghost"
+							className="text-red-500 hover:text-red-600 hover:bg-red-50 flex items-center gap-2 px-4"
+							onClick={() => navigate({ to: "/logout" })}
+						>
+							<LogOut className="size-4" />
+							Sign out
+						</Button>
 					</div>
 				</div>
 			</div>

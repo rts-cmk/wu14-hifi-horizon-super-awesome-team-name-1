@@ -1,6 +1,7 @@
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useSearch } from "@tanstack/react-router";
 import { cva } from "class-variance-authority";
 import { useEffect, useState } from "react";
+import { ProductSearchInput } from "@/components/product-search-input";
 import { cn } from "@/lib/utils";
 import { useNav } from "@/stores/navigation";
 
@@ -24,53 +25,29 @@ interface SearchBarProps {
 }
 
 export function SearchBar({ className }: SearchBarProps) {
-	const searchOpen = useNav((state) => state.searchOpen);
-	const navigate = useNavigate();
+	const { searchOpen, close } = useNav();
 
 	// loose strictness for global search access
 	const searchParams = useSearch({ strict: false });
 	const initialQuery = searchParams?.search || "";
+	const [key, setKey] = useState(0);
 
-	const [query, setQuery] = useState(initialQuery);
-
-	// sync local state if URL changes externally (e.g. back button)
+	// Force re-render of input when search opens to ensure fresh state if needed
 	useEffect(() => {
 		if (searchOpen) {
-			setQuery(initialQuery);
+			setKey(prev => prev + 1);
 		}
-	}, [initialQuery, searchOpen]);
-
-	useEffect(() => {
-		const timeoutId = setTimeout(() => {
-			if (query !== initialQuery) {
-				navigate({
-					to: "/shop",
-					search: {
-						search: query || undefined,
-						brand: undefined,
-						color: undefined,
-						price: undefined,
-						category: undefined,
-					},
-				});
-			}
-		}, 300);
-
-		return () => clearTimeout(timeoutId);
-	}, [query, navigate, initialQuery]);
+	}, [searchOpen]);
 
 	return (
 		<div className={cn(searchBarVariants({ open: searchOpen }), className)}>
 			<div className="p-4">
-				<div className="relative">
-					<input
-						type="search"
-						placeholder="Search product..."
-						className="w-full text-black placeholder:text-black bg-transparent border-b border-gray-500 focus:outline-none p-2"
-						value={query}
-						onChange={(e) => setQuery(e.target.value)}
-					/>
-				</div>
+				<ProductSearchInput
+					key={key}
+					variant="mobile"
+					initialQuery={initialQuery}
+					onClose={() => close("searchOpen")}
+				/>
 			</div>
 		</div>
 	);
