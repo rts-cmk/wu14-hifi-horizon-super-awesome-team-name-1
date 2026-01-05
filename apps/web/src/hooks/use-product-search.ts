@@ -30,7 +30,8 @@ export function useProductSearch(
 		const colorMap = new Map<string, { hex: string; name: string }>();
 		for (const product of products) {
 			for (const color of product.colors || []) {
-				if (!colorMap.has(color.name)) {
+				// safety check: ensure color has required fields
+				if (color?.name && color?.hex && !colorMap.has(color.name)) {
 					colorMap.set(color.name, { hex: color.hex, name: color.name });
 				}
 			}

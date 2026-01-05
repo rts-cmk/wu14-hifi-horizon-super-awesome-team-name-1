@@ -124,7 +124,15 @@ export function ComparisonDialog({
 										</div>
 										<button
 											type="button"
-											onClick={() => handleAdd(product)}
+											onClick={() =>
+												handleAdd({
+													id: product.id,
+													title: product.title,
+													price: product.price,
+													images: product.images,
+													specifications: product.specifications || [],
+												})
+											}
 											disabled={inComparison || isMaxReached}
 											className={cn(
 												"px-4 py-2 rounded-sm text-sm font-medium transition-colors shrink-0",
