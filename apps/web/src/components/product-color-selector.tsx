@@ -20,22 +20,26 @@ export function ProductColorSelector({
 	if (!colors?.length) return null;
 
 	return (
-		<div className="flex items-center gap-3">
+		<div className="flex flex-wrap gap-x-6 gap-y-4">
 			{colors.map((color) => (
-				<button
-					key={color.id}
-					type="button"
-					onClick={() => onColorSelect(color.name)}
-					className={cn(
-						"size-8 rounded-full border-2 transition-all",
-						selectedColor === color.name
-							? "ring-2 ring-offset-2 ring-gray-900 border-gray-900"
-							: "border-gray-300 hover:border-gray-400",
-					)}
-					style={{ backgroundColor: color.hex }}
-					aria-label={`Select ${color.name}`}
-					title={color.name}
-				/>
+				<div key={color.id} className="flex flex-col items-center gap-2">
+					<button
+						type="button"
+						onClick={() => onColorSelect(color.name)}
+						className={cn(
+							"size-8 rounded-full border-2 transition-all",
+							selectedColor === color.name
+								? "ring-2 ring-offset-2 ring-gray-900 border-gray-900"
+								: "border-gray-300 hover:border-gray-400",
+						)}
+						style={{ backgroundColor: color.hex }}
+						aria-label={`Select ${color.name}`}
+						title={color.name}
+					/>
+					<span className="text-sm text-gray-600 font-medium">
+						{color.name}
+					</span>
+				</div>
 			))}
 		</div>
 	);

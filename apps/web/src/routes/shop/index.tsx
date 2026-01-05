@@ -82,6 +82,7 @@ function ShopComponent() {
 				price: newFilters.price || undefined,
 			}),
 			replace: true,
+			resetScroll: false,
 		});
 	};
 
@@ -180,13 +181,13 @@ function ShopComponent() {
 										</button>
 									</div>
 
-									<figure className="aspect-square bg-gray-200 mb-4 shrink-0">
+									<figure className="aspect-square mb-4 shrink-0 p-8 flex items-center justify-center">
 										{thumbnail ? (
 											<img
 												src={thumbnail}
 												alt={product.title}
 												loading="lazy"
-												className="object-cover w-full h-full"
+												className="max-w-full max-h-full object-contain"
 											/>
 										) : (
 											<div className="w-full h-full flex items-center justify-center text-gray-400">

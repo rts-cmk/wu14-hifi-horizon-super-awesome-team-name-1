@@ -1,4 +1,5 @@
 import { useId, useState } from "react";
+import { PRICE_RANGE_LABELS } from "@/constants/price-ranges";
 import type { FilterOptions } from "@/types/filters";
 import { FilterCheckbox } from "./filter-checkbox";
 import { FilterRadio } from "./filter-radio";
@@ -16,14 +17,6 @@ interface ShopFiltersProps {
 	onFiltersChange: (filters: ShopFiltersState) => void;
 	options: FilterOptions;
 }
-
-const prices = [
-	"Under £500",
-	"£500 - £1,000",
-	"£1,000 - £2,500",
-	"£2,500 - £5,000",
-	"Over £5,000",
-];
 
 export function ShopFilters({
 	filters,
@@ -60,7 +53,7 @@ export function ShopFilters({
 	const setSingleFilter = (key: keyof ShopFiltersState, value: string) => {
 		onFiltersChange({
 			...filters,
-			[key]: value,
+			[key]: filters[key] === value ? null : value,
 		});
 	};
 
@@ -130,14 +123,15 @@ export function ShopFilters({
 					expanded={expandedSections.price}
 					onToggle={() => toggleSection("price")}
 				>
-					{prices.map((price) => (
+					{PRICE_RANGE_LABELS.map((price) => (
 						<FilterRadio
 							key={price}
 							name={`${instanceId}-price-filter`}
 							value={price}
 							label={price}
 							checked={filters.price === price}
-							onChange={() => setSingleFilter("price", price)}
+							onChange={() => {}} // no-op, we use onClick for toggling
+							onClick={() => setSingleFilter("price", price)}
 						/>
 					))}
 				</FilterSection>

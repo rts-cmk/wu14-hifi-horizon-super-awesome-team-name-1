@@ -27,7 +27,7 @@ export function ProductImageCarousel({
 					<ChevronLeft className="size-10" strokeWidth={1.5} />
 				</button>
 
-				<div className="p-6 w-full aspect-4/3 flex items-center justify-center">
+				<div className="p-12 w-full aspect-square flex items-center justify-center rounded-xs">
 					{images.length > 0 ? (
 						<img
 							src={images[index]?.url}

@@ -9,11 +9,11 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
 	return (
 		<article className="w-full h-full flex flex-col gap-4 bg-white p-4 border border-gray-200">
-			<figure className="w-full flex-1 flex items-center justify-center overflow-hidden h-[300px]">
+			<figure className="aspect-square p-8 flex items-center justify-center overflow-hidden">
 				<img
 					src={product.images[0].url}
 					alt={product.title}
-					className="w-full h-full object-contain"
+					className="max-w-full max-h-full object-contain"
 				/>
 			</figure>
 
