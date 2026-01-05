@@ -8,6 +8,13 @@
       "when": 1765965983275,
       "tag": "0000_tranquil_mojo",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1736107200000,
+      "tag": "0001_add_color_name",
+      "breakpoints": true
     }
   ]
 }

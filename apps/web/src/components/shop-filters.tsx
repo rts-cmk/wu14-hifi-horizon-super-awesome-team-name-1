@@ -106,30 +106,23 @@ export function ShopFilters({
 					expanded={expandedSections.color}
 					onToggle={() => toggleSection("color")}
 				>
-					{options.colors.map((color) => {
-						const isHex = /^#[0-9A-Fa-f]{6}$/.test(color);
-						return (
-							<FilterCheckbox
-								key={color}
-								id={`${instanceId}-color-${color}`}
-								label={
-									isHex ? (
-										<div className="flex items-center gap-2">
-											<div
-												className="w-4 h-4 rounded-full border border-gray-300 shadow-sm"
-												style={{ backgroundColor: color }}
-											/>
-											<span className="uppercase text-sm ml-1">{color}</span>
-										</div>
-									) : (
-										color
-									)
-								}
-								checked={filters.color?.includes(color) || false}
-								onChange={() => toggleMultiFilter("color", color)}
-							/>
-						);
-					})}
+					{options.colors.map((color) => (
+						<FilterCheckbox
+							key={color.hex}
+							id={`${instanceId}-color-${color.hex}`}
+							label={
+								<div className="flex items-center gap-2">
+									<div
+										className="w-4 h-4 rounded-full border border-gray-300 shadow-sm"
+										style={{ backgroundColor: color.hex }}
+									/>
+									<span className="text-sm">{color.name}</span>
+								</div>
+							}
+							checked={filters.color?.includes(color.name) || false}
+							onChange={() => toggleMultiFilter("color", color.name)}
+						/>
+					))}
 				</FilterSection>
 
 				<FilterSection

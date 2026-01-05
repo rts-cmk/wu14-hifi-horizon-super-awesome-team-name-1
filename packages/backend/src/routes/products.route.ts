@@ -34,7 +34,7 @@ router.get(
         const formattedProducts = productList.map(product => ({
             ...product,
             descriptions: product.descriptions.map(d => d.content),
-            colors: product.colors.map(c => c.color)
+            colors: product.colors.map(c => ({ id: c.id, hex: c.hex, name: c.name }))
         }))
 
         return res.status(200).json(formattedProducts)
@@ -75,7 +75,7 @@ router.get(
         const formattedProducts = productList.map(product => ({
             ...product,
             descriptions: product.descriptions.map(d => d.content),
-            colors: product.colors.map(c => c.color)
+            colors: product.colors.map(c => ({ id: c.id, hex: c.hex, name: c.name }))
         }))
 
         return res.status(200).json({
@@ -114,7 +114,7 @@ router.get(
         return res.status(200).json({
             ...product,
             descriptions: product.descriptions.map(d => d.content),
-            colors: product.colors.map(c => c.color)
+            colors: product.colors.map(c => ({ id: c.id, hex: c.hex, name: c.name }))
         })
     })
 )
@@ -137,7 +137,9 @@ router.post(
                     )
             }
             if (colors?.length) {
-                await tx.insert(productColors).values(colors.map(color => ({ productId: newProduct.id, color })))
+                await tx
+                    .insert(productColors)
+                    .values(colors.map(color => ({ productId: newProduct.id, hex: color.hex, name: color.name })))
             }
             if (images?.length) {
                 await tx
@@ -163,7 +165,7 @@ router.post(
             product: {
                 ...newProductWithRelations,
                 descriptions: newProductWithRelations?.descriptions.map(d => d.content) || [],
-                colors: newProductWithRelations?.colors.map(c => c.color) || []
+                colors: newProductWithRelations?.colors.map(c => ({ id: c.id, hex: c.hex, name: c.name })) || []
             }
         })
     })
@@ -191,7 +193,10 @@ router.patch(
                     table: productDescriptions,
                     data: descriptions?.map((content, index) => ({ productId: productId, content, sortOrder: index }))
                 },
-                { table: productColors, data: colors?.map(color => ({ productId: productId, color })) },
+                {
+                    table: productColors,
+                    data: colors?.map(color => ({ productId: productId, hex: color.hex, name: color.name }))
+                },
                 {
                     table: productImages,
                     data: images?.map(image => ({ productId: productId, url: image.url, alt: image.alt }))
@@ -222,7 +227,7 @@ router.patch(
             product: {
                 ...updatedProductWithRelations,
                 descriptions: updatedProductWithRelations.descriptions.map(d => d.content),
-                colors: updatedProductWithRelations.colors.map(c => c.color)
+                colors: updatedProductWithRelations.colors.map(c => ({ id: c.id, hex: c.hex, name: c.name }))
             }
         })
     })

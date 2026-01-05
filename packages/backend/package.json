@@ -9,6 +9,7 @@
         "build": "tsup",
         "start": "node api/main.js",
         "db:push": "drizzle-kit push",
+        "db:seed": "bun run src/db/seed.ts",
         "check-types": "tsc --noEmit"
     },
     "devDependencies": {

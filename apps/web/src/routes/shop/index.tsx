@@ -125,7 +125,7 @@ function ShopComponent() {
 
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 						{filteredProducts.map((product: Product) => {
-							const thumbnail = product.images[0].url;
+							const thumbnail = product.images?.[0]?.url;
 							const inComparison = isInComparison(product.id);
 
 							const handleAddToCompare = () => {
@@ -181,12 +181,18 @@ function ShopComponent() {
 									</div>
 
 									<figure className="aspect-square bg-gray-200 mb-4 shrink-0">
-										<img
-											src={thumbnail}
-											alt={product.title}
-											loading="lazy"
-											className="object-cover w-full h-full"
-										/>
+										{thumbnail ? (
+											<img
+												src={thumbnail}
+												alt={product.title}
+												loading="lazy"
+												className="object-cover w-full h-full"
+											/>
+										) : (
+											<div className="w-full h-full flex items-center justify-center text-gray-400">
+												No image
+											</div>
+										)}
 									</figure>
 
 									<div className="flex flex-col gap-4 text-center">

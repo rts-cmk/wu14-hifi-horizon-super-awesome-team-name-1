@@ -1,6 +1,11 @@
+export interface ColorOption {
+	hex: string;
+	name: string;
+}
+
 export interface FilterOptions {
 	brands: string[];
-	colors: string[];
+	colors: ColorOption[];
 	categories: string[];
 }
 

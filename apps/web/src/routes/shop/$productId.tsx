@@ -32,7 +32,9 @@ export const Route = createFileRoute("/shop/$productId")({
 function RouteComponent() {
 	const { productId } = Route.useParams();
 	const { data: product } = useSuspenseQuery(productQueryOptions(productId));
-	const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "");
+	const [selectedColor, setSelectedColor] = useState(
+		product.colors?.[0]?.name || "",
+	);
 	const [quantity, setQuantity] = useState(1);
 	const { addItem } = useCartStore();
 	const {

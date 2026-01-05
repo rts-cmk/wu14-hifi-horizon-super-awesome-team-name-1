@@ -27,9 +27,17 @@ export function useProductSearch(
 			new Set(products.map((p) => p.brand).filter(Boolean)),
 		).sort();
 
-		const colors = Array.from(
-			new Set(products.flatMap((p) => p.colors || []).filter(Boolean)),
-		).sort();
+		const colorMap = new Map<string, { hex: string; name: string }>();
+		for (const product of products) {
+			for (const color of product.colors || []) {
+				if (!colorMap.has(color.name)) {
+					colorMap.set(color.name, { hex: color.hex, name: color.name });
+				}
+			}
+		}
+		const colors = Array.from(colorMap.values()).sort((a, b) =>
+			a.name.localeCompare(b.name),
+		);
 
 		const categories = Array.from(
 			new Set(
@@ -58,7 +66,7 @@ export function useProductSearch(
 
 		if (filters.color && filters.color.length > 0) {
 			result = result.filter((p) =>
-				p.colors?.some((c) => filters.color?.includes(c)),
+				p.colors?.some((c) => filters.color?.includes(c.name)),
 			);
 		}
 

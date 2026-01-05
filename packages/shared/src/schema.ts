@@ -69,7 +69,8 @@ export const productColors = pgTable('product_colors', {
     productId: integer('product_id')
         .notNull()
         .references(() => products.id, { onDelete: 'cascade' }),
-    color: text('color').notNull()
+    hex: text('hex').notNull(),
+    name: text('name').notNull()
 })
 
 export const productImages = pgTable('product_images', {
@@ -136,9 +137,10 @@ export const productUpdateSchema = createInsertSchema(products)
     .omit({ id: true, createdAt: true, updatedAt: true })
     .partial()
 
-const hexColorSchema = z
-    .string()
-    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Must be a valid hex color (e.g., #1a1a1a)')
+const colorSchema = z.object({
+    hex: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Must be a valid hex color (e.g., #1a1a1a)'),
+    name: z.string().min(1, 'Color name is required')
+})
 
 const specificationSchema = z.object({
     label: z.string(),
@@ -147,7 +149,7 @@ const specificationSchema = z.object({
 
 export const productCreateSchema = productInsertSchema.extend({
     descriptions: z.array(z.string()).min(1, 'At least one description is required'),
-    colors: z.array(hexColorSchema).min(1, 'At least one color is required'),
+    colors: z.array(colorSchema).min(1, 'At least one color is required'),
     images: z
         .array(
             z.object({
@@ -176,7 +178,7 @@ export const contactMessageInsertSchema = createInsertSchema(contactMessages).om
 
 export const productUpdateWithRelationsSchema = productUpdateSchema.extend({
     descriptions: z.array(z.string()).optional(),
-    colors: z.array(hexColorSchema).optional(),
+    colors: z.array(colorSchema).optional(),
     images: z
         .array(
             z.object({
@@ -246,7 +248,7 @@ export const orderItemInsertSchema = createInsertSchema(orderItems).omit({
 
 export type Product = z.infer<typeof productSchema> & {
     descriptions: string[]
-    colors: string[]
+    colors: { id: number; hex: string; name: string }[]
     images: { id: number; url: string; alt: string | null }[]
     specifications: { label: string; value: string }[]
 }
