@@ -1,3 +1,4 @@
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
@@ -7,20 +8,30 @@ import { ProductQuantitySelector } from "@/components/product-quantity-selector"
 import { ProductSpecifications } from "@/components/product-specifications";
 import { ProductStockIndicator } from "@/components/product-stock-indicator";
 import { cn, formatPrice } from "@/lib/utils";
-import { getApiUrl } from "@/lib/get-api-url";
 import { useCartStore } from "@/stores/cart";
 import { useComparisonStore } from "@/stores/comparison";
+import type { Product } from "@/types/product";
+
+const productQueryOptions = (productId: string) =>
+	queryOptions({
+		queryKey: ["products", productId],
+		queryFn: async () => {
+			const res = await fetch(`/api/products/${productId}`);
+			if (!res.ok) throw new Error("Product not found");
+			return res.json() as Promise<Product>;
+		},
+	});
 
 export const Route = createFileRoute("/shop/$productId")({
 	component: RouteComponent,
-	loader: async ({ params }) => {
-		const res = await fetch(getApiUrl(`/api/products/${params.productId}`));
-		return res.json();
+	loader: async ({ context: { queryClient }, params: { productId } }) => {
+		await queryClient.ensureQueryData(productQueryOptions(productId));
 	},
 });
 
 function RouteComponent() {
-	const product = Route.useLoaderData();
+	const { productId } = Route.useParams();
+	const { data: product } = useSuspenseQuery(productQueryOptions(productId));
 	const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "");
 	const [quantity, setQuantity] = useState(1);
 	const { addItem } = useCartStore();
@@ -34,7 +45,13 @@ function RouteComponent() {
 	const inComparison = isInComparison(product.id);
 
 	const handleAddToCompare = () => {
-		addProduct({ ...product, color: selectedColor });
+		addProduct({
+			id: product.id,
+			title: product.title,
+			price: product.price,
+			images: product.images,
+			specifications: product.specifications,
+		});
 	};
 
 	const handleAddToCart = () => {

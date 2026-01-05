@@ -1,8 +1,18 @@
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import { Search, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cn, formatPrice } from "@/lib/utils";
-import { getApiUrl } from "@/lib/get-api-url";
 import { type CompareProduct, useComparisonStore } from "@/stores/comparison";
+import type { Product } from "@/types/product";
+
+const productsQueryOptions = queryOptions({
+	queryKey: ["products"],
+	queryFn: async () => {
+		const res = await fetch("/api/products");
+		if (!res.ok) throw new Error("Failed to fetch products");
+		return res.json() as Promise<Product[]>;
+	},
+});
 
 interface ComparisonDialogProps {
 	open: boolean;
@@ -14,32 +24,16 @@ export function ComparisonDialog({
 	onOpenChange,
 }: ComparisonDialogProps) {
 	const [search, setSearch] = useState("");
-	const [products, setProducts] = useState<CompareProduct[]>([]);
-	const [loading, setLoading] = useState(false);
+	const { data: products = [], isLoading } = useQuery({
+		...productsQueryOptions,
+		enabled: open,
+	});
+
 	const {
 		addProduct,
 		isInComparison,
 		products: compareProducts,
 	} = useComparisonStore();
-
-	useEffect(() => {
-		if (!open) return;
-
-		const fetchProducts = async () => {
-			setLoading(true);
-			try {
-				const res = await fetch(getApiUrl("/api/products"));
-				const data = await res.json();
-				setProducts(data);
-			} catch (error) {
-				console.error("Failed to fetch products:", error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchProducts();
-	}, [open]);
 
 	const filteredProducts = products.filter((p) =>
 		p.title.toLowerCase().includes(search.toLowerCase()),
@@ -90,7 +84,7 @@ export function ComparisonDialog({
 				</div>
 
 				<div className="flex-1 overflow-y-auto p-4">
-					{loading ? (
+					{isLoading ? (
 						<div className="text-center py-8 text-gray-500">Loading...</div>
 					) : filteredProducts.length === 0 ? (
 						<div className="text-center py-8 text-gray-500">

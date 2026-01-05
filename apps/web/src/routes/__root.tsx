@@ -1,12 +1,16 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import { createRootRoute, Outlet } from "@tanstack/react-router";
+import type { QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Toaster } from "sonner";
 import { ComparisonBar } from "@/components/comparison-bar";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+	queryClient: QueryClient;
+}>()({
 	component: () => (
 		<>
 			<Header />
@@ -14,6 +18,7 @@ export const Route = createRootRoute({
 			<Outlet />
 			<Footer />
 			<ComparisonBar />
+			<ReactQueryDevtools buttonPosition="bottom-left" />
 			<TanStackDevtools
 				config={{
 					position: "bottom-right",

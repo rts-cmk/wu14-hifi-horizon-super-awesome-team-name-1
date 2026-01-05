@@ -1,0 +1,14 @@
+{
+    "version": 2,
+    "functions": {
+        "packages/backend/dist/index.js": {
+            "maxDuration": 10
+        }
+    },
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "packages/backend/dist/index.js"
+        }
+    ]
+}

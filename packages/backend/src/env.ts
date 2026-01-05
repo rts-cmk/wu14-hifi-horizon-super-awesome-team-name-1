@@ -1,10 +1,14 @@
-import { z } from 'zod'
+import { config } from 'dotenv'
+import { treeifyError, z } from 'zod'
+
+config()
 
 const envSchema = z.object({
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-    PORT: z.coerce.number().default(3000),
-    DATABASE_URL: z.url(),
-    JWT_SECRET: z.string()
+    PORT: z.coerce.number().default(8080),
+    DATABASE_URL: z.string().min(1),
+    JWT_SECRET: z.string().min(1),
+    PROXY_SECRET: z.string().min(1).optional()
 })
 
 export type Env = z.infer<typeof envSchema>
@@ -15,7 +19,7 @@ try {
     env = envSchema.parse(process.env)
 } catch (e) {
     const error = e as z.ZodError
-    console.error('❌ invalid environment variables:', z.treeifyError(error))
+    console.error('❌ invalid environment variables:', treeifyError(error))
     process.exit(1)
 }
 

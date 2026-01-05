@@ -1,9 +1,5 @@
-import {
-	createFileRoute,
-	Link,
-	useLoaderData,
-	useNavigate,
-} from "@tanstack/react-router";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
@@ -16,14 +12,19 @@ interface Order {
 	itemsCount: number;
 }
 
+const ordersQueryOptions = queryOptions({
+	queryKey: ["orders"],
+	queryFn: async () => {
+		const response = await fetch("/api/me/orders", { credentials: "include" });
+		if (!response.ok) return [] as Order[];
+		return (await response.json()) as Order[];
+	},
+});
+
 export const Route = createFileRoute("/profile/orders")({
 	component: RouteComponent,
-	loader: async () => {
-		const response = await fetch("/api/me/orders", { credentials: "include" });
-		if (!response.ok) {
-			return [];
-		}
-		return await response.json();
+	loader: async ({ context: { queryClient } }) => {
+		await queryClient.ensureQueryData(ordersQueryOptions);
 	},
 });
 
@@ -81,7 +82,7 @@ function OrderItem({
 
 function RouteComponent() {
 	const navigate = useNavigate();
-	const orders = useLoaderData({ from: "/profile/orders" });
+	const { data: orders } = useSuspenseQuery(ordersQueryOptions);
 
 	const tabs = [
 		{ id: "profile", label: "Profile" },

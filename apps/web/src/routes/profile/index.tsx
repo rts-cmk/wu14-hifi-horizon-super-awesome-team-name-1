@@ -1,8 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { User as UserType } from "@repo/shared";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import {
 	createFileRoute,
 	redirect,
-	useLoaderData,
 	useNavigate,
 	useRouter,
 } from "@tanstack/react-router";
@@ -63,15 +64,26 @@ const profileSchema = z
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
-export const Route = createFileRoute("/profile/")({
-	component: RouteComponent,
-	loader: async () => {
+const profileQueryOptions = queryOptions({
+	queryKey: ["me"],
+	queryFn: async () => {
 		const response = await fetch("/api/me", { credentials: "include" });
 		if (!response.ok) {
-			throw redirect({ to: "/login" });
+			throw new Error("Not authenticated");
 		}
 		const data = await response.json();
-		return data.user;
+		return data.user as UserType;
+	},
+});
+
+export const Route = createFileRoute("/profile/")({
+	component: RouteComponent,
+	loader: async ({ context: { queryClient } }) => {
+		try {
+			return await queryClient.ensureQueryData(profileQueryOptions);
+		} catch (_err) {
+			throw redirect({ to: "/login" });
+		}
 	},
 });
 
@@ -187,7 +199,7 @@ function ProfileItem({
 function RouteComponent() {
 	const navigate = useNavigate();
 	const router = useRouter();
-	const user = useLoaderData({ from: "/profile/" });
+	const { data: user } = useSuspenseQuery(profileQueryOptions);
 
 	const [editingField, setEditingField] = React.useState<string | null>(null);
 	const [isLoading, setIsLoading] = React.useState(false);

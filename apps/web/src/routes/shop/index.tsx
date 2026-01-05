@@ -1,43 +1,51 @@
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { SlidersHorizontal } from "lucide-react";
+import { z } from "zod";
 import { ProductStockIndicator } from "@/components/product-stock-indicator";
 import { ShopFilters, type ShopFiltersState } from "@/components/shop-filters";
 import { useProductSearch } from "@/hooks/use-product-search";
 import { cn, formatPrice } from "@/lib/utils";
-import { getApiUrl } from "@/lib/get-api-url";
 import { useCartStore } from "@/stores/cart";
 import { useComparisonStore } from "@/stores/comparison";
 import type { Product } from "@/types/product";
 
+const productsQueryOptions = queryOptions({
+	queryKey: ["products"],
+	queryFn: async () => {
+		const response = await fetch("/api/products");
+		if (!response.ok) throw new Error("Failed to fetch products");
+		return response.json() as Promise<Product[]>;
+	},
+});
+
+const shopSearchSchema = z.object({
+	search: z.string().optional(),
+	brand: z
+		.array(z.string())
+		.or(z.string().transform((v) => [v]))
+		.optional(),
+	color: z
+		.array(z.string())
+		.or(z.string().transform((v) => [v]))
+		.optional(),
+	price: z.string().optional(),
+	category: z
+		.array(z.string())
+		.or(z.string().transform((v) => [v]))
+		.optional(),
+});
+
 export const Route = createFileRoute("/shop/")({
 	component: ShopComponent,
-	validateSearch: (search: Record<string, unknown>) => {
-		const normalizeToArr = (val: unknown): string[] | undefined => {
-			if (Array.isArray(val))
-				return val.filter((v): v is string => typeof v === "string");
-			if (typeof val === "string") return [val];
-			return undefined;
-		};
-
-		return {
-			search: typeof search.search === "string" ? search.search : undefined,
-			brand: normalizeToArr(search.brand),
-			color: normalizeToArr(search.color),
-			price: typeof search.price === "string" ? search.price : undefined,
-			category: normalizeToArr(search.category),
-		};
-	},
-	loader: async () => {
-		const response = await fetch(getApiUrl("/api/products"), {
-			method: "GET",
-		});
-		const products = await response.json();
-		return products;
+	validateSearch: (search) => shopSearchSchema.parse(search),
+	loader: async ({ context: { queryClient } }) => {
+		await queryClient.ensureQueryData(productsQueryOptions);
 	},
 });
 
 function ShopComponent() {
-	const data = Route.useLoaderData();
+	const { data } = useSuspenseQuery(productsQueryOptions);
 	const searchParams = Route.useSearch();
 	const navigate = useNavigate({ from: Route.fullPath });
 

@@ -1,9 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import {
 	createFileRoute,
 	Link,
 	redirect,
-	useLoaderData,
 	useNavigate,
 } from "@tanstack/react-router";
 import * as React from "react";
@@ -33,7 +33,7 @@ const checkoutSchema = z.object({
 	zipCode: z.string().min(2, "Zip code is required"),
 	city: z.string().min(1, "City is required"),
 	address: z.string().min(5, "Address must be at least 5 characters"),
-	email: z.email("Please enter a valid email address"),
+	email: z.string().email("Please enter a valid email address"),
 	phone: z.string().min(5, "Phone number is required"),
 	newsletter: z.boolean().optional(),
 	terms: z.boolean().refine((val) => val === true, {
@@ -43,6 +43,18 @@ const checkoutSchema = z.object({
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
+const userQueryOptions = queryOptions({
+	queryKey: ["me"],
+	queryFn: async () => {
+		const response = await fetch("/api/me", { credentials: "include" });
+		if (response.ok) {
+			const data = await response.json();
+			return data.user;
+		}
+		return null;
+	},
+});
+
 export const Route = createFileRoute("/payment")({
 	component: PaymentComponent,
 	beforeLoad: () => {
@@ -51,22 +63,12 @@ export const Route = createFileRoute("/payment")({
 			throw redirect({ to: "/cart" });
 		}
 	},
-	loader: async () => {
-		try {
-			const response = await fetch("/api/me", { credentials: "include" });
-			if (response.ok) {
-				const data = await response.json();
-				return data.user;
-			}
-		} catch (error) {
-			console.error("Failed to fetch user data", error);
-		}
-		return null;
-	},
+	loader: ({ context: { queryClient } }) =>
+		queryClient.ensureQueryData(userQueryOptions),
 });
 
 function PaymentComponent() {
-	const user = useLoaderData({ from: "/payment" });
+	const { data: user } = useSuspenseQuery(userQueryOptions);
 	const navigate = useNavigate();
 	const { items, total, clearCart } = useCartStore();
 	const {

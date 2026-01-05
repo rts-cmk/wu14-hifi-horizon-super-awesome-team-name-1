@@ -1,21 +1,27 @@
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { ProductCard } from "@/components/product-card";
 import type { Product } from "@/types/product";
-import { getApiUrl } from "@/lib/get-api-url";
+
+const paginatedProductsQueryOptions = queryOptions({
+	queryKey: ["products", "paginated", { page: 1, limit: 4 }],
+	queryFn: async () => {
+		const response = await fetch("/api/products/paginated?page=1&limit=4");
+		if (!response.ok) throw new Error("Failed to fetch products");
+		return response.json() as Promise<{ products: Product[] }>;
+	},
+});
 
 export const Route = createFileRoute("/")({
 	component: App,
-	loader: async () => {
-		const response = await fetch(getApiUrl("/api/products/paginated?page=1&limit=4"), {
-			method: "GET",
-		});
-		const products = await response.json();
-		return products;
+	loader: async ({ context: { queryClient } }) => {
+		await queryClient.ensureQueryData(paginatedProductsQueryOptions);
 	},
 });
 
 function App() {
-	const { products } = Route.useLoaderData();
+	const { data } = useSuspenseQuery(paginatedProductsQueryOptions);
+	const { products } = data;
 
 	return (
 		<main className="w-full min-h-screen">

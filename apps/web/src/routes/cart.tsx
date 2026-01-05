@@ -13,17 +13,6 @@ export const Route = createFileRoute("/cart")({
 function CartComponent() {
 	const { items, removeItem, updateQuantity, total } = useCartStore();
 
-	const browseLinkProps = {
-		to: "/shop" as const,
-		search: {
-			search: undefined,
-			brand: undefined,
-			color: undefined,
-			price: undefined,
-			category: undefined,
-		},
-	};
-
 	if (items.length === 0) {
 		return (
 			<main className="min-h-screen w-full bg-[#F5F5F5] pt-10 pb-20">
@@ -35,7 +24,7 @@ function CartComponent() {
 					<div className="text-center py-20 bg-white rounded-sm shadow-sm">
 						<p className="text-gray-500 mb-4">Your cart is empty</p>
 						<Link
-							{...browseLinkProps}
+							to="/shop"
 							className="text-orange-500 hover:text-orange-600 font-medium"
 						>
 							Browse Products

@@ -39,18 +39,7 @@ function CompareComponent() {
 						You need at least 2 products to compare.
 					</Text>
 					<Button asChild>
-						<Link
-							to="/shop"
-							search={{
-								search: undefined,
-								brand: undefined,
-								color: undefined,
-								price: undefined,
-								category: undefined,
-							}}
-						>
-							Browse Products
-						</Link>
+						<Link to="/shop">Browse Products</Link>
 					</Button>
 				</div>
 			</main>

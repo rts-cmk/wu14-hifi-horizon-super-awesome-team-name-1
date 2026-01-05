@@ -41,7 +41,7 @@ function RouteComponent() {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting },
 		reset,
 	} = useForm<RegisterFormValues>({
 		resolver: zodResolver(registerSchema),
@@ -65,7 +65,8 @@ function RouteComponent() {
 			});
 
 			if (!res.ok) {
-				throw new Error((await res.text()) || "Failed to register");
+				const errorData = await res.text();
+				throw new Error(errorData || "Failed to register");
 			}
 
 			toast.success("Account created successfully");
@@ -74,9 +75,9 @@ function RouteComponent() {
 			navigate({ to: "/login" });
 		} catch (err) {
 			console.error("Registration error:", err);
-			toast.error(
-				`Error: ${err instanceof Error ? err.message : "Unknown error"}`,
-			);
+			const errorMessage =
+				err instanceof Error ? err.message : "An unknown error occurred";
+			toast.error(errorMessage);
 		}
 	};
 
@@ -222,9 +223,10 @@ function RouteComponent() {
 
 				<button
 					type="submit"
-					className="mt-6 bg-orange-500 text-white py-3 px-6 hover:bg-orange-600 transition-all w-fit cursor-pointer"
+					className="mt-6 bg-orange-500 text-white py-3 px-6 hover:bg-orange-600 transition-all w-fit cursor-pointer disabled:opacity-50"
+					disabled={isSubmitting}
 				>
-					Create an Account
+					{isSubmitting ? "Creating..." : "Create an Account"}
 				</button>
 			</form>
 		</main>

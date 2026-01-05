@@ -1,10 +1,19 @@
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import Fuse from "fuse.js";
 import { Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { cn, formatPrice } from "@/lib/utils";
-import { getApiUrl } from "@/lib/get-api-url";
 import type { Product } from "@/types/product";
+
+const productsQueryOptions = queryOptions({
+	queryKey: ["products"],
+	queryFn: async () => {
+		const res = await fetch("/api/products");
+		if (!res.ok) throw new Error("Failed to fetch products");
+		return res.json() as Promise<Product[]>;
+	},
+});
 
 interface ProductSearchInputProps {
 	className?: string;
@@ -22,24 +31,8 @@ export function ProductSearchInput({
 	const navigate = useNavigate();
 	const [query, setQuery] = useState(initialQuery);
 	const [debouncedQuery, setDebouncedQuery] = useState(query);
-	const [products, setProducts] = useState<Product[]>([]);
+	const { data: products = [] } = useQuery(productsQueryOptions);
 	const [isFocused, setIsFocused] = useState(false);
-
-	useEffect(() => {
-		async function fetchProducts() {
-			try {
-				const response = await fetch(getApiUrl("/api/products"));
-				if (response.ok) {
-					const data = await response.json();
-					setProducts(data);
-				}
-			} catch (error) {
-				console.error("Failed to fetch products for search", error);
-			}
-		}
-
-		fetchProducts();
-	}, []);
 
 	useEffect(() => {
 		setQuery(initialQuery);
@@ -74,10 +67,6 @@ export function ProductSearchInput({
 				to: "/shop",
 				search: {
 					search: query || undefined,
-					brand: undefined,
-					color: undefined,
-					price: undefined,
-					category: undefined,
 				},
 			});
 			if (onClose) onClose();

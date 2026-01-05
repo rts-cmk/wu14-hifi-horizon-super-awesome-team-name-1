@@ -37,13 +37,6 @@ export function MenuDrawer({ open, onClose, className }: MenuDrawerProps) {
 					<nav className="flex flex-col items-center gap-8 text-lg tracking-wide">
 						<Link
 							to="/shop"
-							search={{
-								search: undefined,
-								brand: undefined,
-								color: undefined,
-								price: undefined,
-								category: undefined,
-							}}
 							className="text-white hover:text-gray-300 text-base md:text-lg"
 							onClick={onClose}
 						>
